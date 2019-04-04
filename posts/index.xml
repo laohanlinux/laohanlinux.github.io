@@ -86,7 +86,7 @@
     <item>
       <title>Goim Analysis of Source Code</title>
       <link>https://laohanlinux.github.io/2016/12/04/goim-analysis-of-source-code/</link>
-      <pubDate>Sun, 04 Dec 2016 15:03:15 +0800</pubDate>
+      <pubDate>Sun, 04 Dec 2016 12:03:15 +0800</pubDate>
       
       <guid>https://laohanlinux.github.io/2016/12/04/goim-analysis-of-source-code/</guid>
       <description>Comet comet为用户代理服务器，用于客户端的连接，根据情况可部署多个comet(部署机房选择以用户接入为基础，如：最近接入、按运营商接入)。 流</description>
