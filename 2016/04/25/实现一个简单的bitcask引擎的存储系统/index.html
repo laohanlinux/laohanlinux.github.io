@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,49 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">使用Golang语言实现一个简单的Bitcask引擎的文件存储系统</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-04-25 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/"> 存储引擎 </a>
+            </div>
+          <span class="more-meta"> 2377 words </span>
+          <span class="more-meta"> 5 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#设计模型以及特点">设计模型以及特点</a></li>
+<li><a href="#具体的组件设计图">具体的组件设计图</a></li>
+<li><a href="#数据结构的设计">数据结构的设计</a>
+<ul>
+<li><a href="#文件映射的结构体">文件映射的结构体</a></li>
+<li><a href="#key-value-结构体"><code>key/value</code>结构体</a></li>
+</ul></li>
+<li><a href="#关于merge">关于Merge</a></li>
+<li><a href="#如何实现一个简单的-merge">如何实现一个简单的<code>Merge</code>:</a></li>
+<li><a href="#todo-list">TODO LIST</a></li>
+<li><a href="#简单的操作">简单的操作</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <p><code>bitcask</code>是<code>bashro</code>的设计的一个底层存储引擎，主要应用于<code>Riak</code>产品中（<code>ps</code>:国内的<code>beansdb</code>的底层存储引擎也是使用<code>bitcask</code>，分布式上也是使用<code>dynamo</code>，并且他们也根据自己的实际应用做了相应的优化），其设计简单易懂，算法也是很简明的算法。其存储对象类型是<code>key/value</code>类型。</p>
 
@@ -470,8 +511,43 @@
 <span class="mi">2016</span><span class="o">/</span><span class="mo">05</span><span class="o">/</span><span class="mo">01</span> <span class="mi">16</span><span class="p">:</span><span class="mi">22</span><span class="p">:</span><span class="mi">28</span> <span class="nx">bitcask_main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">49</span> <span class="p">[</span><span class="nx">info</span><span class="p">]</span> <span class="nx">zhanSan已经毕业</span><span class="p">.</span></code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2016-04-25
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/bitcask/">Bitcask</a>
+          <a href="/tags/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">存储引擎</a>
+          <a href="/tags/golang/">Golang</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2016/06/13/riak-core-%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-1/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Riak Core 原理分析-1</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2016/04/25/%E4%BD%BF%E7%94%A8raft%E7%AE%97%E6%B3%95%E5%BF%AB%E7%86%9F%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84key-value%E7%B3%BB%E7%BB%9F/">
+            <span class="next-text nav-default">使用raft算法快速构建一个分布式kv系统</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

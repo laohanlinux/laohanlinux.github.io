@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,115 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">muduo net library chapter 3</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2015-07-01 </span>
+        <div class="post-category">
+            <a href="/categories/muduo/"> muduo </a>
+            <a href="/categories/network-program/"> network program </a>
+            </div>
+          <span class="more-meta"> 25022 words </span>
+          <span class="more-meta"> 50 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#34-tcpserver-tcpconnection">[34] TcpServer/TcpConnection</a>
+<ul>
+<li><a href="#时序图">时序图</a></li>
+<li><a href="#tcpserver头文件">TcpServer头文件</a></li>
+<li><a href="#tcpserver源文件">TcpServer源文件</a></li>
+<li><a href="#tcpconnection头文件">TcpConnection头文件</a></li>
+<li><a href="#tcpconnection源文件">TcpConnection源文件</a></li>
+<li><a href="#callback源文件">CallBack源文件</a></li>
+<li><a href="#测试程序1">测试程序1</a></li>
+<li><a href="#程序输出">程序输出:</a></li>
+<li><a href="#服务器端">服务器端</a></li>
+<li><a href="#测试程序2">测试程序2</a></li>
+</ul></li>
+<li><a href="#35-1-multiple-reactors">[35-1] multiple reactors</a>
+<ul>
+<li><a href="#eventloopthreadpool-头文件"><code>EventLoopThreadPool</code>头文件</a></li>
+<li><a href="#eventloopthreadpool源文件">EventLoopThreadPool源文件</a></li>
+<li><a href="#tcpserver头文件-1">TcpServer头文件</a></li>
+<li><a href="#tcpserver源文件-1">TcpServer源文件</a></li>
+<li><a href="#测试程序">测试程序</a></li>
+</ul></li>
+<li><a href="#35-2-文件描述符的分析">[35-2] 文件描述符的分析</a>
+<ul>
+<li><a href="#code">code</a></li>
+<li><a href="#分析结果">分析结果</a></li>
+</ul></li>
+<li><a href="#36-1-buffer">[36-1] BUFFER</a>
+<ul>
+<li><a href="#buffer头文件">BUFFER头文件</a></li>
+<li><a href="#buffer源文件">BUFFER源文件</a></li>
+</ul></li>
+<li><a href="#37-buffer">[37] BUFFER</a>
+<ul>
+<li><a href="#测试程序-1">测试程序</a></li>
+<li><a href="#客户端">客户端</a></li>
+<li><a href="#程序输出-1">程序输出</a></li>
+</ul></li>
+<li><a href="#38-完善tcpconnection">[38] 完善TcpConnection</a>
+<ul>
+<li><a href="#tcpconnection-完整的源文件">TcpConnection 完整的源文件</a></li>
+<li><a href="#测试程序-2">测试程序</a></li>
+</ul></li>
+<li><a href="#39-tcpclient和connector">[39] TcpClient和connector</a>
+<ul>
+<li><a href="#测试程序-3">测试程序</a></li>
+<li><a href="#tcpclient-头文件">TcpClient 头文件</a></li>
+<li><a href="#tcpclient-源文件">TcpClient 源文件</a></li>
+<li><a href="#connector-头文件">Connector 头文件</a></li>
+<li><a href="#connector-源文件">Connector 源文件</a></li>
+<li><a href="#测试程序-4">测试程序</a></li>
+</ul></li>
+<li><a href="#40-http-简单描述">[40] http 简单描述</a>
+<ul>
+<li><a href="#http-request">http request</a>
+<ul>
+<li><a href="#请求方法有">请求方法有</a></li>
+<li><a href="#常用请求头">常用请求头</a></li>
+</ul></li>
+<li><a href="#http-response">http response</a></li>
+<li><a href="#一个典型的http请求">一个典型的http请求</a></li>
+<li><a href="#一个典型的http应答">一个典型的http应答</a></li>
+<li><a href="#muduo-http库涉及到的类">muduo_http库涉及到的类</a></li>
+</ul></li>
+<li><a href="#40-1-http实现源码">[40-1] http实现源码</a>
+<ul>
+<li><a href="#httprequest头文件-包含实现">HttpRequest头文件(包含实现)</a></li>
+<li><a href="#httpresponse头文件">HttpResponse头文件</a></li>
+<li><a href="#httpresponse源文件">HttpResponse源文件</a></li>
+<li><a href="#httpcontext文件">HttpContext文件</a></li>
+<li><a href="#httpserver头文件">HttpServer头文件</a></li>
+<li><a href="#测试程序-5">测试程序</a></li>
+</ul></li>
+<li><a href="#41-muduo-inspect库源码分析">[41] muduo_inspect库源码分析</a>
+<ul>
+<li><a href="#processinspectort头文件">ProcessInspectort头文件</a></li>
+<li><a href="#processinspectort源文件">ProcessInspectort源文件</a></li>
+<li><a href="#inspector头文件">Inspector头文件</a></li>
+<li><a href="#inspector源文件">Inspector源文件</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h2 id="34-tcpserver-tcpconnection">[34] TcpServer/TcpConnection</h2>
 <div class="highlight"><div class="chroma">
@@ -9680,8 +9787,41 @@ string ProcessInspector::threads(HttpRequest::Method, const Inspector::ArgList&a
 </code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2015-07-01
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/muduo/">muduo</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2016/03/13/udon-riak-core/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">udon_riak_core</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2015/07/01/muduo-net-library-chapter-2/">
+            <span class="next-text nav-default">muduo net library chapter 2</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

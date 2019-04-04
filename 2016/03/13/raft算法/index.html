@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,46 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">raft算法</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-03-13 </span>
+        <div class="post-category">
+            <a href="/categories/distribute-system/"> Distribute System </a>
+            </div>
+          <span class="more-meta"> 3573 words </span>
+          <span class="more-meta"> 8 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#raft-算法小结">Raft 算法小结</a>
+<ul>
+<li><a href="#选举">选举</a></li>
+<li><a href="#关系的变更">关系的变更</a></li>
+<li><a href="#日志复制">日志复制</a></li>
+<li><a href="#日志压缩">日志压缩</a>
+<ul>
+<li>
+<ul>
+<li><a href="#安装快照-rpc">安装快照 RPC：</a></li>
+<li><a href="#接收者实现">接收者实现：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h1 id="raft-算法小结">Raft 算法小结</h1>
 
@@ -296,8 +334,41 @@
 
 <p>第二个影响性能的问题就是写入快照需要花费显著的一段时间，并且我们还不希望影响到正常操作。解决方案是通过写时复制的技术，这样新的更新就可以被接收而不影响到快照。例如，具有函数式数据结构的状态机天然支持这样的功能。另外，操作系统的写时复制技术的支持（如 Linux 上的 fork）可以被用来创建完整的状态机的内存快照（我们的实现就是这样的）。</p>
 
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2016-03-13
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/raft/">raft</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2016/03/13/raft-analysis-of-source-code/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Raft Analysis of Source Code</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2016/03/13/riak-core-guide/">
+            <span class="next-text nav-default">riak core 导读</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,50 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">raft源码分析</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2017-09-11 </span>
+        <div class="post-category">
+            <a href="/categories/distribute-system/"> Distribute System </a>
+            </div>
+          <span class="more-meta"> 13573 words </span>
+          <span class="more-meta"> 28 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#项目简介">项目简介</a>
+<ul>
+<li><a href="#节点的增加和删除">节点的增加和删除</a></li>
+<li><a href="#roadmap">roadmap</a></li>
+</ul></li>
+<li><a href="#源码分析">源码分析</a>
+<ul>
+<li><a href="#源码目录结构">源码目录结构</a></li>
+<li><a href="#主要的数据结构">主要的数据结构</a>
+<ul>
+<li><a href="#rpc-go">rpc.go</a></li>
+<li><a href="#log-go">log.go</a></li>
+<li><a href="#peers-go">Peers.go</a></li>
+<li><a href="#server-go">server.go</a></li>
+<li><a href="#configuration-go">configuration.go</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#demo">Demo</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <p>这篇文章主要是从源码的级别来看<code>Raft</code>算法的实现。在网上找到了一个简化版：<a href="https://github.com/peterbourgon/raft">源码</a>.
 一个<code>Server</code>结构代表<code>Raft</code>网络中的一个<code>节点</code>。节点会创建一个<code>Server</code>，并且通过<code>端(peers)</code>接口的方式暴露给其他节点。
@@ -4687,8 +4729,42 @@
 <span class="m">7</span>, apply <span class="k">function</span>: <span class="m">2017</span>-09-11 <span class="m">11</span>:41:16.677758823 +0800 CST</code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2017-09-11
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/raft/">raft</a>
+          <a href="/tags/raft-source-analyse/">raft source analyse</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2019/03/03/go%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">go内存管理</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/">
+            <span class="next-text nav-default">200行区块链</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

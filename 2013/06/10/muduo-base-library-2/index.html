@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,120 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">muduo_base_library_2</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2013-06-10 </span>
+        <div class="post-category">
+            <a href="/categories/muduo/"> muduo </a>
+            <a href="/categories/network-program/"> network program </a>
+            </div>
+          <span class="more-meta"> 15317 words </span>
+          <span class="more-meta"> 31 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#1-timestamp">[1] Timestamp</a></li>
+<li><a href="#11-gcc-原子操作">[11] gcc 原子操作</a></li>
+<li><a href="#12-exception类实现">[12] Exception类实现</a></li>
+<li><a href="#13-muduo-之线程">[13] muduo 之线程</a>
+<ul>
+<li><a href="#线程标识符">线程标识符</a></li>
+<li><a href="#muduo库的thread类图">muduo库的Thread类图</a></li>
+<li><a href="#pthread-atfork">pthread_atfork</a></li>
+</ul></li>
+<li><a href="#13-1-module之线程">[13-1] module之线程</a></li>
+<li><a href="#14-ipc组件的分装之互斥锁">[14] IPC组件的分装之互斥锁</a>
+<ul>
+<li><a href="#mutexlock-的封装">MutexLock 的封装</a></li>
+<li><a href="#mutexlockguard">MutexLockGuard</a></li>
+<li><a href="#mutexlockguard-1">MutexLockGuard</a></li>
+<li><a href="#mutexlock-和-mutexlockguard的源代码">MutexLock 和 MutexLockGuard的源代码</a></li>
+</ul></li>
+<li><a href="#15-blockingqueue">[15] BlockingQueue</a>
+<ul>
+<li><a href="#blockingqueue类图">BlockingQueue类图</a></li>
+<li><a href="#blockingqueue的源文件">BlockingQueue的源文件:</a></li>
+<li><a href="#blockingqueue的测试程序1">BlockingQueue的测试程序1:</a></li>
+<li><a href="#blockingqueue的测试程序2">BlockingQueue的测试程序2:</a></li>
+</ul></li>
+<li><a href="#15-1-boundedblockingqueue">[15-1] BoundedBlockingQueue</a>
+<ul>
+<li><a href="#boundedblockingqueue的类图">BoundedBlockingQueue的类图</a></li>
+<li><a href="#boudedblockingqueue的源代码">BoudedBlockingQueue的源代码</a></li>
+<li><a href="#测试程序">测试程序</a></li>
+</ul></li>
+<li><a href="#16-threadpool">[16] ThreadPool</a>
+<ul>
+<li><a href="#threadpool类图">threadPool类图</a></li>
+<li><a href="#threadpool头文件">ThreadPool头文件</a></li>
+<li><a href="#threadpool的源文件">ThreadPool的源文件</a></li>
+<li><a href="#threadpool的测试程序">ThreadPool的测试程序</a></li>
+</ul></li>
+<li><a href="#17-singleton">[17] Singleton</a>
+<ul>
+<li><a href="#singleton-class-uml">Singleton class uml</a></li>
+<li><a href="#singleton源代码">Singleton源代码</a></li>
+<li><a href="#测试程序-1">测试程序</a></li>
+<li><a href="#程序输出">程序输出</a></li>
+</ul></li>
+<li><a href="#18-threadlocal">[18] ThreadLocal</a>
+<ul>
+<li><a href="#threadlocal-的源代码">ThreadLocal 的源代码</a></li>
+<li><a href="#threadlocal-的测试程序">ThreadLocal 的测试程序</a></li>
+<li><a href="#程序输出-1">程序输出</a></li>
+</ul></li>
+<li><a href="#19-threadlocalsingle">[19] ThreadLocalSingle</a>
+<ul>
+<li><a href="#threadlocalsingle-class-uml">ThreadLocalSingle class UML</a></li>
+<li><a href="#源程序">源程序</a></li>
+<li><a href="#测试程序-2">测试程序</a></li>
+<li><a href="#程序输出-2">程序输出</a></li>
+</ul></li>
+<li><a href="#20-logger-1">[20] Logger-1</a>
+<ul>
+<li><a href="#日志流程">日志流程</a></li>
+<li><a href="#测试程序1">测试程序1</a></li>
+<li><a href="#程序输出-3">程序输出</a></li>
+<li><a href="#测试程序2">测试程序2</a></li>
+<li><a href="#程序输出-4">程序输出</a></li>
+<li><a href="#测试程序3">测试程序3</a></li>
+</ul></li>
+<li><a href="#21-logger-2">[21] Logger-2</a>
+<ul>
+<li><a href="#logstream类图">LogStream类图</a></li>
+<li><a href="#fixedbuffer类图">FixedBuffer类图</a></li>
+<li><a href="#logger类图">Logger类图</a></li>
+<li><a href="#impl类图">Impl类图</a></li>
+<li><a href="#logstream的测试程序1">LogStream的测试程序1</a></li>
+</ul></li>
+<li><a href="#21-traits-技术">[21] traits 技术</a></li>
+<li><a href="#22-logfile">[22] LogFile</a>
+<ul>
+<li><a href="#logger-类图">Logger 类图</a></li>
+<li><a href="#file类图">File类图</a></li>
+<li><a href="#logfile头文件-logfile-h">LogFile头文件(logfile.h)</a></li>
+<li><a href="#logfile的源文件">LogFile的源文件</a></li>
+<li><a href="#logfile测试类-logfile-test-cc">LogFile测试类 LogFile_Test.cc</a></li>
+<li><a href="#程序输出-5">程序输出</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h2 id="1-timestamp">[1] Timestamp</h2>
 
@@ -6654,8 +6766,42 @@ oem@oem-VirtualBox ~/workspace/c++ $</code></pre></td></tr></table>
 <span class="o">[</span>root@localhost bin<span class="o">]</span>#</code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2013-06-10
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/muduo/">muduo</a>
+          <a href="/tags/muduo-base-library/">muduo base library</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2014/07/01/muduo-simple-example/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">muduo simple example</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2013/06/10/muduo-base-library-1/">
+            <span class="next-text nav-default">muduo_base_library_1</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

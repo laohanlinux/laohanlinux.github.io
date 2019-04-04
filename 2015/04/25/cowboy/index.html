@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,40 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">cowboy</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2015-04-25 </span>
+        <div class="post-category">
+            <a href="/categories/erlang/"> Erlang </a>
+            </div>
+          <span class="more-meta"> 2837 words </span>
+          <span class="more-meta"> 6 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#cowboy-启动流程">Cowboy 启动流程</a>
+<ul>
+<li><a href="#meta-data-response-body">Meta data (response body)</a></li>
+</ul></li>
+<li><a href="#rest-flowcharts">REST Flowcharts</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h2 id="cowboy-启动流程">Cowboy 启动流程</h2>
 
@@ -371,8 +403,42 @@ The moved_permanently and moved_temporarily callbacks must return the new locati
 
 <p>如果他们都要移动，那么<code>moved_permanently</code>和<code>moved_temporaily</code>必须返回资源所在路径。</p>
 
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2015-04-25
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/erlang/">Erlang</a>
+          <a href="/tags/cowboy/">cowboy</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2015/07/01/muduo-net-library-chapter-1/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">muduo net library chapter 1</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2014/07/01/muduo-simple-example/">
+            <span class="next-text nav-default">muduo simple example</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,63 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">muduo simple example</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2014-07-01 </span>
+        <div class="post-category">
+            <a href="/categories/muduo/"> muduo </a>
+            <a href="/categories/network-program/"> network program </a>
+            </div>
+          <span class="more-meta"> 10827 words </span>
+          <span class="more-meta"> 22 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#42-四个-服务器设计模型">[42] 四个 服务器设计模型</a>
+<ul>
+<li><a href="#下面的程序都是用来解-数独-的-数独的实现如下">下面的程序都是用来解 数独 的，数独的实现如下</a></li>
+<li><a href="#reactor模型">reactor模型</a></li>
+<li><a href="#multiple-reactor">multiple reactor</a></li>
+<li><a href="#reactor-threadpool">reactor + threadPool</a></li>
+<li><a href="#multiple-reactors-threadpool">multiple reactors+threadpool</a></li>
+</ul></li>
+<li><a href="#43-文件传输服务器">[43] 文件传输服务器</a>
+<ul>
+<li><a href="#单线程模式之一次性发完一个文件">单线程模式之一次性发完一个文件</a></li>
+<li><a href="#单线程模型之分块发送文件">单线程模型之分块发送文件</a></li>
+<li><a href="#单线程模型之分块发送-智能指针">单线程模型之分块发送（智能指针）</a></li>
+</ul></li>
+<li><a href="#44-45-muduo实现简单了聊天功能">[44-45] muduo实现简单了聊天功能</a>
+<ul>
+<li><a href="#聊天服务器-muduomanual-pdf-p66">聊天服务器（MuduoManual.pdf P66）</a></li>
+<li><a href="#code-h">code.h</a></li>
+<li><a href="#examples-asio-chat-server-cc-单线程">examples/asio/chat/server.cc 单线程</a></li>
+<li><a href="#examples-asio-chat-server-threaded-cc-多线程tcpserver-并用mutex来保护共享数据">examples/asio/chat/server_threaded.cc，多线程TcpServer，并用mutex来保护共享数据</a></li>
+<li><a href="#examples-asio-chat-server-threaded-efficient-cc-借shared-ptr实现copy-on-write的手法来降低锁竞争">examples/asio/chat/server_threaded_efficient.cc,借shared_ptr实现copy-on-write的手法来降低锁竞争</a></li>
+<li><a href="#examples-asio-chat-server-threaded-highperformance-cc-采用thread-local变量实现多线程高效转发">examples/asio/chat/server_threaded_highperformance.cc，采用thread local变量实现多线程高效转发</a></li>
+</ul></li>
+<li><a href="#47-限制服务器最大并发连接数">[47] 限制服务器最大并发连接数</a>
+<ul>
+<li><a href="#timing-wheel">Timing wheel</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h2 id="42-四个-服务器设计模型">[42] 四个 服务器设计模型</h2>
 
@@ -4602,8 +4657,41 @@ muduo库网络模型使用示例（sudoku求解服务器MuduoManual.pdf P35 ）<
 </code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2014-07-01
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/muduo/">muduo</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2015/04/25/cowboy/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">cowboy</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2013/06/10/muduo-base-library-2/">
+            <span class="next-text nav-default">muduo_base_library_2</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

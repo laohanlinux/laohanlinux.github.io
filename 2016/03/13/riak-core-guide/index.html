@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,53 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">riak core 导读</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-03-13 </span>
+        <div class="post-category">
+            <a href="/categories/distribute-system/"> Distribute System </a>
+            </div>
+          <span class="more-meta"> 9390 words </span>
+          <span class="more-meta"> 19 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#riak-core-guide">Riak Core Guide</a>
+<ul>
+<li><a href="#3try-rts-demo">3Try RTS Demo</a></li>
+<li><a href="#riak-core-基本原理">Riak Core 基本原理</a></li>
+<li><a href="#riak-core-依赖注入-loc">riak core 依赖注入 loC</a>
+<ul>
+<li>
+<ul>
+<li><a href="#riak-core-vnode-behaviour-用户处理逻辑的实现接口">riak_core_vnode behaviour 用户处理逻辑的实现接口</a></li>
+<li><a href="#业务逻辑的实现和其他">业务逻辑的实现和其他</a></li>
+<li><a href="#业务逻辑的注入过程">业务逻辑的注入过程</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#riack-core-系统的数据的分布和处理步骤">Riack Core 系统的数据的分布和处理步骤</a></li>
+<li><a href="#业务逻辑的实现-数据如何处理">业务逻辑的实现： 数据如何处理</a></li>
+<li><a href="#常用的api">常用的API</a>
+<ul>
+<li><a href="#常用api之与ring-节点有关的api">常用API之与ring、节点有关的API</a></li>
+<li><a href="#常用application管理api">常用application管理API</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <p>这一部分的文章整理主要参照于 <code>try-try-try</code> 和 <em>书写是对思维的缓存 / 好记性不如烂博客</em> <code>http://cryolite.iteye.com/</code></p>
 
@@ -642,8 +687,42 @@ A依赖B、C:这意味着A要正常启动,B、C要先启动, B又依赖X、Y:A�
 <p>在实际开发过程中,这种依赖的一一启动是很枯燥的,<code>Riak Core</code>的<code>riak_core_util</code>模块提供了这种依赖应用的管理:
 <code>riak_core_util:start_app_deps/1</code> 这个函数检查应用依赖的其它应用,并确保所有依赖应用被启动。判断依赖应用<code>:app</code>文件中的<code>applications</code>属性。</p>
 
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2016-03-13
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/riak/">riak</a>
+          <a href="/tags/riak-core/">riak core</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2016/03/13/raft%E7%AE%97%E6%B3%95/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">raft算法</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2016/03/13/udon-riak-core/">
+            <span class="next-text nav-default">udon_riak_core</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">

@@ -85,7 +85,7 @@
   <ul class="mobile-menu-list">
     <a href="/">
         <li class="mobile-menu-item">cd ~/</li>
-      </a><a href="/posts/">
+      </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
@@ -105,7 +105,7 @@
     <li class="menu-item">
         <a class="menu-item-link" href="/">cd ~/</a>
       </li><li class="menu-item">
-        <a class="menu-item-link" href="/posts/">Archives</a>
+        <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
@@ -119,8 +119,92 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <div class="post-content">
     
+    <header class="post-header">
+      <h1 class="post-title">muduo net library chapter 1</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2015-07-01 </span>
+        <div class="post-category">
+            <a href="/categories/muduo/"> muduo </a>
+            <a href="/categories/network-program/"> network program </a>
+            </div>
+          <span class="more-meta"> 16564 words </span>
+          <span class="more-meta"> 34 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#25-muduo-net库源码分析">[25] muduo_net库源码分析</a>
+<ul>
+<li><a href="#tcp网络编程本质">TCP网络编程本质</a></li>
+<li><a href="#echoserver类图">EchoServer类图</a></li>
+<li><a href="#eventloop-头文件">EventLoop 头文件</a></li>
+<li><a href="#eventloop-的测试程序1">EventLoop 的测试程序1</a></li>
+<li><a href="#程序输出">程序输出</a></li>
+<li><a href="#测试程序2">测试程序2</a></li>
+</ul></li>
+<li><a href="#27-epollpoller">[27] EpollPoller</a>
+<ul>
+<li><a href="#epollpoller的头文件">EpollPoller的头文件</a></li>
+<li><a href="#epollpoller的源文件">EpollPoller的源文件</a></li>
+<li><a href="#测试程序">测试程序</a></li>
+</ul></li>
+<li><a href="#28-muduo的定时器由三个类实现-timerid-定时器-timer-最上层的抽象-timerqueue-定时器的列表">[28] muduo的定时器由三个类实现，TimerId（定时器）、Timer(最上层的抽象)、TimerQueue（定时器的列表）</a>
+<ul>
+<li><a href="#时序图">时序图</a></li>
+<li><a href="#timer头文件">Timer头文件</a></li>
+<li><a href="#timer源文件">Timer源文件</a></li>
+<li><a href="#timerid头文件">TimerId头文件</a></li>
+<li><a href="#timerqueue头文件">TimerQueue头文件</a></li>
+<li><a href="#timerqueue源文件">TimerQueue源文件</a></li>
+</ul></li>
+<li><a href="#29-eventloop再分析之io线程-29">[29] EventLoop再分析之IO线程（29）</a>
+<ul>
+<li><a href="#eventloop-io-线程的简单描述">EventLoop IO 线程的简单描述</a></li>
+<li><a href="#进程-线程-wait-notify">进程(线程)wait/notify</a></li>
+<li><a href="#eventloop头文件">EventLoop头文件</a></li>
+<li><a href="#eventloop源文件">EventLoop源文件</a></li>
+<li><a href="#测试程序源代码">测试程序源代码</a></li>
+<li><a href="#测试输出">测试输出</a></li>
+</ul></li>
+<li><a href="#30-eventloopthread">[30] EventLoopThread</a>
+<ul>
+<li><a href="#eventloopthread头文件">EventLoopThread头文件</a></li>
+<li><a href="#eventloopthread源文件">EventLoopThread源文件</a></li>
+<li><a href="#测试程序-1">测试程序</a></li>
+<li><a href="#程序输出-1">程序输出</a></li>
+</ul></li>
+<li><a href="#31-socket封装">[31] Socket封装</a>
+<ul>
+<li><a href="#endian头文件">Endian头文件</a></li>
+<li><a href="#inetaddress头文件">InetAddress头文件</a></li>
+<li><a href="#inetaddress源文件">InetAddress源文件</a></li>
+<li><a href="#sokcet头文件">Sokcet头文件</a></li>
+<li><a href="#socket源文件">Socket源文件</a></li>
+<li><a href="#程序程序">程序程序</a></li>
+</ul></li>
+<li><a href="#32-acceptor">[32] Acceptor</a>
+<ul>
+<li><a href="#acceptor的头文件">Acceptor的头文件</a></li>
+<li><a href="#acceptor源文件">Acceptor源文件</a></li>
+<li><a href="#测试程序-2">测试程序</a></li>
+<li><a href="#程序输出-2">程序输出</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
 
 <h2 id="25-muduo-net库源码分析">[25] muduo_net库源码分析</h2>
 
@@ -5420,8 +5504,41 @@ ubuntu@ubuntu-virtual-machine:~/pro/30$</code></pre></td></tr></table>
 <span class="n">ubuntu</span><span class="err">@</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">virtual</span><span class="o">-</span><span class="nl">machine</span><span class="p">:</span><span class="o">~</span><span class="err">$</span></code></pre></td></tr></table>
 </div>
 </div>
-  </div>
-</article>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2015-07-01
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/muduo/">muduo</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2015/07/01/muduo-net-library-chapter-2/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">muduo net library chapter 2</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2015/04/25/cowboy/">
+            <span class="next-text nav-default">cowboy</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
         </div>
         <div id="gitalk-container"></div>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
