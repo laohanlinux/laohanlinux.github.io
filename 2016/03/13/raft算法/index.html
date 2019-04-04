@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/03/13/riak-core-guide/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/03/13/raft-analysis-of-source-code/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           raft算法 | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="raft算法 | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "raft算法",
+    "headline" : "raft算法",
+    "description" : "raft 算法学习笔记.",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-13 22:19:30 &#43;0000 UTC",
+    "dateModified" : "2016-03-13 22:19:30 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/",
+    "wordCount" : "3570",
+    "keywords" : [ "raft", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">raft算法</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-13 itemprop="datePublished">March 13, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="raft-算法小结">Raft 算法小结</h1>
+
+<p>raft 算法的主要模块：</p>
+
+<ul>
+<li>选举</li>
+<li>关系更新</li>
+<li>日志复制</li>
+<li>日志压缩</li>
+</ul>
+
+<h2 id="选举">选举</h2>
+
+<p>raft为了避免<code>操作</code>混乱，使用了<code>Quorom</code> ， 一种强领导的方式，所有的写操作到由<code>leader</code>处理，在由leader分发到follwer.这样所有的操作都会变成有序化，再将这些操作</p>
+
+<p>应用到状态机即可。</p>
+
+<p><code>Dynamo</code>除了强一致性外，还支持最终一致性，由于是多写，<code>Dynamo</code>使用了向量时钟来纠正操作的时序。</p>
+
+<p>raft的角色一共3种，<code>Leader</code>,<code>Follower</code>以及<code>Candidate</code>, 其中<code>Leader</code>是由选举产生的， <code>Follower</code>在集群没有<code>Leader</code>的情况下会进行投票选举，此时发起投票的节点就</p>
+
+<p>变成了<code>Candidate</code>,如果选举成功，会变成<code>Leader</code>. 选举时，每个节点每次只能投出一票，如果同一时间有多个节点发起投票，那么其他节点也只会投一个节点的票。</p>
+
+<h2 id="关系的变更">关系的变更</h2>
+
+<p>关系的变换主要包括2中：<code>Leader</code>以及集群升级。</p>
+
+<ul>
+<li><p>如果<code>Leader</code>发生故障，检测到这个状态的<code>Follower</code>就会发起<code>Leader</code>选举，选出新的<code>Leader</code>。</p></li>
+
+<li><p>当升级集群时，<code>Raft</code>会根据新旧配置进行升级。</p></li>
+</ul>
+
+<h2 id="日志复制">日志复制</h2>
+
+<p>日志由<code>Leader</code>产生，然后分发到<code>Follower</code>。
+<center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://www.thinkingyu.com/images/raft5.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<p>日志也是采用大多数应答的原则，如图（日志格式由<code>任选期-index</code>唯一标识）。</p>
+
+<p>根据大多数原则，<code>leader</code>发起的日志复制已经<code>committed</code>的最新索引为<code>任期3-index7</code>，这些日志都已经被大多数(<code>&gt;=3</code>)接收了，<code>Leader</code>就会将这条日志应用到状态机，然后<code>commit</code>了，并将结果返回给客户端。</p>
+
+<p>每个<code>log entry</code>都存储着一条用于状态机的指令，同时保存从<code>leader</code>收到该<code>entry</code>时的<code>term</code>号。该<code>term</code>号可以用来判断一些<code>log</code>之间的不一致状态。每一个<code>entry</code>还有一个<code>index</code>指明自己在<code>log</code>中的位置。</p>
+
+<p><code>leader</code>需要决定什么时候将日志应用给状态机是安全的，被应用的<code>entry</code>叫<code>committed</code>。<code>Raft</code>保证<code>committed entries</code>持久化，并且最终被其他状态机应用。一个<code>log entry</code>一旦复制给了大多数节点就成为<code>committed</code>。<strong>同时要注意一种情况(如上图，假设<code>leader</code>发生故障，而第4个节点成为了新的<code>Leader</code>,此时这个节点的日志已经落后了好多)</strong>，如果当前待提交<code>entry</code>之前有未提交的<code>entry</code>，即使是以前过时的<code>leader</code>创建的，只要满足已存储在大多数节点上就一次性按顺序都提交。<code>leader</code>要追踪最新的<code>committed</code>的<code>index</code>，并在每次<code>AppendEntries RPCs</code>（包括心跳）都要捎带，以使其他<code>server</code>知道一个<code>log entry</code>是已提交的，从而在它们本地的状态机上也应用。</p>
+
+<p><code>Raft</code>的日志机制提供两个保证，统称为<code>Log Matching Property</code>：</p>
+
+<ul>
+<li>不同机器的日志中如果有两个<code>entry</code>有相同的偏移和<code>term</code>号，那么它们存储相同的指令。</li>
+<li>如果不同机器上的日志中有两个相同偏移和<code>term</code>号的日志，那么日志中这个<code>entry</code>之前的所有<code>entry</code>保持一致。</li>
+</ul>
+
+<p>假设图-6,如果<code>Leader</code>挂掉，然后第2个节点选举为<code>Leader</code>， 那么，第3和第5个节点就会出现日志丢失的情况。</p>
+
+<p>因为节点2（<code>leader</code>）发送自己最新的日志条目给第3个节点，由于任期号匹配成功，但是<code>index</code>匹配不成功，此时第3个节点<code>[3-x&lt;-0]</code>的就会丢失掉，这是非常危险的情况。如果这些日志条目已经<code>committed</code>了，状态是无法后退，只能前进，就会造成脏日志条目被某些节点提交的情况。</p>
+
+<p>为了避免这些情况的发生，<code>raft</code>在节点进行选举的时候，候选人的日志条目必须不比比追随者的条目旧，追随者才会投票给当前的候选人，所以<code>图-6</code>中第2个节点是不会被选举为<code>Leader</code>的。</p>
+
+<h2 id="日志压缩">日志压缩</h2>
+
+<p><code>raft</code>的日志压缩采用的是快照的方式。</p>
+
+<p>快照是最简单的压缩方法。在快照系统中，整个系统的状态都以快照的形式写入到稳定的持久化存储中，<strong><em>然后到那个时间点之前的日志全部丢弃</em></strong>。快照技术被使用在 <code>Chubby</code> 和 <code>ZooKeeper</code> 中，接下来的章节会介绍 <code>Raft</code> 中的快照技术。</p>
+
+<p>增量压缩的方法，例如日志清理或者日志结构合并树，都是可行的。这些方法每次只对一小部分数据进行操作，这样就分散了压缩的负载压力。首先，他们先选择一个已经积累的大量已经被删除或者被覆盖对象的区域，然后重写那个区域还活跃的对象，之后释放那个区域。和简单操作整个数据集合的快照相比，需要增加复杂的机制来实现。状态机可以实现 <code>LSM tree</code> 使用和快照相同的接口，但是日志清除方法就需要修改 <code>Raft</code> 了。</p>
+
+<p><center>
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://camo.githubusercontent.com/0dc1ee745b32d4ae32e58a9a09b57e6faa117cf4/68747470733a2f2f646e2d307830312d696f2e71626f782e6d652f726166742d25453525394225424531322e706e67" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图 <code>12</code>：一个服务器用新的快照替换了从 <code>1</code> 到 <code>5</code> 的条目，快照值存储了当前的状态。快照中包含了最后的索引位置和任期号。
+</center></p>
+
+<p>图 <code>12</code> 展示了 <code>Raft</code> 中快照的基础思想:</p>
+
+<pre><code>每个服务器独立的创建快照，只包括已经被提交的日志。主要的工作包括将状态机的状态写入到快照中。Raft 也包含一些少量的元数据到快照中：最后被包含索引指的是被快照取代的最后的条目在日志中的索引值（状态机最后应用的日志），最后被包含的任期指的是该条目的任期号。保留这些数据是为了支持快照前的第一个条目的附加日志请求时的一致性检查，因为这个条目需要最后的索引值和任期号。为了支持集群成员更新（第 6 节），***快照中也将最后的一次配置作为最后一个条目存下来***。一旦服务器完成一次快照，他就可以删除最后索引位置之前的所有日志和快照了。
+
+尽管通常服务器都是独立的创建快照，但是领导人必须偶尔的发送快照给一些落后的跟随者。这通常发生在当领导人已经丢弃了下一条需要发送给跟随者的日志条目的时候。幸运的是这种情况不是常规操作：一个与领导人保持同步的跟随者通常都会有这个条目。然而一个运行非常缓慢的跟随者或者新加入集群的服务器（第 6 节）将不会有这个条目。这时让这个跟随者更新到最新的状态的方式就是通过网络把快照发送给他们。
+</code></pre>
+
+<h4 id="安装快照-rpc">安装快照 RPC：</h4>
+
+<p>在领导人发送快照给跟随者时使用到。领导人总是按顺序发送。</p>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解析</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>term</td>
+<td>领导人的任期号</td>
+</tr>
+
+<tr>
+<td>leaderId</td>
+<td>领导人的 Id，以便于跟随者重定向请求</td>
+</tr>
+
+<tr>
+<td>lastIncludedIndex</td>
+<td>快照中包含的最后日志条目的索引值</td>
+</tr>
+
+<tr>
+<td>lastIncludedTerm</td>
+<td>快照中包含的最后日志条目的任期号</td>
+</tr>
+
+<tr>
+<td>offset</td>
+<td>分块在快照中的偏移量</td>
+</tr>
+
+<tr>
+<td>data[]</td>
+<td>原始数据</td>
+</tr>
+
+<tr>
+<td>done</td>
+<td>如果这是最后一个分块则为 true</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>结果</th>
+<th>解析</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>term</td>
+<td>当前任期号，便于领导人更新自己</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="接收者实现">接收者实现：</h4>
+
+<ul>
+<li>如果term &lt; currentTerm就理解回复</li>
+<li>如果是第一个分块（offset 为 0）就创建一个新的快照</li>
+<li>在指定偏移量写入数据</li>
+<li>如果 done 是 false，则继续等待更多的数据</li>
+<li>保存快照文件，丢弃索引值小于快照的日志</li>
+<li>如果现存的日志拥有相同的最后任期号和索引值，则后面的数据继续保持</li>
+<li>丢弃整个日志</li>
+<li><strong>使用快照重置状态机</strong></li>
+</ul>
+
+<p>在这种情况下领导人使用一种叫做安装快照的新的 <code>RPC</code> 来发送快照给太落后的跟随者；见<code>图 13</code>。当跟随者通过这种 <code>RPC</code> <code>接收到快照时，他必须自己决定对于已经存在的日志该如何处理</code>。通常快照会包含没有在接收者日志中存在的信息。在这种情况下，跟随者直接丢弃他所有的日志；这些会被快照所取代，但是可能会和没有提交的日志产生冲突。如果接收到的快照是自己日志的前面部分（由于网络重传或者错误），那么被快照包含的条目将会被全部删除，但是快照之后的条目必须正确和保留。</p>
+
+<p>这种快照的方式背离了 <code>Raft</code> 的强领导人原则，因为跟随者可以在不知道领导人情况下创建快照。但是我们认为这种背离是值得的。领导人的存在，是为了解决在达成一致性的时候的冲突，但是在创建快照的时候，一致性已经达成，这时不存在冲突了，所以没有领导人也是可以的。数据依然是从领导人传给跟随者，只是跟随者可以重新组织他们的数据了。</p>
+
+<p>我们考虑过一种替代的基于领导人的快照方案，即只有领导人创建快照，然后发送给所有的跟随者。但是这样做有两个缺点。第一，发送快照会浪费网络带宽并且延缓了快照处理的时间。每个跟随者都已经拥有了所有产生快照需要的信息，而且很显然，自己从本地的状态中创建快照比通过网络接收别人发来的要经济。第二，领导人的实现会更加复杂。例如，领导人需要发送快照的同时并行的将新的日志条目发送给跟随者，这样才不会阻塞新的客户端请求。</p>
+
+<p>还有两个问题影响了快照的性能。首先，服务器必须决定什么时候应该创建快照。如果快照创建的过于频繁，那么就会浪费大量的磁盘带宽和其他资源；如果创建快照频率太低，他就要承受耗尽存储容量的风险，同时也增加了从日志重建的时间。一个简单的策略就是当日志大小达到一个固定大小的时候就创建一次快照。如果这个阈值设置的显著大于期望的快照的大小，那么快照对磁盘压力的影响就会很小了。</p>
+
+<p>第二个影响性能的问题就是写入快照需要花费显著的一段时间，并且我们还不希望影响到正常操作。解决方案是通过写时复制的技术，这样新的更新就可以被接收而不影响到快照。例如，具有函数式数据结构的状态机天然支持这样的功能。另外，操作系统的写时复制技术的支持（如 Linux 上的 fork）可以被用来创建完整的状态机的内存快照（我们的实现就是这样的）。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/>https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/raft/">
+                    #raft</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/03/13/riak-core-guide/" class="prev" rel="prev" title="riak core 导读"><i class="iconfont icon-left"></i>&nbsp;riak core 导读</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/03/13/raft-analysis-of-source-code/" class="next" rel="next" title="Raft Analysis of Source Code">Raft Analysis of Source Code&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

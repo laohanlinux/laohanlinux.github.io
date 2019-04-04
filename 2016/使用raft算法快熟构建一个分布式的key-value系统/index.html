@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/erlang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84bitcask%E5%BC%95%E6%93%8E%E7%9A%84%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/%E4%BD%BF%E7%94%A8raft%E7%AE%97%E6%B3%95%E5%BF%AB%E7%86%9F%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84key-value%E7%B3%BB%E7%BB%9F/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           使用raft算法快速构建一个分布式kv系统 | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="使用raft算法快速构建一个分布式kv系统 | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "使用raft算法快速构建一个分布式kv系统",
+    "headline" : "使用raft算法快速构建一个分布式kv系统",
+    "description" : "一个基于hashicorp raft算法的分布式key/value系统.",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-04-25 23:44:25 &#43;0000 UTC",
+    "dateModified" : "2016-04-25 23:44:25 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/%E4%BD%BF%E7%94%A8raft%E7%AE%97%E6%B3%95%E5%BF%AB%E7%86%9F%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84key-value%E7%B3%BB%E7%BB%9F/",
+    "wordCount" : "2315",
+    "keywords" : [ "Golang","raft","分布式存储系统","分布式", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">使用raft算法快速构建一个分布式kv系统</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-04-25 itemprop="datePublished">April 25, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<p><code>raft</code>是一种类似于<code>paoxs</code>的分布式算法，相对于<code>paxos</code>算法，<code>raft</code>更容易于理解以及实现，这也是一种典型的<code>半数协议算法</code>。这里不详细介绍<code>raft</code>算法，有兴趣的同学可以参照一下下面的文章：</p>
+
+<p><a href="https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/" rel="nofollow noreferrer" target="_blank">raft Algorithm</a></p>
+
+<p>本次教程实现的<code>key/value</code>分布式存储系统的<code>github</code>地址为：<a href="https://github.com/laohanlinux/riot" rel="nofollow noreferrer" target="_blank">riot github</a></p>
+
+<h2 id="如何快速使用-hashicorp-raft-搭建一个简单的分布式系统">如何快速使用<code>hashicorp raft</code>搭建一个简单的分布式系统</h2>
+
+<p><code>raft</code>算法种类的实现有很多，比较流行的是<code>etcd raft</code>和<code>hashicorp raft</code>，这两个都是<code>Go</code>语言实现的<code>raft</code>算法库，并且都大量应用到生产环境中，可靠性高。由于本人对<code>hashiro raft</code>熟悉一点，刚好又对<code>Go</code>语言有兴趣，所以选择了<code>hashicorp raft</code>来实现一个简单的分布式<code>key/value</code>系统.</p>
+
+<p>系统设计的基本目标：</p>
+
+<ul>
+<li>具有容错性</li>
+<li>可以在线自动线性扩展节点</li>
+<li>可以自动增删节点</li>
+<li>具体增删查改操作</li>
+<li>可以适配多种存储引擎</li>
+<li>支持日志/快照重建</li>
+</ul>
+
+<p><code>raft</code>的请求处理流程：</p>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohan.qiniudn.com/raft/raft_1.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<p>除此之外还有一个状态机快照的模块。</p>
+
+<p>使用<code>hashicorp raft</code>构建一个分布式存储系统时，主要需要实现的模块有：</p>
+
+<ul>
+<li>FSM</li>
+</ul>
+
+<p><code>fsm</code>为<code>raft</code>的日志状态机</p>
+
+<ul>
+<li>Snapshot</li>
+</ul>
+
+<p><code>Snapshot</code>为<code>raft</code>的快照对象</p>
+
+<p>这两个对象是比较重要的，基本上所有的核心都基于这个两个对象进行构建。</p>
+
+<h2 id="riot-的主要组件"><code>Riot</code>的主要组件</h2>
+
+<ul>
+<li>模块图</li>
+</ul>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohan.qiniudn.com/raft/riot_2.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<ul>
+<li>流程图</li>
+</ul>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://7rflb0.com1.z0.glb.clouddn.com/raft/riot_4.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<h3 id="backend-store">Backend Store</h3>
+
+<pre><code class="language-go">type RiotStorage interface {
+	Get([]byte) ([]byte, error)
+	Set([]byte, []byte) error
+	Del([]byte) error
+	Rec() &lt;-chan store.Iterm
+}
+</code></pre>
+
+<p><code>Rec()</code>返回一个只读的信道，该信道用于<code>riot</code>的快照系统。</p>
+
+<p>为了便于扩展更多的存储后端，该接口对外开放，有兴趣的朋友只要实现这个接口即可。</p>
+
+<pre><code class="language-go">type leveldbStorage struct {
+	*leveldb.DB
+	c chan Iterm
+	l *sync.Mutex
+}
+</code></pre>
+
+<p><code>Riot</code>目前采用的存储后端为<code>leveldb</code>，未了会增加<code>Bitcask</code><a href="https://github.com/laohanlinux/bitcask" rel="nofollow noreferrer" target="_blank">github-link</a>存储后端,</p>
+
+<pre><code class="language-go">type Iterm struct {
+	Err   error
+	Key   []byte
+	Value []byte
+}
+</code></pre>
+
+<p>其中当<code>iterm.Err = ErrFinished</code>是表示所有的<code>key</code>已迭代完毕。</p>
+
+<p>为了确保一个节点中，同一时间只有一个快照操作，需要操作（<code>raft</code>本身就也确保了，为了更加保险，建议还是加上锁，毕竟<code>IO</code>才是这个系统的瓶颈，锁的损耗可以忽略）。</p>
+
+<p>实现起来还是比较明了的。</p>
+
+<h3 id="fsm-snapshot">FSM、SnapShot</h3>
+
+<p><code>raft fsm</code>:</p>
+
+<pre><code class="language-go">type FSM interface {
+    
+    Apply(*Log) interface{}
+  
+    Snapshot() (FSMSnapshot, error)
+    
+    Restore(io.ReadCloser) error
+}
+</code></pre>
+
+<p>用户自定义的<code>fsm</code>只要实现这个接口即可。</p>
+
+<p><code>riot fsm</code>:</p>
+
+<pre><code class="language-go">type StorageFSM struct {
+	l  *sync.Mutex //互斥锁
+	rs RiotStorage //存储后端
+}
+</code></pre>
+
+<p>这里的互斥锁是必须的，因为<code>fsm</code>的<code>Apply</code>和<code>Snapshot</code>不是线程安全的。</p>
+
+<p>其中业务操作都会应用到<code>Apply</code>方法中，所以把所有的业务请求都按一定的格式打包即可，然后再解包，根据包的<code>action</code>类型，做相应的操作。其中操作主要有：</p>
+
+<ul>
+<li>SET</li>
+<li>DEL</li>
+<li>SHARE</li>
+</ul>
+
+<blockquote>
+<p>注:</p>
+
+<p>1、<code>SHARE</code> 操作类型用于Riot节点通信有的，<code>Riot</code>集群在启动的时候，他们之间的有些信息需要同步，目前用于同步Leader的RPC地址和端口</p>
+
+<p>2、为了性能，<code>GET</code>操作并没有放在Apply方法中，所以GET请求会有404的情况出现，未来会把查询请求是否经过Leader的权限交给用户.</p>
+
+<p>3、<code>DEL</code>和<code>SHARE</code>操作全部交给Leader处理,再由Leader下发到Follower节点</p>
+</blockquote>
+
+<p><code>Shapshot</code>方法会在快照时被执行,这时候,只要把所有的<code>key/value</code>传递给<code>FSMSnapshot</code>对象即可.在<code>Riot</code>中.只要传递<code>RiotStorage</code>对象给<code>StorageSnapshot</code>即可;</p>
+
+<p>然后<code>StorageSnapshot.Persist</code>方法将被调用,<code>StorageSnapshot</code>只要遍历这些数据,按一定的格式快照到SnapshotSink中即可.</p>
+
+<p><center> <figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://7rflb0.com1.z0.glb.clouddn.com/raft/Riot_3.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center>
+当服务重启时,<code>Riot</code>会检测是否存在快照,如果存在快照,快照的数据就会被<code>StorageFSM.Restore</code>进行重建;重建完后,<code>raft</code>会根据日志的索引,重放那些没有被快照到日志条目,这样
+所有的数据就恢复完成了.</p>
+
+<h3 id="cluster">Cluster</h3>
+
+<pre><code class="language-go">type Cluster struct {
+	Dir         string
+	R           *raft.Raft
+	Stores      *raft.InmemStore
+	FSM         *fsm.StorageFSM
+	Snap        raft.SnapshotStore
+	Tran        raft.Transport
+	PeerStorage raft.PeerStore
+}
+</code></pre>
+
+<p>好吧，偷个懒，<code>raft.Raft</code>访问权限直接暴露出&hellip;&hellip;</p>
+
+<ul>
+<li>PeerStorge</li>
+</ul>
+
+<p>节点地址列表的存储对象
+- Tran</p>
+
+<p>节点网络通信对象
+- Snap</p>
+
+<p>日志快照
+- FSM</p>
+
+<p>状态机
+- Stores</p>
+
+<p>日志存储对象</p>
+
+<h3 id="rpc">RPC</h3>
+
+<p>节点之间的业务通信主要采用<code>gRPC</code>方式.</p>
+
+<ul>
+<li>pb</li>
+</ul>
+
+<pre><code class="language-probuffer">syntax = &quot;proto3&quot;;
+
+package pb;
+
+service RiotGossip {
+    rpc OpRPC(OpRequest) returns (OpReply) {}
+}
+
+message OpRequest {
+    string op = 1;
+    string key= 2;
+    bytes value = 3;
+}
+
+message OpReply {
+    int32 status = 1;
+    string msg = 2;
+    int32 errCode = 3;
+}
+</code></pre>
+
+<p><code>OpRequest.op</code>表示操作类型，其取值为：</p>
+
+<pre><code class="language-go">CmdGet   = &quot;GET&quot;
+CmdSet   = &quot;SET&quot;
+CmdDel   = &quot;DEL&quot;
+CmdShare = &quot;SHARE&quot;
+</code></pre>
+
+<p>总共4做操作类型，其中<code>SHARE</code>和<code>CmdGet</code>这两类型不会影响到日志快照。</p>
+
+<p>(<code>PS</code>：<code>OpReply</code>结构需要调整一下，如果<code>GET</code>操作增加一致性，起码需要增加一项<code>value</code>)</p>
+
+<ul>
+<li>RiotRPCClient</li>
+</ul>
+
+<pre><code class="language-go">type RiotRPCClient struct {
+	l    *sync.RWMutex
+	conn map[string]*grpc.ClientConn
+}
+</code></pre>
+
+<p>每个服务器到客户端的连接有且只有一个<code>conn</code>.</p>
+
+<ul>
+<li>RiotRPCService</li>
+</ul>
+
+<pre><code class="language-go">type RiotRPCService struct{}
+</code></pre>
+
+<p><code>RiotRPCService</code>只要实现<code>OpRPC</code>这个方法即可</p>
+
+<h3 id="http-interface">Http Interface</h3>
+
+<p>所有的业务入口都是<code>http</code>请求，包括集群管理</p>
+
+<ul>
+<li>RiotHandler</li>
+</ul>
+
+<pre><code class="language-go">type RiotHandler struct{}
+</code></pre>
+
+<p><code>RiotHandler</code>更具请求类型来判定操作类型.</p>
+
+<ul>
+<li>AdminHandlerFunc</li>
+</ul>
+
+<p><code>AdminHandlerFunc</code>可以获取到集群的<code>Leader</code>地址、集群节点地址信息、节点角色信息、节点的<code>rpc</code>地址信息；还有删除集群中的某一个节点以及把新节点加入到集群中。</p>
+
+<h2 id="example">Example</h2>
+
+<p>脚本位于&rsquo;riot/tool&rsquo;目录下：</p>
+
+<h3 id="启动集群">启动集群</h3>
+
+<pre><code class="language-erlang">bash-3.2$ ./cluster1.sh
+raft: {127.0.0.1 12000 [127.0.0.1:12000] raft0/raft_peer_storage raft0/raft_snapshot_storage raft0/storage_backend_path raft0/raft_log_path raft0/apply_log_path true}
+rpc: {127.0.0.1 32123}
+leader rpc: { }
+server:{localhost 8080}
+raft: {127.0.0.1 12001 [127.0.0.1:12001] raft1/raft_peer_storage raft1/raft_snapshot_storage raft1/storage_backend_path raft1/raft_log_path raft1/apply_log_path false}
+rpc: {127.0.0.1 32124}
+leader rpc: { }
+server:{localhost 8081}
+2016/05/02 23:35:11 admin_handler.go:124 [info] The Leader Name is :127.0.0.1:12000
+2016/05/02 23:35:11 admin_handler.go:130 [debug] 127.0.0.1:12001will join the cluster, leader is :127.0.0.1:12000
+2016/05/02 23:35:11 [DEBUG] raft-net: 127.0.0.1:12001 accepted connection from: 127.0.0.1:61792
+2016/05/02 23:35:11 riot.go:147 [error] 127.0.0.1:12000timed out enqueuing operation
+2016/05/02 23:35:11 riot.go:124 [info] {&lt;nil&gt; 0 0.0030684640000000003 {0 0 &lt;nil&gt;}}
+2016/05/02 23:35:11 [DEBUG] raft-net: 127.0.0.1:12001 accepted connection from: 127.0.0.1:61793
+raft: {127.0.0.1 12002 [127.0.0.1:12002] raft2/raft_peer_storage raft2/raft_snapshot_storage raft2/storage_backend_path raft2/raft_log_path raft2/apply_log_path false}
+rpc: {127.0.0.1 32125}
+leader rpc: { }
+server:{localhost 8082}
+2016/05/02 23:35:13 admin_handler.go:124 [info] The Leader Name is :127.0.0.1:12000
+2016/05/02 23:35:13 admin_handler.go:130 [debug] 127.0.0.1:12002will join the cluster, leader is :127.0.0.1:12000
+2016/05/02 23:35:13 [DEBUG] raft-net: 127.0.0.1:12002 accepted connection from: 127.0.0.1:61797
+2016/05/02 23:35:13 riot.go:124 [info] {&lt;nil&gt; 0 0.004264005 {0 0 &lt;nil&gt;}}
+2016/05/02 23:35:13 [DEBUG] raft-net: 127.0.0.1:12002 accepted connection from: 127.0.0.1:61798
+</code></pre>
+
+<h3 id="查看集群信息">查看集群信息</h3>
+
+<pre><code class="language-erlang">curl  &quot;http://localhost:8080/admin/status&quot;
+{
+  &quot;results&quot;: &quot;Leader&quot;,
+  &quot;error&quot;: 0,
+  &quot;time&quot;: 3.9520000000000004e-06
+}
+</code></pre>
+
+<pre><code class="language-erlang">curl  &quot;http://localhost:8080/admin/peer&quot;
+{
+  &quot;results&quot;: [
+    &quot;127.0.0.1:12002&quot;,
+    &quot;127.0.0.1:12000&quot;,
+    &quot;127.0.0.1:12001&quot;
+  ],
+  &quot;error&quot;: 0,
+  &quot;time&quot;: 0.017415839000000002
+}
+</code></pre>
+
+<pre><code class="language-erlang">curl  &quot;http://localhost:8080/admin/status&quot;
+{
+  &quot;results&quot;: &quot;Leader&quot;,
+  &quot;error&quot;: 0,
+  &quot;time&quot;: 2.7490000000000003e-06
+}
+</code></pre>
+
+<h3 id="基本操作">基本操作</h3>
+
+<ul>
+<li>SET</li>
+</ul>
+
+<pre><code class="language-erlang">curl http://localhost:8080/riot\?key\=a -d '1024'
+</code></pre>
+
+<ul>
+<li>GET</li>
+</ul>
+
+<pre><code class="language-erlang">curl http://localhost:8081/riot\?key\=a
+1024%
+</code></pre>
+
+<ul>
+<li>DEL</li>
+</ul>
+
+<pre><code class="language-erlang">curl -XDELETE http://localhost:8082/riot\?key\=a
+</code></pre>
+
+<ul>
+<li>GET</li>
+</ul>
+
+<pre><code class="language-erlang">curl  http://localhost:8082/riot\?key\=a
+{&quot;errCode&quot;:40004,&quot;msg&quot;:&quot;not found&quot;}%
+</code></pre>
+
+<h2 id="todo">TODO</h2>
+
+<ul>
+<li>增加快照的压缩算法,提高压缩效率</li>
+<li>增加跟多的监控信息</li>
+<li>增加多种后端存储引擎的支持</li>
+<li>优化代码结构</li>
+<li>重新设计<code>http api</code>，新的<code>api</code>为<code>REST</code>风格</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/%E4%BD%BF%E7%94%A8raft%E7%AE%97%E6%B3%95%E5%BF%AB%E7%86%9F%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84key-value%E7%B3%BB%E7%BB%9F/>https://laohanlinux.github.io/2016/%E4%BD%BF%E7%94%A8raft%E7%AE%97%E6%B3%95%E5%BF%AB%E7%86%9F%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84key-value%E7%B3%BB%E7%BB%9F/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/golang/">
+                    #Golang</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/raft/">
+                    #raft</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
+                    #分布式存储系统</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                    #分布式</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/erlang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="prev" rel="prev" title="erlang学习笔记"><i class="iconfont icon-left"></i>&nbsp;erlang学习笔记</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84bitcask%E5%BC%95%E6%93%8E%E7%9A%84%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/" class="next" rel="next" title="使用Golang语言实现一个简单的Bitcask引擎的文件存储系统">使用Golang语言实现一个简单的Bitcask引擎的文件存储系统&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/raft%E7%AE%97%E6%B3%95/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/epoll/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Linux epoll | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="Linux epoll | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "Linux epoll",
+    "headline" : "Linux epoll",
+    "description" : "epoll的简单使用,同时结合了timerfd",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-20 11:54:32 &#43;0000 UTC",
+    "dateModified" : "2016-03-20 11:54:32 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/epoll/",
+    "wordCount" : "3852",
+    "keywords" : [ "epoll","timerfd", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Linux epoll</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-20 itemprop="datePublished">March 20, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/linux-program/"> Linux Program </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="epoll">epoll</h1>
+
+<p><code>epoll</code>是一种事件驱动的<code>io</code>模式，<code>epoll</code>不仅可以应用在网络<code>io</code>上，时钟也是适用，得益于<code>linux/Unix</code>的一切皆为文件理论。这也意味着系统的所有资源都可以用<code>文件</code>来表示，这些资源都用一个具有<code>read()</code>,<code>write()</code>, <code>close()</code>接口的文件描述符进行管理。</p>
+
+<p><code>Linux</code>也提供了文件描述符的<code>监听</code>事件功能，比如<code>在一个目录下创建一个文件</code>和<code>时钟超时</code>的事件。</p>
+
+<p><code>epoll</code>的触发模式有2种：1、水平触发（电平触发-LT）；2、边沿触发（ET）</p>
+
+<blockquote>
+<p>EPOLL 在有些情况下是不建议使用的
+如：已连接套接字不多，并且这些套接字非常活跃;都是活跃，那就不用等什么事件了，直接操作就完事了。</p>
+</blockquote>
+
+<ul>
+<li>水平触发</li>
+</ul>
+
+<p><code>Write EPOLLOUT EVENT</code>:
+高电平: <code>writebuf</code>内核有空闲空间，我们就说他处于高电平状态，也就是一直处于活跃状态。如果应用没有及时写入数据，此时可能会产生<code>busy waitting loop</code>
+低电平: 当<code>writebuf</code>内核没有空闲空间，我们就说他处于低电平状态，没有激活。</p>
+
+<p>或者这样解析：
+内核中的socket接收缓冲区为空 =》 低电平
+内核中的socket接收缓冲区不为空 =》 高电平</p>
+
+<p><code>Read EPOLLIN EVENT</code>:</p>
+
+<p>高电平：<code>ReadBuf</code>内核有数据可读，如果应用没有及时把这些数据读取掉，那么也可能产生<code>busy waitting loop</code>的情况
+低电平：<code>ReadBuf</code>内核没有数据可读，处于低电平状态，没有被激活。</p>
+
+<p>或者这样解析：
+内核中的socket发送缓冲区不满 =》 高电平
+内核中的socket发送缓冲区满 =》 低电平</p>
+
+<p>总之，应用在使用<code>epoll</code>是尽量写满内核<code>写缓冲区</code>和读空内核<code>读缓存区</code>,避免空闲等待.</p>
+
+<ul>
+<li>边缘触发</li>
+</ul>
+
+<p>在该模式下，一开始我们就要关注<code>EPOLLIN</code>事件和<code>EPOLLOU</code>T事件 ， 此时<code>writbuf</code>一直处于高电平，不会触发<code>EPOLLOUT</code>事件.而<code>EPOLLIN</code>可能会产生，因为开始<code>Readbuf</code>是空的，如果在 <code>epoll_wait</code>前，<code>readbuf</code>有数据了，那么就有<code>unreadablr---&gt;readable</code>,
+也就是产生了<code>EPOLLLIN</code>事件，这也是为什么监听<code>socket</code> 能够接收到外来请求的原因。
+关注<code>EPOLLIN</code> 和 <code>EPOLLOUT</code>事件后，我们也没必要取消他们的关注，只有到断开他们的<code>socketfd</code>时 ， 我们才需要取消。</p>
+
+<p>区别：LT事件不会丢弃，而是只要读buffer里面有数据可以让用户读取，则不断的通知你。而ET则只在事件发生之时通知。</p>
+
+<h2 id="timerfd">timerfd</h2>
+
+<p><a href="http://lxr.free-electrons.com/source/fs/timerfd.c" rel="nofollow noreferrer" target="_blank">link: timerfd-source</a></p>
+
+<p>一般文件描述的使用步骤都是调用一个初始化函数来创建一个文件描述符，也就是句柄。如：</p>
+
+<pre><code>#include&lt;sys/timerfd.h&gt;
+
+int fd = timerfd_create(CLOCK_MONOTONIC, TFD_MONOBLOCK | TFD_CLOEXEC); 
+if (fd == -1) {
+    //handle_error ... 
+}
+</code></pre>
+
+<p><code>TFD_MONOBLOCK</code>, <code>TFD_CLOEXEC</code>这些参数和<code>MONOBLOCK</code>,<code>CLOEXEC</code>是一样的意思，使用<code>异或</code>来互相操作，默认问0。</p>
+
+<h3 id="timerfd的使用例子">timerfd的使用例子</h3>
+
+<p>时钟的文件描述符使用<code>timerfd_create</code>来进行创建，创建成功后，调用<code>timerfd_settime()</code>来设置事件超时，时钟描述符主要使用一个<code>struct timerspec</code>的变量来初始化。</p>
+
+<pre><code>// 时钟超时间隔
+struct timespec it_interval {
+    time_t tv_sec 
+    time_t tv_nsec
+}
+
+// 时钟超时时间
+struct timespec it_value {
+    time_t tv_sec
+    time_t tv_nsec 
+}
+</code></pre>
+
+<p>应用调用<code>read()</code>函数来等待时钟超时事件的到来即可，<code>read()</code>返回一个uint_64的整数，这个整数表示超时的次数，这些次数不会叠加，如：</p>
+
+<pre><code>/* This program prints &quot;Beep!&quot; every second with timerfd. */
+#include &lt;inttypes.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/timerfd.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(void)
+{
+    int fd;
+    struct itimerspec timer = {
+        .it_interval = {1, 0},  /* 1 second */
+        .it_value    = {1, 0},
+    };
+    uint64_t count;
+
+    /* No error checking! */
+    fd = timerfd_create(CLOCK_MONOTONIC, 0);
+    timerfd_settime(fd, 0, &amp;timer, NULL);
+    int i = 0; 
+    for (;;) {
+        sleep(i);
+        i++;
+        read(fd, &amp;count, sizeof(count));
+        printf(&quot;Beep!\n&quot;);
+        printf(&quot;count: %d, i:%d\n&quot;, count, i);
+    }
+
+    return 0;
+}
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code>Beep!
+count: 1, i: 1
+Beep!
+count: 1, i: 2
+Beep!
+count: 2, i: 3
+Beep!
+count: 3, i: 4
+Beep!
+count: 4, i: 5
+Beep!
+count: 5, i: 6
+</code></pre>
+
+<h2 id="signalfd">signalfd</h2>
+
+<p>也可以使用时钟信号的方式来实现定时事件&hellip;&hellip;, 这个此处省略&hellip;.
+当然，其他信号也可以使用<code>epoll</code>来监听</p>
+
+<h2 id="inotify">inotify</h2>
+
+<p>这也不说了&hellip;.</p>
+
+<h1 id="timerfd-signalfd使用epoll处理">timerfd, signalfd使用epoll处理</h1>
+
+<p><code>epoll</code>的触发模式有：水平触发（电平触发） ， 边缘触发。</p>
+
+<pre><code class="language-c">#include &lt;inttypes.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/epoll.h&gt;
+#include &lt;sys/timerfd.h&gt;
+#include &lt;sys/signalfd.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(void)
+{
+    int efd, sfd, tfd;
+    struct itimerspec timer = {
+        .it_interval = {1, 0},  /* 1 second */
+        .it_value    = {1, 0},
+    };
+    uint64_t count;
+    sigset_t sigmask;
+    struct signalfd_siginfo siginfo;
+#define MAX_EVENTS 2
+    struct epoll_event ev, events[MAX_EVENTS];
+    ssize_t nr_events;
+    size_t i;
+
+    /* No error checking! */
+    tfd = timerfd_create(CLOCK_MONOTONIC, 0);
+    timerfd_settime(tfd, 0, &amp;timer, NULL);
+
+    sigfillset(&amp;sigmask);
+    sigprocmask(SIG_BLOCK, &amp;sigmask, NULL);
+    sfd = signalfd(-1, &amp;sigmask, 0);
+
+    // new a epoll instance
+    efd = epoll_create1(0);
+
+        // event type ==&gt; read
+    ev.events = EPOLLIN;
+    // add timer fd
+    ev.data.fd = tfd;
+    epoll_ctl(efd, EPOLL_CTL_ADD, tfd, &amp;ev);
+
+    // event type =&gt; read
+    ev.events = EPOLLIN;
+    // add signal fd
+    ev.data.fd = sfd;
+    epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &amp;ev);
+
+    for (;;) {
+        nr_events = epoll_wait(efd, events, MAX_EVENTS, -1);
+        for (i = 0; i &lt; nr_events; i++) {
+            if (events[i].data.fd == tfd) {
+                read(tfd, &amp;count, sizeof(count));
+                printf(&quot;Beep!\n&quot;);
+            } else if (events[i].data.fd == sfd) {
+                read(sfd, &amp;siginfo, sizeof(siginfo));
+                printf(&quot;Received signal number %d\n&quot;, siginfo.ssi_signo);
+            }
+        }
+    }
+    return 0;
+}
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code>$ ./ep
+Beep!
+Beep!
+Beep!
+Beep!
+Beep!
+Beep!
+^CReceived signal number 2
+Beep!
+Beep!
+^CReceived signal number 2
+Beep!
+Beep!
+Beep!
+</code></pre>
+
+<h1 id="构建一个基于epoll的简单定时任务">构建一个基于epoll的简单定时任务</h1>
+
+<p>首先需要构建一个简单的任务池，为了更好的并发，任务池需要一个任务队列，这个任务队列保存了<code>任务类型和任务数据（其实就是TaskFunc and FuncData）</code>.</p>
+
+<h2 id="构建-threadpool">构建 ThreadPool</h2>
+
+<pre><code>            |----------|
+            |ThreadPool|
+            |----------|
+                  ↑
+                  |
+      ------------ ------------|           
+      |                        |
+      |                        |      
+   |------|   ---------     |-------|             
+   |Woker |   |  Init |     | free  |  
+   | Job  |   |   Job |     | Job   |
+   | Queue|   | Qeuue |     | Queue |  
+   |------|   |-------|     |-------|  
+       ↑                        ↑
+       |                        |
+       |-----&gt;|Job Thread|-----&gt;|
+
+</code></pre>
+
+<p>这个简单的线程池整体的设计就是这样，线程池对象包括主要包括三部分，<code>worker Job Queue</code>、<code>Free Job Queue</code>和<code>Job Thread</code>.</p>
+
+<ul>
+<li>Worker Job Queue</li>
+</ul>
+
+<p>这是一个任务队列，这些任务队列有任务函数<code>job_cb</code>和数据参数<code>data</code>组成</p>
+
+<ul>
+<li>Free Job Queue</li>
+</ul>
+
+<p>这是一个空闲队列，这个队列主要是用来做任务回收（可以说是一个内存管理器）， 用户首先从空闲队列中获取一个<code>job_cb</code>和<code>data</code>指正,然后把自身的函数和数据赋给<code>job_cb</code>和<code>data</code>，在把组装好的任务放到<code>worker Job Queue</code>中。</p>
+
+<pre><code>TODO:
+
+把 Init Job Queue去掉，并且把Free Job Queue交给一个内存管理线程进行管理
+</code></pre>
+
+<ul>
+<li>Job Thread</li>
+</ul>
+
+<p><code>job thread</code> 是线程对象，这些线程对象首先会到<code>worker job queue</code>中获取到一个任务，执行完这个任务时，会把这个人回收到<code>free job queue</code>中</p>
+
+<p><strong>source code</strong>:</p>
+
+<p><code>header:</code></p>
+
+<pre><code class="language-c">/**/
+#ifndef THREADPOOL_H_
+#define THREADPOOL_H_
+struct threadpool;
+/**
+This function creates a newly allocated thread pool
+**/
+
+struct threadpool * threadpool_init(int numbers);
+
+int threadpool_add_job(struct threadpool *pool, void (*func )(void *), void *data, int blocking);
+
+void threadpool_free(struct threadpool *pool, int blocking);
+#endif /*THREADPOOL_H_*/
+
+</code></pre>
+
+<p><code>source:</code></p>
+
+<pre><code class="language-c">#include &quot;thr_pool.h&quot;
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;pthread.h&gt;
+
+#define LOG_DEBUG(s) printf(&quot;line %d,:%s, %s- \r\n&quot;, __LINE__, __func__, s); 
+#define THREAD_POOL_QUEUE_SIZE 10
+
+// queue iterm 
+struct threadpool_job {
+    void (*job_cb)(void*);
+    void *data;
+};  
+
+struct threadpool_queue {
+    unsigned int head;
+    unsigned int tail;
+    
+    unsigned int iterm_size;
+    
+    void *iterms[THREAD_POOL_QUEUE_SIZE];
+};
+
+struct threadpool {
+    struct threadpool_queue job_queue; // job queue 
+    struct threadpool_queue free_job_queue; // free job queue 
+    
+    struct threadpool_job jobs[THREAD_POOL_QUEUE_SIZE];
+    
+    pthread_t *thr_arr;
+    
+    unsigned short thread_size; // thread size 
+    volatile unsigned short stop_flag; // stop or start flag 
+    
+    pthread_mutex_t free_job_mutex; // free job queue 
+    pthread_mutex_t mutex;  // 
+    pthread_cond_t free_job_cond;
+    pthread_cond_t cond;
+} ;
+
+/**
+* This funtion inits a thread queue 
+*
+*@param queue The queue structure
+*/
+
+static void threadpool_queue_init(struct threadpool_queue *queue){
+    int i ; 
+    for (i =0; i &lt; THREAD_POOL_QUEUE_SIZE; i ++){
+        queue-&gt;iterms[i] = NULL;
+    }
+    
+    queue-&gt;head = 0;
+    queue-&gt;tail = 0;
+    queue-&gt;iterm_size = 0;
+}
+
+/**
+ * This function adds data to the tail of the queue.
+ *
+ * @param queue The queue structure.
+ * @param data The data to be added to the queue.
+ * @return 0 on success (the data was added to the queue) else -1 is returned.
+ */
+
+static int threadpool_queue_enqueue(struct threadpool_queue *queue, void *data) {
+    if (queue-&gt;iterm_size == THREAD_POOL_QUEUE_SIZE) {
+        LOG_DEBUG(&quot;The queue is full, unable to add data to it.&quot;);
+        return -1;
+    }
+    
+    if(queue-&gt;iterms[queue-&gt;tail] != NULL) {
+        LOG_DEBUG(&quot;A problem was detected in the queque (expected NULL, but found a different value.&quot;);
+        return -1;
+    }
+    
+    queue-&gt;iterms[queue-&gt;tail] = data;
+    queue-&gt;tail++;
+    queue-&gt;iterm_size ++;
+    LOG_DEBUG(&quot;Add Job\n&quot;);
+    if(queue-&gt;tail == THREAD_POOL_QUEUE_SIZE) {
+        queue-&gt;tail = 0;
+    }
+    return 0;
+}
+
+static void *threadpool_queue_dequeue(struct threadpool_queue *queque){
+    void *data;
+    
+    if(queque-&gt;iterm_size == 0) {
+        LOG_DEBUG(&quot;Tried to dequeue from an empty queque&quot;);
+        return NULL;
+    }
+    
+    data = queque-&gt;iterms[queque-&gt;head];
+    queque-&gt;iterms[queque-&gt;head] = NULL;
+    queque-&gt;iterm_size --;
+    
+    if (queque-&gt;iterm_size == 0){
+        queque-&gt;head = 0;
+        queque-&gt;tail = 0;
+    }else{
+        queque-&gt;head++;
+        if(queque-&gt;head == THREAD_POOL_QUEUE_SIZE) {
+            queque-&gt;head=0;
+        }
+    }
+    
+    return data;
+}
+
+static int threadpool_queue_is_empty(struct threadpool_queue *q){
+    //return q-&gt;iterm_size?0:1;
+    if (q-&gt;iterm_size==0){
+        return 1;
+    }
+    return 0;
+}
+
+static int threadpool_queue_size(struct threadpool_queue *queque) {
+    return queque-&gt;iterm_size;
+}
+
+static void threadpool_job_init(struct threadpool_job *job){
+    job-&gt;data = NULL;
+    job-&gt;job_cb = NULL;
+}
+
+/*
+ * Ths function obtains a queued job from the pool and return it. 
+ * if no such job is available the operation blocks. 
+ *
+ * @param pool the thread pool structure. 
+ * @return a job or null error (or if thread pool should shut down ) . *
+ * */
+static struct threadpool_job * threadpool_get_job(struct threadpool *pool){
+    struct threadpool_job *job;
+    
+    // lock threadpool
+    if (pthread_mutex_lock(&amp;(pool-&gt;mutex))){
+        printf(&quot;pthread_mutex_lock error.\r\n&quot;);
+        return NULL;
+    }
+
+    while(threadpool_queue_is_empty(&amp;(pool-&gt;job_queue))){
+            if (pool-&gt;stop_flag) {
+                if(pthread_cond_broadcast(&amp;(pool-&gt;cond))){
+                    LOG_DEBUG(&quot;thread_cond_broadcast error.\r\n&quot;);
+                }
+
+                if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))){
+                    LOG_DEBUG(&quot;pthread_mutex_unlock.\r\n&quot;);
+                    return NULL;
+                }
+                return NULL;
+            }
+            // Block until a new job arrives .  
+            if (pthread_cond_wait(&amp;(pool-&gt;cond), &amp;(pool-&gt;mutex))) {
+                LOG_DEBUG(&quot;pthread_cond_wait.\r\n&quot;); 
+                if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))) {
+                    LOG_DEBUG(&quot;pthread_mutex_unlock. \r\n&quot;);
+                } 
+                return NULL;
+            }
+            LOG_DEBUG(&quot;Wait for a job comming&quot;);
+        }
+        
+        job = (struct threadpool_job*)threadpool_queue_dequeue(&amp;(pool-&gt;job_queue));
+    if (job== NULL){
+        LOG_DEBUG(&quot;Failded to obtain a job from the job queue.&quot;);
+    }
+    
+    if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))){
+        LOG_DEBUG(&quot;pthread_mutex_unlock.&quot;);
+        return NULL;
+    }
+    
+    return job; 
+}
+
+static void *job_cb_func(void *data){
+    struct threadpool *pool = (struct threadpool*)data;
+    struct threadpool_job *job;
+    LOG_DEBUG(&quot;do in thread ...&quot;);
+    while(1){
+        // take a job 
+        LOG_DEBUG(&quot;REUEST A JOB&quot;);
+        job = threadpool_get_job(pool);
+        LOG_DEBUG(&quot;GOT A JOB&quot;);
+        if (job == NULL) {
+            if (pool-&gt;stop_flag) {
+                // job thr need to exit (thread pool was shutdown)
+                break;
+            }else {
+                // An error has occurented.
+                LOG_DEBUG(&quot;a error happend when trying to obtain a work job.&quot;);
+                LOG_DEBUG(&quot;The job thread has exited.&quot;);
+                break;
+            }
+        }
+        
+        if(job-&gt;job_cb){
+            job-&gt;job_cb(job-&gt;data);
+            
+            // release the job by returing it to the free job queue.
+            threadpool_job_init(job);
+            
+            if (pthread_mutex_lock(&amp;(pool-&gt;free_job_mutex))) {
+                LOG_DEBUG(&quot;pthread mutex lock error.&quot;);
+                LOG_DEBUG(&quot;The job thread has exited.&quot;);
+                break;
+            }
+            
+            // put the idle job into thread pool's free job queue   
+            if (threadpool_queue_enqueue(&amp;(pool-&gt;free_job_queue), job)) {
+                LOG_DEBUG(&quot;Failed to enqueue a job to free job queue.&quot;);
+                if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+                    LOG_DEBUG(&quot;pthread mutext unlock error.&quot;);
+                }
+                
+                LOG_DEBUG(&quot;The Job thread has exited.&quot;); 
+                break;
+            }
+            
+            if (threadpool_queue_size(&amp;(pool-&gt;free_job_queue)) ==1) {
+                // Notify all waiting threads that new tasks can added 
+                if (pthread_cond_broadcast(&amp;(pool-&gt;free_job_cond))) {
+                    LOG_DEBUG(&quot;pthread cond broadcast . &quot;); 
+                    
+                    if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+                        LOG_DEBUG(&quot;pthread mutex unlock.&quot;);
+                    }
+                    
+                    break;
+                }
+            }
+            
+            if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+                LOG_DEBUG(&quot;The job thread has exited.&quot;); 
+                break;
+            }
+        }
+    }   
+
+    LOG_DEBUG(&quot;Thread Exit ...&quot;);
+    
+    return NULL;
+}
+
+static void *stop_job_thr_func_cb(void *ptr) {
+    int i ; 
+    struct threadpool *pool = (struct threadpool *)ptr;
+    
+    if (pthread_mutex_lock(&amp;(pool-&gt;mutex))) {
+        LOG_DEBUG(&quot;Warning: Memory was not released .&quot;);
+        LOG_DEBUG(&quot;Warning: Some of the job threads may have failed to exit.&quot;);
+        return NULL;
+    }
+    
+    pool-&gt;stop_flag = 1; 
+    
+    while(!threadpool_queue_is_empty(&amp;(pool-&gt;job_queue))){
+        LOG_DEBUG(&quot;Wait All Sub thread exit...&quot;);
+        // Blocking until all job have been executed, safely stop the thread pool .
+        if (pthread_cond_wait(&amp;(pool-&gt;cond), &amp;(pool-&gt;mutex))){
+            LOG_DEBUG(&quot;pthread cond wait.&quot;);
+            if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))){
+                LOG_DEBUG(&quot;pthread mutex unlock.&quot;);
+            }
+            return NULL;
+        }
+    }
+    
+    LOG_DEBUG(&quot;Wait All Sub thread exit...&quot;);
+    // Wakeup all job threads (broadcast operation). 
+    if (pthread_cond_broadcast(&amp;(pool-&gt;cond))){
+        LOG_DEBUG(&quot;Warning: Memory was not released.&quot;); 
+        LOG_DEBUG(&quot;Warning: Some of the job threads my have failed to exit .&quot;);
+        return NULL;
+    }
+
+    if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))){
+        LOG_DEBUG(&quot;pthread mutex unlock error.&quot;);
+        return NULL;
+    }
+
+    // Wait until all job threads are done. 
+    for (i = 0; i &lt; pool-&gt;thread_size; i ++) {
+        LOG_DEBUG(&quot;Wait sub thread exit..&quot;);
+        if (pthread_join(pool-&gt;thr_arr[i], NULL)) {
+            LOG_DEBUG(&quot;pthread join error.&quot;);
+        }
+    }
+    
+    // Free all allocated memory 
+    free(pool-&gt;thr_arr);
+    free(pool);
+    
+    return NULL;    
+}
+
+struct threadpool * threadpool_init( int threads_size){
+    struct threadpool *pool; 
+    int i; 
+    
+    // Create the thread pool struct. 
+    pool = malloc(sizeof(struct threadpool));
+    if (pool == NULL) {
+        LOG_DEBUG(&quot;malloc thread pool error.&quot;);
+        return NULL;
+    }
+    
+    pool-&gt;stop_flag = 0; 
+    
+    // Init the mutex and cond vars 
+    if (pthread_mutex_init(&amp;(pool-&gt;free_job_mutex), NULL)) {
+        LOG_DEBUG(&quot;pthread mutex init .&quot;); 
+        free(pool);
+        return NULL;
+    }
+    if (pthread_mutex_init(&amp;(pool-&gt;mutex), NULL)) {
+        LOG_DEBUG(&quot;pthread mutex init error&quot;); 
+        free(pool);
+        return NULL;
+    }
+    if (pthread_cond_init(&amp;(pool-&gt;free_job_cond), NULL)) {
+        LOG_DEBUG(&quot;pthread cond init error&quot;);
+        free(pool);
+        return NULL;
+    }
+    if (pthread_cond_init(&amp;(pool-&gt;cond), NULL)) {
+        LOG_DEBUG(&quot;pthread cond init error&quot;); 
+        free(pool);
+        return NULL;
+    }
+    
+    // Init the jobs queue 
+    threadpool_queue_init(&amp;(pool-&gt;job_queue)); 
+    
+    // Init the free job queue . 
+    threadpool_queue_init(&amp;(pool-&gt;free_job_queue)); 
+    
+    // Add all the free job to the free job queue 
+    for (i = 0; i &lt; THREAD_POOL_QUEUE_SIZE; i++){
+        threadpool_job_init((pool-&gt;jobs) + i);
+        if (threadpool_queue_enqueue(&amp;(pool-&gt;free_job_queue), (pool-&gt;jobs) +i)) {
+            LOG_DEBUG(&quot;Failed to a job to the free job queue during initialization.&quot;); 
+            free(pool);
+            return NULL;
+        }
+    }
+
+    printf(&quot;The free Queue is : %d\n&quot;, pool-&gt;free_job_queue.iterm_size);
+    printf(&quot;The Worker Queue size is: %d\n&quot;, pool-&gt;job_queue.iterm_size);
+
+    
+    // Create the thr_arr. 
+    pool-&gt;thr_arr = malloc(sizeof(pthread_t) * threads_size);
+    if (pool-&gt;thr_arr == NULL) {
+        LOG_DEBUG(&quot;malloc thread arr error.&quot;); 
+        free(pool);
+        return NULL;
+    }
+    
+    // Start the job threads 
+    for (pool-&gt;thread_size = 0; pool-&gt;thread_size &lt; threads_size; (pool-&gt;thread_size ++)) {
+        if (pthread_create(&amp;(pool-&gt;thr_arr[pool-&gt;thread_size]), NULL, job_cb_func, pool)) {
+            LOG_DEBUG(&quot;pthread create function error.&quot;); 
+            threadpool_free(pool, 0); 
+            return NULL;
+        }
+    }
+    
+    return pool;
+}
+
+int threadpool_add_job (struct threadpool *pool, void (*job_cb)(void *), void *data, int blocking){
+    struct threadpool_job * job ; 
+    if (pool == NULL) {
+        LOG_DEBUG(&quot;The thread pool is null&quot;); 
+        return -1;
+    }
+    
+    // lock free job queque
+    if (pthread_mutex_lock(&amp;(pool-&gt;free_job_mutex))){
+        LOG_DEBUG(&quot;pthread mutext lock err.&quot;); 
+        return -1;
+    }
+    
+    // Check if the free job queque is empty 
+    while(threadpool_queue_is_empty(&amp;(pool-&gt;free_job_queue))) {
+        // The job is empty 
+        LOG_DEBUG(&quot;The Free Queue Size equal zero&quot;);
+        if(!blocking) {
+            // Return immediately if the command is non blocking 
+            if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+                LOG_DEBUG(&quot;pthread mutex unlock.&quot;); 
+                return -1;
+            }
+            return -2;
+        }
+        
+        // blocking is set to 1, wait until free job queue has a job to obtain 
+        if (pthread_cond_wait(&amp;(pool-&gt;free_job_cond), &amp;(pool-&gt;free_job_mutex))) {
+            LOG_DEBUG(&quot;pthread cond mutex.&quot;); 
+            if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+                LOG_DEBUG(&quot;pthread mutex unlock.&quot;); 
+            }
+            return -1;
+        }
+    }
+    
+    // Obtain an empty job. 
+    job = (struct threadpool_job*) threadpool_queue_dequeue(&amp;(pool-&gt;free_job_queue));
+    if (job == NULL) {
+        LOG_DEBUG(&quot;Failed to obtain an empty job from the free job queue.&quot;); 
+        if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))) {
+            LOG_DEBUG(&quot;pthread mutex unlock.&quot;);
+        }
+        
+        return -1;
+    }
+    
+    if (pthread_mutex_unlock(&amp;(pool-&gt;free_job_mutex))){
+        LOG_DEBUG(&quot;pthread mutex unlock.&quot;); 
+        return -1;
+    }
+    
+    job-&gt;data = data; 
+    job-&gt;job_cb = job_cb; 
+    
+    // Add the job into the job queue 
+    if (pthread_mutex_lock(&amp;(pool-&gt;mutex))) {
+        LOG_DEBUG(&quot;pthread mutex lock.&quot;); 
+        return -1;
+    }
+    
+    if (threadpool_queue_enqueue(&amp;(pool-&gt;job_queue), job)){
+        LOG_DEBUG(&quot;Failed to add new job to the job queue.&quot;); 
+        if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))) {
+            LOG_DEBUG(&quot;pthread mutex unlock.&quot;); 
+        }
+        return -1;
+    }
+    
+    if (threadpool_queue_size(&amp;(pool-&gt;job_queue)) == 1) {
+        // Notify all worker threads that there are new jobs 
+        if (pthread_cond_broadcast(&amp;(pool-&gt;cond))) {
+            LOG_DEBUG(&quot;pthread cond broadcast error&quot;); 
+            if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))) {
+                LOG_DEBUG(&quot;pthread mutex unlock error&quot;);
+            }
+            return -1;
+        }
+    }
+    if (pthread_mutex_unlock(&amp;(pool-&gt;mutex))) {
+        LOG_DEBUG(&quot;pthread mutex unlock error&quot;);
+        return -1; 
+    } 
+    return 0;
+}
+
+void threadpool_free(struct threadpool *pool, int blocking){
+    pthread_t thr; 
+    if (blocking) {
+        stop_job_thr_func_cb(pool);
+    }else{
+        if (pthread_create(&amp;thr, NULL, stop_job_thr_func_cb, pool)) {
+            LOG_DEBUG(&quot;pthread create function error.&quot;);
+            pool-&gt;stop_flag = 1;
+        }       
+    }
+}
+</code></pre>
+
+<p><code>test Code</code>:</p>
+
+<pre><code class="language-c">#include &quot;thr_pool.h&quot;
+#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;pthread.h&gt;
+
+#define ARR_SIZE 1000000
+
+static pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER; 
+static int count; 
+
+void fast_job1(void *ptr) {
+    int *pval = (int*)ptr;
+    int i; 
+    printf(&quot;Do in fast_job1&quot;);
+    for (i =0; i &lt; 1000; i ++) {
+        (*pval) ++;
+    }
+    
+    printf(&quot;ptr:%d\r\n&quot;, pval);    
+    pthread_mutex_lock(&amp;count_mutex);
+    count++; 
+    pthread_mutex_unlock(&amp;count_mutex);
+}
+
+void slow_job(void *ptr) {
+    printf(&quot;slow job: count value is %d\n&quot;, count); 
+    
+    pthread_mutex_lock(&amp;count_mutex);
+    
+    count ++; 
+    
+    pthread_mutex_unlock(&amp;count_mutex);
+}
+
+
+int main (){
+    struct threadpool *p; 
+    
+    int arr[ARR_SIZE], i, ret, failed_count =0; 
+    for (i =0; i &lt; ARR_SIZE; i++){
+        arr[i] = i;
+    }
+    
+    p = threadpool_init(200) ; 
+    if (p==NULL) {
+        printf(&quot;Error! Failed to create a threadpool struct \n&quot;); 
+        exit(EXIT_FAILURE);
+    }
+        
+    
+    for (i =0 ; i &lt; ARR_SIZE; i ++) {
+        if (i % 2==0){
+            ret = threadpool_add_job(p, slow_job, arr +i , 1);
+        }else {
+            ret = threadpool_add_job(p, fast_job1, arr+i,  0);
+        }
+        
+        if (ret == -1) {
+            printf(&quot;An error had occurred while adding a job, %d\r\n&quot;, ret);
+            exit(EXIT_FAILURE);
+        }
+        if (ret == -2 ){
+            failed_count ++;
+        }
+    }
+    threadpool_free(p, 1);
+    // stop the pool 
+    printf(&quot;Example ended.\n&quot;);
+    printf(&quot;%d tasks out of %d have been executed.\n&quot;,count,ARR_SIZE);
+    printf(&quot;%d tasks out of %d did not execute since the pool was overloaded.\n&quot;,failed_count,ARR_SIZE);
+    printf(&quot;All other tasks had not executed yet.&quot;);
+    return 0;
+
+}
+</code></pre>
+
+<h2 id="构建一个eventloop对象">构建一个eventloop对象</h2>
+
+<p>好吧，暂时没时间，先这样&hellip;&hellip;.</p>
+
+<p>以后有时间再能吧.</p>
+
+<p>资料来源：
+- <a href="http://www.enodev.fr/posts/notifications-with-file-descriptors.html" rel="nofollow noreferrer" target="_blank">http://www.enodev.fr/posts/notifications-with-file-descriptors.html</a>
+- <a href="http://docs.oracle.com/cd/E19253-01/816-5137/ggedn/index.html" rel="nofollow noreferrer" target="_blank">http://docs.oracle.com/cd/E19253-01/816-5137/ggedn/index.html</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/epoll/>https://laohanlinux.github.io/2016/epoll/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/epoll/">
+                    #epoll</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/timerfd/">
+                    #timerfd</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/raft%E7%AE%97%E6%B3%95/" class="prev" rel="prev" title="raft算法"><i class="iconfont icon-left"></i>&nbsp;raft算法</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" class="next" rel="next" title="SFS Store 一种简单应用存储架构">SFS Store 一种简单应用存储架构&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

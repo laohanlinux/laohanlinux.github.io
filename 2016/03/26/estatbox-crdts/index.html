@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/03/30/paxos/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/26/estatbox-crdts/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           estatbox_crdts | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="estatbox_crdts | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "estatbox_crdts",
+    "headline" : "estatbox_crdts",
+    "description" : "estatebox 参照于statebox实现的，主要用来解决在分布式中的版本冲突问题.",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-26 22:22:53 &#43;0000 UTC",
+    "dateModified" : "2016-03-26 22:22:53 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/03/26/estatbox-crdts/",
+    "wordCount" : "2129",
+    "keywords" : [ "riak","riak core","crdt","crdts","estatbox","statbox", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">estatbox_crdts</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-26 itemprop="datePublished">March 26, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="estatebox">EStateBox</h1>
+
+<p><a href="https://github.com/laohanlinux/estatebox" rel="nofollow noreferrer" target="_blank">GitHub</a></p>
+
+<p><code>estatebox</code> 参照于<code>statebox</code>实现的，主要用来解决在分布式中的版本冲突问题,<code>Dynamo</code>算法中，<code>CRDTs (Conflict-free Replicated Data Types)</code>是一种比较好的解决冲突的方法，要满足<code>CRDTs</code>，数据类型可以总结为：</p>
+
+<ul>
+<li><p>满足结合率</p></li>
+
+<li><p>满足交换率</p></li>
+
+<li><p>满足幂等性</p></li>
+</ul>
+
+<p>在<code>EStateBox</code>中：</p>
+
+<blockquote>
+<p>An op() must be repeatable: F(Arg, F(Arg, Value)) =:= F(Arg, Value)
+If the {fun(), [term()]} form is used, the fun() should be a reference to an exported function.
+F(Arg, Value) should return the same type as Value.</p>
+</blockquote>
+
+<p>当然，在其他情况下可以不完全满足这些条件，可以参照一些Riak的VClock。</p>
+
+<h2 id="overview">Overview:</h2>
+
+<p><code>EStateBox</code>是一种数据结构，这种数据结构在最终一致性系统中，如<code>riak</code>，可以用一种确定的方法来解决并行冲突。<code>EStateBox</code>只是一个事件的集合，这种事件的集合会导致唯一一个结果，所以这些事件必须满足一定的条件，这些条件如上所示。和<code>Ｒiak VClock</code>比较相似，他们都保持每一个的操作方法 和 操作数。</p>
+
+<h2 id="status">Status:</h2>
+
+<p>在<code>Ｍochi Ｍedia</code>平台中，已经使用在多后端服务。</p>
+
+<h2 id="theory">Theory</h2>
+
+<p><code>EStateBox</code> 包含一个当前值和一个事件队列，事件队列是一个按<code>{timestamp(), op()}</code>排列的有序列表。当有<code>2</code>个或者更多的<code>EStateBox</code>被<code>EStateBox</code>.<code>merge/1</code>合并，事件队列被<code>lists.umerge/1</code>合并，操作被执行于更新当前最新的<code>EStatBox</code>时, 将会产生一个新的<code>EStateBox</code>.</p>
+
+<p><code>op()</code>是一个<code>{fun(), [term()]}</code>的元组结构，除了最后一个参数，所有的参数都被指定在这个列表中。如：<code>{ordsets:add_element/2, [a]}</code>;</p>
+
+<p><code>op()</code>也可以是一个<code>{module(), atom(), [term()]}</code>元组；</p>
+
+<p><code>op()</code>列表也可以表示在相同的时间戳的多个操作</p>
+
+<p>下面是一些安全使用op的例子：</p>
+
+<p><code>op()</code>必须是幂等的： <code>fn(arg, fn(arg, value)) =:= f(arg, value)</code></p>
+
+<p>如果<code>{fn(), [term()]}</code>可以使用，<code>fn</code>必须是可导出的</p>
+
+<p><code>fn(arg, value)</code>应该返回和<code>value</code>相同的值</p>
+
+<p>在<code>erlang</code>中 ，下面的函数都是可以安全使用：</p>
+
+<pre><code class="language-elixir">{fun ordsets:add_element/2, [SomeElem]} and {fun ordsets:del_element/2, [SomeElem]}
+
+{fun ordsets:union/2, [SomeOrdset]} and {fun ordsets:subtract/2, [SomeOrdset]}
+
+{fun orddict:store/3, [Key, Value]}
+</code></pre>
+
+<p>有一些是不可以使用的：</p>
+
+<p><code>{fun orddict:update_counter, [Key, Inc]} , 因为F(a, 1, [{a, 0}]) =/= F(a, 1 , F(a, 0}]))</code>, 可以看出不满足幂等性质。</p>
+
+<h2 id="optiomizations">Optiomizations</h2>
+
+<p>为了防止<code>EStateBox</code>过大，浪费不必要的内存，这里有两个函数用来裁剪<code>Qeueu</code>的大小，分别是：</p>
+
+<p><code>truncate(n, stateBox)</code> 返回小于<code>n</code>个事件的队列</p>
+
+<p><code>expire(age, stateBox)</code> 返回以<code>lastmodified</code>为基准的<code>Ａge</code>内<code>milliseconds</code>的数据.</p>
+
+<h2 id="merge">Merge</h2>
+
+<p><code>EStateBox</code>的合并完全是根据<code>timestamp</code>来合并的，选取最新的一个，如果<code>timestamp</code>一样，会自动选取一个，这种方法处理方便，但是不是一个好的方法（有更好的方法？<code>^&gt;^</code>），因为在分布式环境中时钟不一定是同步的。</p>
+
+<pre><code class="language-shell">op1 -&gt; value: []
+op2 -&gt; value: [1]
+op3-&gt; value: [1, 2]
+op4 -&gt; value: [1, 2, 3]
+op5 -&gt; value: [1, 2, 3, 4]
+op6 -&gt; value: [1, 2, 3, 4, 5]
+op7 -&gt; value: [1, 2, 3, 4, 5, 6]
+op8 -&gt; value: [1, 2, 3, 4, 5, 6, 7]
+op9 -&gt; value: [1, 2, 3, 4, 5, 6, 7, 8]
+op10 -&gt; value: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+Queue:
+
+[ {1, {&amp;:ordsets.add_element/2, [1]}},
+  {2, {&amp;:ordsets.add_element/2, [2]}},
+  {3, {&amp;:ordsets.add_element/2, [3]}},
+  {4, {&amp;:ordsets.add_element/2, [4]}},
+  {5, {&amp;:ordsets.add_element/2, [5]}},
+  {6, {&amp;:ordsets.add_element/2, [6]}},
+  {7, {&amp;:ordsets.add_element/2, '\a'}},
+  {8, {&amp;:ordsets.add_element/2, '\b'}},
+  {9, {&amp;:ordsets.add_element/2, '\t'}},
+  {10, {&amp;:ordsets.add_element/2, '\n'}}]
+</code></pre>
+
+<ul>
+<li>Merge 过程</li>
+</ul>
+
+<pre><code class="language-elixir">@spec merge([StateBox]) :: StateBox
+def merge([state]), do: state
+def merge(unordered) do
+  %StateBox{value: v, last_modified: t} = newest(unordered)
+  queue = unordered |&gt;
+    Enum.map(fn(%StateBox{queue: q}) -&gt; q end) |&gt;
+   :lists.umerge
+  new(t, apply_queue(v, queue), queue)
+end
+</code></pre>
+
+<p><code>Merge</code>首先找出最大时间戳的<code>StateBox</code>,然后<code>umerge</code>掉<code>multiple statebox</code>,最后<code>apply_queue(v, queue)</code>，将操作重新再次操作一次，因为这时候的<code>queue</code>是合并后得<code>queue</code>，所以算出来的结果是所有节点<code>(statebox)</code>的值，这也符合最终一致性的思想，其实这里的操作已经包含v了，不过这并不会影响到最终的结果。</p>
+
+<pre><code class="language-erlang">Merge Queue:
+[{1, {&amp;:orddict.store/3, [:c, :c]}}, {1, {&amp;:orddict.store/3, [:key, :a]}}, {1, {&amp;:orddict.store/3, [:key, :b]}}]
+value: [c: :c, key: :b]
+</code></pre>
+
+<h2 id="counter">Counter</h2>
+
+<p><code>counter</code>的数据结构:</p>
+
+<pre><code class="language-elixir"> @type op :: EStateBox.op()
+ @type timestamp() :: EStatebox.Clock.timestamp()
+ @type timedelta() :: EStateBox.timedelta()
+ @type counter_id() :: EStatebox.Identity.entropy() | :acc
+ @type counter_key() :: {timestamp(), counter_id()}
+ @type counter_op() :: {counter_key(), integer()}
+ @type counter() :: [counter_op()]
+</code></pre>
+
+<h2 id="function-analysic">Function Analysic</h2>
+
+<ul>
+<li>f_inc_acc(value, age, key = {timestamp, _id})</li>
+</ul>
+
+<p>返回一个自增 或者 增加的<code>counter StateBox Event</code></p>
+
+<pre><code class="language-shell">value --&gt; counter = into `inc(timestamp, key)`
+    |
+    |
+ Age  --&gt; accumute(Age, counter)
+@params
+
+</code></pre>
+
+<p><code>value</code>:  是一个<code>delta</code>,就是一个整数，便是本次叠加的<code>value</code>
+<code>age</code>：<code>counter events</code>的最大时间, 这个值和<code>key</code>中<code>timestamp</code> 一起用， 会被用在<code>TA=（timestamp-Age）</code>， <code>TA</code>之前的值会被计算
+<code>key</code>：是一个<code>counter event</code> 的<code>key</code>
+这个函数会返回一个<code>op</code>， <code>op</code>的函数体为<code>EStateBox.Counter.op_inc_acc/4</code>, 在如果想插入小于：<code>acc</code>时间戳<code>counter event</code>是不允许的。</p>
+
+<p>Test Case：</p>
+
+<pre><code class="language-elixir">    test &quot;f_inc_acc_test&quot; do
+    ¦ # we should expect to get unique enough results from our entropy and
+    ¦ # timestamp even if the frequency is high.
+    ¦ fincacc =  1..1000 |&gt; enum.map(fn(_) -&gt; estatebox.counter.f_inc_acc(1, 1000) end)
+    ¦ ctr = :lists.foldl(&amp;estatebox.apply_op/2, [], fincacc)
+    ¦ assert 1000 === estatebox.counter.value(ctr)
+    end
+</code></pre>
+
+<ul>
+<li>inc(counter_key, Integer, counter) :: counter</li>
+</ul>
+
+<pre><code class="language-shell">  Return a new counter with the given counter event, If there is an &quot;:acc&quot; at or before the
+  timestamp of the given key then this is a a no-op
+
+  @spec inc(counter_key, Integer, counter) ::  counter
+  def inc({t1, _}, _, counter = [{{t0, :acc}, _} | _]) when t1 &lt;= t0, do: counter
+  def inc(key, value, counter), do: :orddict.store(key, value, counter)
+@params
+</code></pre>
+
+<p><code>key</code> ： <code>counter</code> 的<code>id</code>， 格式为<code>{timestamp, counter_id} , counter_id = entropy|:acc， counter_id</code>可以重复
+<code>value</code> : 操作数
+<code>counter</code>：被操作的<code>counter</code>
+增加一个额外的<code>event counter</code> 到指定的<code>counter</code>中去。</p>
+
+<p>Test Case</p>
+
+<pre><code class="language-elixir">test &quot;inc_test&quot; do
+   ¦ c0 = []
+   ¦ c1 = EStateBox.Counter.inc({1, 1}, 1, c0)
+   ¦ c2 = EStateBox.Counter.inc({2, 2}, 1, c1)
+
+   ¦ assert 0 === EStateBox.Counter.value(c0)
+   ¦ assert 1 === EStateBox.Counter.value(c1)
+   ¦ assert 2 === EStateBox.Counter.value(c2)
+   ¦ c1 = EStateBox.Counter.inc({3, 1}, 1, c1)
+   ¦ assert 2 === EStateBox.Counter.value(c1)
+end
+</code></pre>
+
+<ul>
+<li>merge([counter]) :: counter -&gt; merge(counter) &ndash;&gt; prune(counter) &ndash;&gt; :listsumerge(counter)</li>
+</ul>
+
+<pre><code class="language-elixir">   @doc &quot;&quot;&quot;
+    Merge the given list of counters and return a new counter
+    with the union of that history.
+    &quot;&quot;&quot;
+
+   def merge([counter]), do: counter
+   def merge(counters), do: :orddict.for_list(merge_prune(counters))
+merge 会根据相同Id 的event counter merge掉。
+</code></pre>
+
+<blockquote>
+<p>注</p>
+</blockquote>
+
+<p>这种的<code>merge</code>，在网络分区的时候会出现数据的丢失，除非可以确定协调唯一，具体细节可以看<code>try try try</code> 最后一个例子</p>
+
+<p>Example</p>
+
+<pre><code class="language-elixir"> test &quot;merge test&quot; do
+    ¦ c0 = []
+    ¦ c1 = EStateBox.Counter.inc({1, 1}, 1, c0)
+    ¦ c2 = EStateBox.Counter.inc({2, 2}, 1, c1)
+    ¦ assert 2 === EStateBox.Counter.value(EStateBox.Counter.merge([c0, c1, c2]))
+    ¦ assert 1 === EStateBox.Counter.value(EStateBox.Counter.merge([c0, c1, c1]))
+    ¦ assert 1 === EStateBox.Counter.value(EStateBox.Counter.merge([c1]))
+    ¦ assert 1 === EStateBox.Counter.value(EStateBox.Counter.merge([c0, c1]))
+ end
+</code></pre>
+
+<ul>
+<li>old counter test</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/03/26/estatbox-crdts/>https://laohanlinux.github.io/2016/03/26/estatbox-crdts/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak/">
+                    #riak</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak-core/">
+                    #riak core</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/crdt/">
+                    #crdt</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/crdts/">
+                    #crdts</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/estatbox/">
+                    #estatbox</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/statbox/">
+                    #statbox</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" class="prev" rel="prev" title="SFS Store 一种简单应用存储架构"><i class="iconfont icon-left"></i>&nbsp;SFS Store 一种简单应用存储架构</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/03/30/paxos/" class="next" rel="next" title="paxos">paxos&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

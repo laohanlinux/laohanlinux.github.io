@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/03/13/filename/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/03/13/filename/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/13/filename/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           riak core 导读 | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="riak core 导读 | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "riak core 导读",
+    "headline" : "riak core 导读",
+    "description" : "riak core 原理分析的导读部分，后续会发布更加细节的部分",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-13 22:13:13 &#43;0000 UTC",
+    "dateModified" : "2016-03-13 22:13:13 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/03/13/filename/",
+    "wordCount" : "9320",
+    "keywords" : [ "riak","riak core", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">riak core 导读</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-13 itemprop="datePublished">March 13, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<p>这一部分的文章整理主要参照于 <code>try-try-try</code> 和 <em>书写是对思维的缓存 / 好记性不如烂博客</em> <code>http://cryolite.iteye.com/</code></p>
+
+<h1 id="riak-core-guide">Riak Core Guide</h1>
+
+<p><code>Riak Core</code> 并不会涉及到数据的物理存储， <code>demo</code>参照 <strong>【try try try】</strong>的<code>github</code>。</p>
+
+<p>在<code>3try</code>的例子中，可以看到，<code>mfmn</code>是业务逻辑<code>application</code>， 而<code>riak_core application</code>为这个<code>mfmn</code>系统提供了分布式的系统架构支持。</p>
+
+<p><code>mfmn_vnode_master</code> 是<code>riak_core_vnode_master</code>模块运行时的一个进程注册名，这个进程为容纳业务模块代码的容器运行。在进程启动时系统的业务逻辑会嵌到这个进程中。</p>
+
+<h2 id="3try-rts-demo">3Try RTS Demo</h2>
+
+<ul>
+<li>服务及其API</li>
+</ul>
+
+<p>接收日志数据的服务在<code>rts_entry_vnode</code>模块中实现,统计日志的服务在<code>rts_stat_vnode</code>模块中实现。
+同时,这两类服务对外提供的调用API也在对应的模块中。
+每当接收日志服务收到一条日志,会用正则表达式分析日志,根据分析结果调用统计服务对日志信息进行
+计数。
+最后由一个<code>rts</code>模块作为<code>Facade</code>包装这两个服务,统一对外提供API。</p>
+
+<p>BTW:由于每个日志信息的上传都要新建一个HTTP连接,这里就成了系统输入的性能瓶颈。因此即使使用 多个物理节点时也不会感受到系统性能的提高。</p>
+
+<ul>
+<li>实现</li>
+</ul>
+
+<p>这里的重点是了解和学习<code>Riak Core</code>的<code>vnode</code>接口如何使用实现业务逻辑:基于<code>riak_core_vnode behaviour</code>实现相关回调函数。
+对于每个<code>partition</code>,会有一个<code>rts_stat_vnode</code>进程负责该分区内日志数据的各种状态统计,这个<code>vnode</code>进程内维护一个字典数据结构(<code>dict</code>),
+用来存储这个<code>partition</code>上的各种日志状态。字典的<code>key</code>是状态名, <code>value</code>是整数或者<code>list</code>。
+不过我觉得这个<code>rts</code>例子的处理逻辑似乎有问题,不能处理多个用户的录入。
+<code>riak_core_vnode behaviour</code>的回调函数:</p>
+
+<p>生命周期回调函数:</p>
+
+<p><code>init(Partition)</code> 初始化<code>vnode</code>进程的状态(类似<code>gen_server/gen_fsm</code>的状态),回调函数的参数是代表此 <code>vnode</code>负责的分区的<code>ring</code>整数;</p>
+
+<p><code>terminate(Reason, State)</code>,<code>handle_exit/3</code> 当与<code>vnode</code>进程有<code>link</code>的其它进程崩溃时被调用.</p>
+
+<p>用户定制的<code>riak_core_vnode</code>回调函数模块被称为<code>vnode_moudles</code>,可以调用 <code>application:get_env(riak_core, vnode_modules)</code>. 查询当前应用的<code>vnode</code>模块。这些在 <code>riak_core:register_vnode_module</code>注册。</p>
+
+<h2 id="riak-core-基本原理">Riak Core 基本原理</h2>
+
+<p><code>Riak Core</code>是一个分布式系统的开发框架,如果你的应用要采用分布式架构,凑巧你又选中了分布 式哈希表这种分布式架构,则可以考虑使用<code>Riak Core</code>,不然自己从底层重新实现一个分布式哈希 表实在是太麻烦了。</p>
+
+<ul>
+<li>1.基于<code>dynamo</code>设计的<code>Riak Core</code></li>
+</ul>
+
+<p>通过某种<code>hash</code>算法,对数据的某一特征计算哈希值,每份数据会对应着一个唯一的整数。这样处 理后,这些数据将均匀的映射到一个整数区间上。
+对于<code>Riak Core</code>,它管理着一个整数范围为<code>[0-2^160]</code>整数空间,这个空间形成一个首尾相连的环。
+<code>Riak Core</code>把这个环平均划分成多个分区<code>partition</code>(默认是64个分区,当前的版本不能动态修改这 个参数,据说将来会),<code>partition</code>在环上的<code>Token</code>作为此<code>partition</code>的唯一标识<code>ID</code>,每个<code>partition</code>交给一个或多个不同类型的<code>vnode</code>进程负责,每类<code>vnode</code>提供一套服务功能。<code>partition</code>的<code>Token</code>(或者说<code>Index,Id</code>)将作为对应<code>vnode</code>进程的<code>id</code>标识。如下图所示</p>
+
+<p>多个<code>partition</code>可以挤在一个物理节点上。但是怎么挤是有严格要求的,我觉得看懂这个图的关键在 于:每一种颜色代表同一个物理节点;各个颜色按照固定的顺序循环。这保证了任意两个相邻的 <code>partition</code>肯定不在同一个物理节点上。因此<code>Dynamo Preference List</code>上的节点不会是同一个物理节点,也即一份数据的多份副本不会在同一个物理节点上了。(这里一个<code>物理节点指一个erlang虚拟机</code>,而不是一个实际的计算机)</p>
+
+<p><code>Riak Core</code>的基本原理是,通过一致性<code>hash</code>算法,系统要处理的数据(例如,KV要存储的业务数 据,或者要处理的用户请求会话)会被<code>riak_core</code>随机的均匀分布在环上的各个分区中, 对每个数 据的处理由该分区上的<code>vnode</code>进程负责。
+由于<code>hash</code>算法的特点,当我们要对某个数据集进行处理时,这个数据集会随机分布个不同的<code>partition</code>上,所以本质上是个数据并行的处理方式。</p>
+
+<ul>
+<li>2.<code>Riak Core</code>的设计:<code>partition</code>和<code>vnode</code></li>
+</ul>
+
+<p>按照<code>dynamo</code>的设计思想,要处理的数据将会随机均匀的分布在<code>dynamo ring</code>上,<code>Riak Core</code>进一步将这些数据又以<code>partition</code>为基本单元组织起来。对数据的处理将以<code>partition</code>为单元,通过<code>vnode</code>进程进行处理。数据的处理(或者叫服务)又有很多种,每类服务对应着一类<code>vnode</code>进程。</p>
+
+<p>显然,<code>partition</code>是整个分布式系统并发、复制和容错的基本单元:以<code>partition</code>为单元进行数据并发 处理;复制以<code>partition</code>为单元进行;容错也是如此:出错也以<code>partition/vnode</code>为单元出错。</p>
+
+<p>对于基于<code>Riak Core</code>的分布式应用系统开发来说,<code>vnode</code>是最重要的概念,简单的说,每个<code>vnode</code>进程负责一份<code>partition</code>上数据的处理,数据处理逻辑由用户负责实现。</p>
+
+<p>一份<code>partition</code>可以有多个<code>vnode</code>进程管理,所以上图中<code>a single partition/vnode</code>应该是<code>a single partition with its assorted vnodes</code>。</p>
+
+<p><strong>(用<code>riak_core_node_watcher:services()</code>可以察看应用系统中有哪些<code>vnode</code>服务)。</strong></p>
+
+<p>例子写道例如,对<code>riak</code>这个<code>NoSQL</code>数据库来说,最重要的服务是存储,在<code>riak_kv_vnode</code>模块中实现。模块实现了<code>riak_core_vnode</code>接口(实现了<code>riak_core_vnode behaviour</code>的回调函数)。</p>
+
+<ul>
+<li>3.此外<code>riak</code>还有两类重要的服务:</li>
+</ul>
+
+<p><code>riak</code>的<code>mapreduce</code>基于<code>riak_pipe</code>实现,其<code>vnode</code>对应着<code>riak_pipe_vnode</code>模块。</p>
+
+<p><code>riak</code>还提供了<strong>二级索引搜索(<code>riak_search</code>)</strong>服务,其<code>vnode</code>对应着<code>riak_search_vnode</code>模块。</p>
+
+<p>而一个实际的应用系统可能在功能上要比<code>NoSQL</code>数据库更多,它需要根据业务提供各种各样的服务,因此在<code>vnode</code>种类上就显得丰富多彩。比如<code>rts</code>实时日志统计这样一个例子就有两类<code>vnode: riak_core_entry_vnode</code>和<code>riak_core_stat_vode</code>,前者记录它负责的那份<code>partition</code>的所有数据, 后者统计它负责的那份<code>partition</code>的所有数据。</p>
+
+<h2 id="riak-core-依赖注入-loc">riak core 依赖注入 loC</h2>
+
+<h4 id="riak-core-vnode-behaviour-用户处理逻辑的实现接口">riak_core_vnode behaviour 用户处理逻辑的实现接口</h4>
+
+<p><code>Riak Core</code>为提供了一个<code>riak_core_vnode</code>回调模块作为用户实现业务逻辑的接口。</p>
+
+<p><code>riak_core_vnode</code>有两个作用:</p>
+
+<ul>
+<li><p>1.作为erlang behaviour提供回调函数实现接口,用户在回调函数中实现业务逻辑;</p></li>
+
+<li><p>2.作为容器进程运行实现上述接口的用户模块,具体来讲它将作为一个基于gen_fsm的有限状态机进程运行。
+也就是说,<code>riak_core_vnode</code>是作为一个容器以<code>erlang</code>进程的形式运行,而用户的业务逻辑 栖身于容器中。(BTW:<code>gen_server/gen_fsm</code>都是这种设计和运行模式。)
+我想这是一种典型的<code>IoC</code>(依赖注入)设计:系统将用户实现的功能注入到<code>Riak Core</code>系统 中,由此构建出基于<code>Riak Core</code>的分布式应用系统。困难的<code>dynamo</code>分布式实现交给<code>Riak Core</code>完成,用户只关心业务逻辑的实现就行了。</p></li>
+</ul>
+
+<h4 id="业务逻辑的实现和其他">业务逻辑的实现和其他</h4>
+
+<p>主要是实现<code>riak_core_vnode behaviour</code>的接口回调函数。除了业务逻辑的实现,还设计到 数据的转移等。</p>
+
+<p><code>Riak Core</code>将<code>partition</code>上的数据处理操作抽象出来,由用户通过<code>riak_core_vnode behaviour</code>的回调函数实现,<code>vnode</code>的回调函数分为以下几类:</p>
+
+<ul>
+<li><p><code>vnode</code>进程生命周期管理,在<code>vnode</code>进程诞生和毁灭时将被调用的回调函数<code>init/1</code>, <code>terminate/2</code></p></li>
+
+<li><p>对<code>vnode</code>进程负责的<code>partition</code>上数据的处理,当传来对该<code>partition</code>上的数据继续处理的命 令时,由回调函数<code>handle_command/3</code>负责处理。例如,如果对数据的处理是存储,那么无非是<code>get/put</code>之类的命令,这些命令的格式(协议)都是由用户自己定义并实现的。</p></li>
+
+<li><p>当集群中增/减物理节点时,或者某个宕掉的物理节点恢复时,就需要对<code>partition</code>进行<code>handoff</code>的处理,其核心是对数据的搬运,它包括一组回调函数
+<code>(is_empty/1, delete/1, handle_handoff_command/3, handoff_starting/2, handoff_cancelled/1, handoff_finished/2, handle_handoff_data/2, handle_handoff_data/2, encode_handoff_item/2 )</code></p></li>
+
+<li><p>对进程错误的处理:与该<code>vnode</code>相关的进程如果出错会调用回调函数<code>handle_exit</code></p></li>
+
+<li><p><code>Covering</code>:覆盖整个<code>ring</code>空间数据的特殊命令,例如对一段连续范围的搜索命令。某个连 续的数据集在<code>hash</code>后有可能会落到所有的<code>partition</code>。</p></li>
+</ul>
+
+<h4 id="业务逻辑的注入过程">业务逻辑的注入过程</h4>
+
+<p>我们的分布式数据处理系统作为一个<code>OTP application</code>发布。在<code>application</code>中实现了处理系 统的启动,以及业务逻辑的注入。</p>
+
+<p><code>application</code>启动时会启动<code>supervisor</code>,后者监控着<code>riak_core_vnode_master</code>子进程 (<code>riak_core_vnode_master</code>是一个<code>gen_server</code>),参数配制成实现用户逻辑的定制<code>vnode</code>模块,从而实现业务逻辑注入。</p>
+
+<blockquote>
+<p>riak_core_vnode_master可看成是运行着vnode的容器.</p>
+</blockquote>
+
+<p>【业务逻辑的注入】</p>
+
+<pre><code class="language-erlang">
+    -module(rts_sup).
+    -behaviour(supervisor).
+    %% API -export([start_link/0]).
+    %% Supervisor callbacks -export([init/1]).
+    start_link() -&gt;
+        supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+    init(_Args) -&gt;
+        VMaster = { rts_vnode_master,
+        {riak_core_vnode_master, start_link, [rts_vnode]}, permanent, 5000, worker,     [riak_core_vnode_master] },
+        Entry = { rts_entry_vnode_master,
+        {riak_core_vnode_master, start_link, [rts_entry_vnode]},
+        permanent, 5000, worker, [riak_core_vnode_master] },
+        Stat = { rts_stat_vnode_master,
+        {riak_core_vnode_master, start_link, [rts_stat_vnode]},
+        permanent, 5000, worker, [riak_core_vnode_master] },
+        {ok,{{one_for_one, 5, 10},
+            [VMaster, Entry, Stat]}}.
+</code></pre>
+
+<p>有几种执行特定分区上业务逻辑的API方法,都是<code>riak_core_vnode_master</code>模块提供的,这 些函数的参数都是三个,分别是: <strong>IdxNode, Msg, VMasterMod</strong></p>
+
+<ul>
+<li>1.同步发送</li>
+</ul>
+
+<p><code>sync_command(IndexNode, Msg, VMaster)</code></p>
+
+<ul>
+<li>2.异步发送</li>
+</ul>
+
+<p><code>riak_core_vnode_master:sync_spawn_command(IndexNode, ping, rts_vnode_master)</code></p>
+
+<p>还有一个比较特殊<code>command</code>函数,它有两种
+一种一上述两类相似,直接向vnode同步发送命令: <code>riak_core_vnode_master:command(IdxNode,
+{entry, Client, Entry} = Msg, rts_entry_vnode_master = VMaster)</code>.</p>
+
+<p>一种向<code>PreList</code>里的所有节点发送<code>command</code>命令: <code>command(Preflist, Msg, VMaster)</code>
+<code>IdxNode</code>是<code>{Index, Node}</code>这样的<code>tuple</code>,其中<code>Index</code>是<code>partition</code>分区的<code>id</code>号,<code>Node</code>是分区所 在的节点,知道了<code>Node</code>和<code>rts_entry_vnode_master</code>,就能得到<code>vnode</code>进程<code>Pid</code>,通过发送事件调用相关业务逻辑:
+    <code>gen_fsm:send_event(Pid, make_request(Msg, Sender, Index));</code></p>
+
+<p><em>IndexNode的计算</em>:</p>
+
+<ul>
+<li><p>用<code>riak_core_util:chash_key/1</code>函数计算hash值,参数是一个含两个二进制数据的<code>tuple</code>
+<code>DocIdx = riak_core_util:chash_key({&lt;&lt;&quot;ping&quot;&gt;&gt;, term_to_binary(now())}),</code></p></li>
+
+<li><p>通过哈希值得到<code>Preflist,Preflist</code>的长度可以指定:
+<code>PrefList = riak_core_apl:get_primary_apl(DocIdx, 1, rts).</code></p></li>
+</ul>
+
+<p>最后得到<code>IndexNod [{IndexNode, _Type}] = PrefList</code></p>
+
+<p><em>BTW: 应用启动过程</em></p>
+
+<pre><code class="language-erlang">- module(rts_app). 
+-behaviour(application).
+%% Application callbacks -export([start/2, stop/1]).
+start(_StartType, _StartArgs) -&gt; 
+    case rts_sup:start_link() of
+        {ok, Pid} -&gt;
+            ok = riak_core:register_vnode_module(rts_vnode), 
+            ok = riak_core_node_watcher:service_up(rts, self()),
+            ok = riak_core:register_vnode_module(rts_entry_vnode),
+            ok = riak_core_node_watcher:service_up(rts_entry, self()),
+            ok = riak_core:register_vnode_module(rts_stat_vnode), 
+            ok = riak_core_node_watcher:service_up(rts_stat, self()),
+            EntryRoute = {[&quot;rts&quot;, &quot;entry&quot;, client], rts_wm_entry, []}, 
+            webmachine_router:add_route(EntryRoute),
+        {ok, Pid}; {error, Reason} -&gt;
+            {error, Reason} 
+    end.
+
+stop(_State) -&gt; 
+    ok.
+</code></pre>
+
+<h2 id="riack-core-系统的数据的分布和处理步骤">Riack Core 系统的数据的分布和处理步骤</h2>
+
+<p>从原理上讲,<code>Riak Core</code>通过<code>hash</code>算法将数据随机均匀的分布在一个环上,数据的hash值也 就是在环上的位置(源码中常用<code>Index</code>表示),知道了<code>Index</code>就知道了对应的分区<code>partition</code>, 知道了分区就知道了对应的管理节点。知道了这个节点我们可以向其发送对应的处理命令:如 取出这块数据、修改这块数据、对这块数据进行计算等等。
+在这样的系统上处理数据的步骤如下:</p>
+
+<ul>
+<li>1)计算数据在环上的位置;</li>
+<li>2)计算这个位置对应分区<code>partition</code>的管理节点;</li>
+<li>3)向这个(些)节点发送处理命令</li>
+</ul>
+
+<p>对环上分布在不同节点上的这些数据的操作可以并发的进行,因此<code>Riak Core</code>本质上还是一个 数据并行的分布式系统。</p>
+
+<p>以上是客户使用时的处理过程(或步骤)。而开发人员在基于<code>Riak Core</code>构建分布式系统时主 要面临两个问题:</p>
+
+<ul>
+<li>1.数据如何分布:Riak Core通过某种hash算法将数据随机均匀的分布在一个环上。选取 那种hash算法,如何hash,可以由开发人员自由选择。例如,如果数据有唯一key,那 么可以对key进行hash,具体来讲,riak这个kv 存储系统默认是对bucket+key做 hash。(当然riak也可以对不同的bucket配置不同的hash方式,包括hash算法和要 hash的数据)</li>
+<li>2.数据如何处理:也即节点能处理哪些命令,以及这些命令的实现。对数据的处理涉及到 系统的业务逻辑,这得由开发人员自己实现。例如对riak来说,主要的业务逻辑就是存 储和查找了。</li>
+</ul>
+
+<p><strong>数据如何分布</strong></p>
+
+<p>数据的分布是指如何将给定的数据映射到环上的位置(<code>Index</code>)。数据如何在环上分布可以由 我们自己自行决定,本文为了表述方便称之为“数据分布的哈希策略”,这包括两方面:</p>
+
+<ul>
+<li>1.哈希算法的选择:Riak Core默认的hash算法是SHA算法,当然我们也可以选择自己的 hash算法,不过实在没有这个必要。</li>
+<li>2.哈希的对象:hash函数接收一个对象参数,这个参数是一个含两个二进制数据的term;我们根据数据的特点自行确定term的组合方式,例如对于riak这样的key-value数据库,这个 term的值就是这样子: <code>{&lt;&lt;&quot;bucket&quot;, &quot;key&quot;&gt;&gt;}</code>
+实际上Riak Core提供的了两个hash函数,一个叫<code>chash_std_keyfun</code>,一个叫 <code>chash_bucketonly_keyfun</code>,缺省的是<code>chash_std_keyfun</code>函数。相同的是它们都采用了SHA 哈希算法,不同的是哈希对象的选取:</li>
+</ul>
+
+<pre><code class="language-erlang">chash_std_keyfun({Bucket, Key}) -&gt; chash:key_of({Bucket, Key}).
+chash_bucketonly_keyfun({Bucket, _Key}) -&gt; chash:key_of(Bucket).
+</code></pre>
+
+<p>可以看到,<code>has</code>h的对象不同,一个对<code>{Bucket,Key}</code>整体做hash,一个只对<code>Bucket</code>做hash, 他们都调用的<code>key_of</code>使用的是<code>SHA哈希算法</code>:</p>
+
+<pre><code class="language-erlang">-spec key_of(ObjectName :: term()) -&gt; index().
+key_of(ObjectName) -&gt;
+crypto:sha(term_to_binary(ObjectName)).
+</code></pre>
+
+<p>这些工作是通过Riak Core提供助手模块<code>riak_core_util</code>中的函数<code>chash_key</code>进行,一般在交给 <code>vnode_master</code>之前要预先计算好了数据在<code>ring上</code>的位置(Index)。</p>
+
+<pre><code class="language-elixir">@spec chash_key(BKey :: {binary(), binary()}) -&gt; chash:index() 
+
+chash_key({Bucket,Key}) -&gt;
+BucketProps = riak_core_bucket:get_bucket(Bucket),
+{chash_keyfun, {M, F}} = proplists:lookup(chash_keyfun, BucketProps), M:F({Bucket,Key}).
+</code></pre>
+
+<p>代码不是很直观,原因是中间插入了额外的逻辑,为了实现不同<code>bucket</code>可以有不同的<code>hash</code>策略。
+可以看到<code>chash_key</code>不做具体的<code>hash</code>计算,它只是调用了配置文件中设定的<code>hash</code>函数(用红色标注),换句话,我们可以自定义自己的hash函数,这个函数有唯一的参数,这个参数也是
+<code>{Bucket::binary(), Key::binary()}</code></p>
+
+<ul>
+<li><strong>数据的处理步骤 在解决了数据如何分布的问题后,再来看看如何使用:</strong></li>
+</ul>
+
+<p>数据处理步骤中对应的第1步,计算数据在环上的位置,Riak Core提供了对应的API,及函数 <code>riak_core_util:chash_key/1</code>.</p>
+
+<p>以riak这个NoSQL数据库为例,它是通过对数据所在的bucket以及数据的key做hash计算得 到数据的分布节点的(即默认的</p>
+
+<p><code>chash_std_keyfun):</code></p>
+
+<p><code>BKey={Bucket, Key}</code></p>
+
+<p><code>DataIdx = riak_core_util:chash_key(BKey),</code> <code>DataIdx</code>就是根据数据的分布策略得到的该数据在环上的位置。</p>
+
+<p>数据处理步骤中对应的第2步,计算这个位置对应分区<code>partition</code>的管理节点: 根据环上位置就可以得到对于的节点:
+<code>PrefList = riak_core_apl:get_primary_apl(DataIdx, 1, rts)</code>,
+<code>IdxNode = hd(PrefList)</code>, % 数据分布的第一个节点</p>
+
+<p>数据处理步骤中对应的第3步, 向这个(些)节点发送处理命令 知道了数据分布的节点,就可以给该节点发送命令了。
+<code>PrefList = riak_core_apl:get_primary_apl(DataIdx, 1, rts),</code>
+<code>IdxNode = hd(PrefList),</code> % 数据分布的第一个节点 <code>riak_core_vnode_master:command(IdxNode, ...</code> % 在数据分布节点上进行数据处理</p>
+
+<p>一个完整的例子:<code>rts</code>这个例子中的<code>ping</code>,使用的是根据当前时间数据计算出分布的节点,然 后</p>
+
+<ul>
+<li><p>1.<code>DataIdx = riak_core_util:chash_key({&lt;&lt;&quot;ping&quot;&gt;&gt;, term_to_binary(now())}),</code></p></li>
+
+<li><p>2.<code>PrefList = riak_core_apl:get_primary_apl(DataIdx, 1, [i]rts[/i]),</code></p></li>
+
+<li><p>3.<code>IdxNode = hd(PrefList),</code> % 数据分布的第一个节点</p></li>
+
+<li><p>4.<code>riak_core_vnode_master:command(IdxNode, ...</code> % 在数据分布节点上进行数据处理</p></li>
+</ul>
+
+<p><strong><em>这样的效果是每次ping都ping到不同的节点上。</em></strong></p>
+
+<h2 id="业务逻辑的实现-数据如何处理">业务逻辑的实现： 数据如何处理</h2>
+
+<p>重点是数据如何处理:<code>Riak Core</code>提供了一个统一的接口以控制分布在ring上的数据的计算(操作)。</p>
+
+<p><strong><em>RiakCore的数据控制接口:</em></strong></p>
+
+<p>如前所述,每类<code>vnode</code>提供了一套服务,每个服务由在各个<code>partition</code>上的<code>vnode</code>进程组成, 这些进程实际分布在各个物理节点上。对于每一个物理节点,每类服务会有一个 <code>riak_core_vnode_master</code>进程提供统一的接口。实际上<code>riak_core_vnode_master</code>进程的主要作用是将<code>请求转发给对应的vnode进程进行处理</code>,无论这个<code>vnode</code>进程在<code>哪个物理节点上</code>。</p>
+
+<p><code>riak_core_vnode_master</code>模块是一个<code>gen_server</code>的实现,它对外提供了一套API。
+引用 用<code>OO</code>打个比方,如果将<code>riak_core_vnode_master</code>比作<code>OO</code>中的一个类,这些API相当于这个 类的<code>静态公共方法</code>,这些<code>静态公共方法</code>提供控制这个类的对象的<code>初始化、以及这些对象的控制等</code>,也就是说所有与这些对象打交道的操作统一通过这些静态公共方法进行。</p>
+
+<p>我们主要通过<code>riak_core_vnode_master</code>模块提供的API控制集群内的所有<code>vnode</code>进程,从而 对外提供数据处理服务,这些API有:</p>
+
+<ul>
+<li><code>start_vnode(VNodeModule)</code>函数:
+<br /></li>
+</ul>
+
+<p>启动<code>vnode_master</code>进程(一个<code>gen_server</code>进程) <code>并注入用户逻辑</code>,用户逻辑在<code>VNodeModule</code>参数指定的模块中实现。通过这种方式在启动时将用户的业务逻辑注入进来(类似IoC的构造器注入);</p>
+
+<ul>
+<li><code>get_vnode_pid(PartitionId, VNodeModule)</code>函数:</li>
+</ul>
+
+<p>获取某个<code>partition</code>上某类服务的<code>vnode</code>进程,<code>如果不存在则调用riak_core_vnode_sup</code>创建之(也就是说<code>vnode</code>进程是<strong><em><code>懒加载</code></em></strong>,不过全部挂在<code>riak_core_vnode_sup</code>这个<code>supervisor</code>树下);
+- 用<code>command/3,sync_command/3,sync_spawn_command/3</code>:会将请求命令 (<code>command</code>)发给对应的<code>vnode</code>进程,最后调用用户实现的<code>vnode</code>模块中的 <code>handle_command</code>回调函数处理;</p>
+
+<ul>
+<li><code>converage/5</code>函数:稍候研究 <code>to be continue...</code></li>
+</ul>
+
+<p>可以看到<code>riak_core_vnode_master</code>的主要任务是转发用户请求,可以异步转发,也可以同步转发。</p>
+
+<p>如何转发:根据请求的数据所在的<code>partition</code>,可以算出<code>partition</code>所在的物理节点和对应的vnode进程Pid,知道了物理节点和vnode进程的pid后就可以向此物理节点上的vnode进程直接发送消息。
+不过,<code>vnode</code>进程的生成不由<code>vnode_master</code>直接负责,所有<code>vnode</code>进程的创建实际上由一个专门的
+<code>riak_core_vnode_sup</code>模块负责(这可模块实际上是一个<code>simple_one_for_one</code>策略的<code>supervisor</code>,这种启动策略使它只能管理同一类erlang进程,不过它的特点是能动态的创建无数的相同类型的子进程,见<code>supervision principles</code>)。vnode进程本质上是一个<code>gen_fsm</code>状态机(可以看到有一个<code>active</code>状态)</p>
+
+<p><strong><em>数据处理:一个完整的例子</em></strong></p>
+
+<p><code>try-try-try</code>的例子代码要简单许多,这个例子是随机ping一个分区vnode,返回结果是该分区 的ID和物理节点,整个过程如下:</p>
+
+<pre><code class="language-erlang">ping() -&gt;
+    DocIdx = riak_core_util:chash_key({&lt;&lt;&quot;ping&quot;&gt;&gt;, term_to_binary(now())}), 
+    
+    PrefList = riak_core_apl:get_primary_apl(DocIdx, 1, rts),
+
+    [{IndexNode, _Type}] = PrefList,
+
+    riak_core_vnode_master:sync_spawn_command(IndexNode, ping, rts_vnode_master).
+</code></pre>
+
+<p><code>riak_kv</code>中的例子要复杂很多,不过基本过程还是类似的.</p>
+
+<p><strong><em>其它</em></strong></p>
+
+<p>在每个物理节点上会为<code>每一类vnode</code>启动一个<code>riak_core_vnode_master</code>进程,该进程控制这个物理节点上的所有<code>同类vnode进程</code>(通过上面提到的API)。所有这些 <code>riak_core_vnode_master</code>进程的注册遵循一套约定的命名规则:
+  <strong><code>master</code>进程的注册名就是该类<code>vnode</code>的模块名字加上尾缀&rdquo;<code>_master</code>&ldquo;。例如应用系统实现了一类<code>vnode</code>,其模块叫 <code>rts_stat_vnode</code>,对应的<code>riak_core_vnode_master</code>进程名就在erlang中注册 为“<code>rts_stat_vnode_master</code>”。</strong></p>
+
+<p>可以通过<code>riak_core:vnode_modules()</code>察看当前有多少<code>vnode</code>模块。(它实际上反映了通过 <code>riak_core:register_mod/3</code>注册的模块,该函数将<code>vnode</code>模块信息放置在<code>application</code>环境 中。许多函数调用了它,例如<code>riak_core:register_vnode_module/1</code>)</p>
+
+<p><code>vnode</code>进程是懒加载的,由<code>riak_core_vnode_sup</code>这个<code>supervisor</code>负责动态创建<code>vnode</code>进程 (可以通过<code>supervisor:which_children(riak_core_vnode_sup)</code>.察看当前的所有 <code>vnode_worker</code>进程)。</p>
+
+<p>浏览<code>rts</code>实时日志统计的代码有助于了解基于<code>riak_core</code>的应用系统的工作方式。 应用系统的功能由<code>rts</code>这个<code>application</code>实现,在<code>rts_app</code>这个<code>application behaviour</code>中可以看到它启动了<code>rts_sup</code>,成功后注册了<code>3类vnode</code>,并作为服务启动查看图片附件</p>
+
+<h2 id="常用的api">常用的API</h2>
+
+<h3 id="常用api之与ring-节点有关的api">常用API之与ring、节点有关的API</h3>
+
+<ul>
+<li><code>riak_core:vnode_modules()</code> 查询安装的vnode模块</li>
+<li><code>riak_core_ring_manager:get_raw_ring()</code> 获取整个ring环,包括partition及其节点</li>
+<li><code>riak_core_apl:get_apl(HashKey, N, Service)</code> 得到HashKey对应的Preference List</li>
+<li><code>riak_core_ring:preflist(HashKey, Ring)</code> 得到HashKey在环Ring上的Preference List</li>
+</ul>
+
+<h3 id="常用application管理api">常用application管理API</h3>
+
+<p>erlang本身提供的application模块有许多API函数可用:</p>
+
+<ul>
+<li><code>aplication:loaded_applications/0</code> 察看当前有哪些应用已经装载</li>
+<li><code>aplication:which_applications/0</code> 察看当前有哪些应用已经启动</li>
+</ul>
+
+<p>erlang以application组织系统,application由模块组成,多个共同组成一个系统。 已装载的<code>application</code>并不意味着<strong>它已经启动</strong>,这一般是在<code>rel</code>( 也即<code>script</code> )文件中指定</p>
+
+<p>application又依赖其它applications,后者又依赖其它application。。。 例如
+A依赖B、C:这意味着A要正常启动,B、C要先启动, B又依赖X、Y:A要正常启动,Y、Z要先启动, C又依赖Y、Z:C要正常启动,Y、Z要先启动,
+以此类推。。。</p>
+
+<p>一般在每个应用对应的<code>.app</code>文件中,有个<code>applications</code>的配置,其值是个列表(list),这个 list就是该应用依赖的其它应用。在系统发布时(release),发布工具会自动将这个列表里的所以依赖应用都启动。</p>
+
+<p>如果不是作为发布(<code>release</code>),在开发过程中经常要<code>手动启动(application:start/1)</code>,但是这种启动是不会自动将列表中的依赖应用也启动的,会报如下错误:</p>
+
+<pre><code class="language-erlang">1&gt; application:which_applications().
+[{stdlib,&quot;ERTS CXC 138 10&quot;,&quot;1.18.1&quot;},
+{kernel,&quot;ERTS CXC 138 10&quot;,&quot;2.15.1&quot;}] 
+2&gt; application:start(xxx). {error,{not_started,lager}}
+</code></pre>
+
+<p>因此启动<code>xxx</code>应用之前要确保<code>xxx</code>的依赖应用<code>lager</code>先被启动(<code>application:start/1</code>),而<code>lager</code>应 用又依赖<code>compiler</code>和<code>syntax_tools</code>应用,因此都得按照依赖关系一一启动:</p>
+
+<pre><code class="language-erlang">3&gt; application:start(lager).
+{error,{not_started,compiler}}
+</code></pre>
+
+<p>在应用的<code>app</code>文件中会有一个<code>applications</code>属性,列出所有的依赖应用。</p>
+
+<pre><code class="language-erlang">4&gt; application:start(compiler).
+ok
+5&gt; application:start(lager). {error,{not_started,syntax_tools}} 
+6&gt; application:start(syntax_tools). ok
+7&gt; application:start(lager).
+18:40:11.591 [info] Application lager started on node nonode@nohost 
+ok
+8&gt; application:start(xxx).
+18:40:13.739 [info] Application xxx started on node nonode@nohost 
+ok
+</code></pre>
+
+<p>在实际开发过程中,这种依赖的一一启动是很枯燥的,<code>Riak Core</code>的<code>riak_core_util</code>模块提供了这种依赖应用的管理:
+<code>riak_core_util:start_app_deps/1</code> 这个函数检查应用依赖的其它应用,并确保所有依赖应用被启动。判断依赖应用<code>:app</code>文件中的<code>applications</code>属性。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/03/13/filename/>https://laohanlinux.github.io/2016/03/13/filename/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak/">
+                    #riak</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak-core/">
+                    #riak core</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/03/13/filename/" class="prev" rel="prev" title="udon_riak_core"><i class="iconfont icon-left"></i>&nbsp;udon_riak_core</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/03/13/filename/" class="next" rel="next" title="raft算法">raft算法&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

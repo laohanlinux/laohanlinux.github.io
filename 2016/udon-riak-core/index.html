@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2015/muduo-net-library-chapter-3/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/riak-core-guide/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/udon-riak-core/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           udon_riak_core | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="udon_riak_core | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "udon_riak_core",
+    "headline" : "udon_riak_core",
+    "description" : "使用riak core 来写分布式存储系统.",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-13 22:10:52 &#43;0000 UTC",
+    "dateModified" : "2016-03-13 22:10:52 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/udon-riak-core/",
+    "wordCount" : "1159",
+    "keywords" : [ "riak","riak core", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">udon_riak_core</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-13 itemprop="datePublished">March 13, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>最近要做文件分片传输的接口，起初是想分片容灾的，有不想借助第三方存储中间状态，有可以自动扩展接口服务能力，是试下一下，<code>riak core</code></p>
+
+<p>刚好可以满足这些需求，<code>dynamo</code>果然是个好东西。 好吧，最后还是没采用这个架构做，至于原因嘛。。。。。。。。。</p>
+
+<p>不过也重新认识了<code>riak core</code>的实现方式。下面参照<code>udon</code>这个项目，做一个小总结。</p>
+
+<p>github: <a href="https://github.com/mrallen1/udon" rel="nofollow noreferrer" target="_blank">https://github.com/mrallen1/udon</a></p>
+
+<p>udon: a distributed static file web server</p>
+
+<p>至于riak core 不太熟的同学，可以看一下博客前面关于riak core 的介绍，那些介绍我也是从网上收集回来的，特别是翻译那基本，有很多问题，</p>
+
+<p>建议大家看英文版的。</p>
+
+<p>这里主要介绍一下<code>udon</code>的<code>udon_vnode.erl</code>模块， 这也是<code>riak core</code> 的主要回调模块。</p>
+
+<p>主要模块函数：</p>
+
+<ul>
+<li>handle_command
+<code>handle_command</code> 是vnode的回调模块，会根据用户的命令来做相应的回调，如果只是把<code>riak core</code>作为计算节点来用，那么其实实现这个函数就</li>
+</ul>
+
+<p>已经可以满足我们的要求了，主要的业务处理也是这里。</p>
+
+<p><code>udon</code> 实现了3个命令的回调-<code>ping</code>, <code>store</code>, <code>fetch</code>， 其中主要是<code>store</code> 和<code>fetch</code>。 <code>store</code>实现存储的业务，根据key/value来存储一个文件，
+key可以看做文件路径，value就是文件的内容，把他们以hash的值存储为<code>hash</code>和<code>hash.meta</code>文件， 并且文件的内容还有版本控制；<code>fetch</code>会根据key来获取value。</p>
+
+<ul>
+<li><p>handle_handoff_command
+<code>handle_handoff_command</code>也是一个主要的模块，这个模块会在节点发生异常时被调用，如节点的<code>down 机</code>，增加节点，删除节点，也就是说集群由于某种原因，
+本属于这个节点的数据，现在又不属于它了，那么这函数会被调用，这个函数会把这些数据搬到相应的节点中去。
+<code>handle_handoff_command</code>主要是把这个vnode的全部数据检索出来，然后交给下一步处理。</p></li>
+
+<li><p>handoff_starting(TargetNode, State)
+如果返回<code>{true, State}</code>， 则表示开始搬运vnode的内容到TargetNode 中去。</p></li>
+
+<li><p>handoff_cancelled(State)
+如果传输过程中发生出错，这个函数也会被调用；可以使用这个函数撤销<code>handoff_starting</code>的任务。</p></li>
+
+<li><p>handoff_finished
+当所有的数据都被传输到TargetNode后，这个函数会被调用。</p></li>
+
+<li><p>encode_handoff_item(K,V)
+对要差传输的数据进行序列化操作， <code>udon</code>把V的内容进行了<code>encode</code></p></li>
+
+<li><p>handle_handoff_data()
+这个和<code>encode_handoff_item</code>相反，是一个反序列化操作，其实这个函数就是<code>TargetNode</code>接到数据的时候调用的函数，
+<code>udon</code>又把街道数据存储到<code>TargetNode</code>中去了。</p></li>
+
+<li><p>is_empty(State)
+如果返回{false, State} 表示该vnode没有数据传输，如果是{true, State}则表示有数据要传输。</p></li>
+
+<li><p>delete(State) -&gt;
+如果已经传递完数据了，那么该函数将会被调用，主要写一些清理的工作。
+{ok, State}.</p></li>
+
+<li><p>handle_coverage
+迭代输出所有的数据， <code>udon</code>没有实现这个功能，可以参照<code>riak kv</code>的实现方式来实现该功能。</p></li>
+
+<li><p>handle_exit</p></li>
+</ul>
+
+<p><em>详细的内容，建议看前面的riak core的详细教程</em></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/udon-riak-core/>https://laohanlinux.github.io/2016/udon-riak-core/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak/">
+                    #riak</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak-core/">
+                    #riak core</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2015/muduo-net-library-chapter-3/" class="prev" rel="prev" title="muduo net library chapter 3"><i class="iconfont icon-left"></i>&nbsp;muduo net library chapter 3</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/riak-core-guide/" class="next" rel="next" title="riak core 导读">riak core 导读&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

@@ -1,0 +1,2579 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2017/03/12/filename/" />
+  <link rel="next" href="https://laohanlinux.github.io/2019/03/15/filename/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2017/09/11/filename/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           raft源码分析 | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="raft源码分析 | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "raft源码分析",
+    "headline" : "raft源码分析",
+    "description" : "raft 源码分析.",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-09-11 12:08:30 &#43;0000 UTC",
+    "dateModified" : "2017-09-11 12:08:30 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2017/09/11/filename/",
+    "wordCount" : "11369",
+    "keywords" : [ "raft","raft source analyse", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">raft源码分析</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-09-11 itemprop="datePublished">September 11, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<p>这篇文章主要是从源码的级别来看<code>Raft</code>算法的实现。在网上找到了一个简化版：<a href="https://github.com/peterbourgon/raft" rel="nofollow noreferrer" target="_blank">源码</a>.
+一个<code>Server</code>结构代表<code>Raft</code>网络中的一个<code>节点</code>。节点会创建一个<code>Server</code>，并且通过<code>端(peers)</code>接口的方式暴露给其他节点。
+传输层采用<code>http</code>包装，<code>端对端</code>通信通过<code>rest http</code>方式。</p>
+
+<pre><code class="language-sh">|http transport| ---&gt; |peers| ---&gt; |server|
+</code></pre>
+
+<h1 id="项目简介">项目简介</h1>
+
+<h2 id="节点的增加和删除">节点的增加和删除</h2>
+
+<p>支持动态增删节点，采用一个简单的<code>共识</code>算法(节点更新时，接受配置更新的节点需要超过1/2，即新集群要大于旧集群)。</p>
+
+<h2 id="roadmap">roadmap</h2>
+
+<ul>
+<li>leader选举</li>
+<li>日志复制</li>
+<li>单元测试</li>
+<li>http 传输层</li>
+<li>配置变更</li>
+</ul>
+
+<p>除此之外，还有一些是未完成的
+- net/rpc 传输层或者其他类型的传输层
+- 日志压缩
+- 快照安装以及恢复
+- 完整的<code>demo</code>应用
+- 一些比较复杂的测试用例
+  具体细节，看下面的代码分析。</p>
+
+<h1 id="源码分析">源码分析</h1>
+
+<h2 id="源码目录结构">源码目录结构</h2>
+
+<pre><code class="language-sh">├── JOINT-CONSENSUS.md
+├── LICENSE
+├── README.md
+├── configuration.go // 配置
+├── example_test.go // demo
+├── log.go // 日志
+├── log_test.go // 日志测试模块
+├── peers.go // 端
+├── peers_test.go // 端模块
+├── rpc.go // rpc 对象模块
+├── server.go //  server模块
+├── server_internals_test.go // server内部测试模块
+├── server_test.go //  server测试模块
+├── transport.go // 传输层
+└── transport_test.go // 传输层模块
+</code></pre>
+
+<h2 id="主要的数据结构">主要的数据结构</h2>
+
+<h3 id="rpc-go">rpc.go</h3>
+
+<pre><code class="language-go">// 日志追加
+type appendEntriesTuple struct {
+        // 日志追加请求
+       	Request  appendEntries 
+       	// 应答通道
+       	Response chan appendEntriesResponse 
+}
+// 投票选举
+type requestVoteTuple struct {
+        // 选举内容
+       	Request  requestVote 
+       	// 选举结构应答
+       	Response chan requestVoteResponse
+}
+
+// appendEntries represents an appendEntries RPC.
+// 日志追加-实体
+type appendEntries struct {
+        // 任期号
+       	Term         uint64     `json:&quot;term&quot;` 
+   	    // leader 标识
+       	LeaderID     uint64     `json:&quot;leader_id&quot;` 
+   	    // 前一个日志索引
+       	PrevLogIndex uint64     `json:&quot;prev_log_index&quot;` 
+       	// 前一个日志任期号
+       	PrevLogTerm  uint64     `json:&quot;prev_log_term&quot;` 
+       	// 要追加的实体数组-支持批量追加
+       	Entries      []logEntry `json:&quot;entries&quot;` 
+       	// 已经committed的缩影
+       	CommitIndex  uint64     `json:&quot;commit_index&quot;` 
+}
+
+// appendEntriesResponse represents the response to an appendEntries RPC.
+// 日志追加应答
+type appendEntriesResponse struct {
+        // 应答节点的任期号
+       	Term    uint64 `json:&quot;term&quot;` 
+       	// 是否追加成功
+       	Success bool   `json:&quot;success&quot;` 
+       	// 失败的原因
+       	reason  string 
+}
+
+// requestVote represents a requestVote RPC.
+// 投票请求实体
+type requestVote struct {
+         // 发起者的任期号 
+       	Term         uint64 `json:&quot;term&quot;`
+   	    // 发起者的id
+       	CandidateID  uint64 `json:&quot;candidate_id&quot;`
+   	    // 发起者的最新条目
+       	LastLogIndex uint64 `json:&quot;last_log_index&quot;`
+   	    // 发起者的最新任期号
+       	LastLogTerm  uint64 `json:&quot;last_log_term&quot;`
+}
+
+// requestVoteResponse represents the response to a requestVote RPC.
+// 投票应答
+type requestVoteResponse struct {
+        // 应答者任期号
+       	Term        uint64 `json:&quot;term&quot;`
+   	    // 应答结果，true赞同，false反对
+       	VoteGranted bool   `json:&quot;vote_granted&quot;`
+        // 反对原因
+       	reason      string
+}
+</code></pre>
+
+<h3 id="log-go">log.go</h3>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/raft-rs.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<pre><code class="language-go">var (
+        // 任期号太小
+       	errTermTooSmall    = errors.New(&quot;term too small&quot;)
+       	// 日志索引太小
+       	errIndexTooSmall   = errors.New(&quot;index too small&quot;)
+       	// 日志缩影太大
+       	errIndexTooBig     = errors.New(&quot;commit index too big&quot;)
+       	// 日志条目内容已损坏
+       	errInvalidChecksum = errors.New(&quot;invalid checksum&quot;)
+	   // 无效的命令
+       	errNoCommand       = errors.New(&quot;no command&quot;)
+       	// 错误的日志索引
+       	errBadIndex        = errors.New(&quot;bad index&quot;)
+       	// 错误任期号
+       	errBadTerm         = errors.New(&quot;bad term&quot;)
+)
+// 日志结构
+type raftLog struct {
+        // 日志读写锁
+       	sync.RWMutex
+       	// 日志存储接口
+       	store     io.Writer
+   	    // 日志镜像，现在存储于内存
+       	entries   []logEntry
+       	// 下一条日志commit索引
+       	commitPos int
+       	// &quot;操作&quot;的回调函数，这个函数比较重要，可以&quot;操作集合&quot;镜像，
+       	// 在快照时，只需要将&quot;结果&quot;快到存储层即可
+       	apply     func(uint64, []byte) []byte
+}
+
+func newRaftLog(store io.ReadWriter, apply func(uint64, []byte) []byte) *raftLog {
+       	l := &amp;raftLog{
+       		store:     store,
+       		entries:   []logEntry{},
+       		commitPos: -1, // no commits to begin with
+       		apply:     apply,
+       	}
+       	l.recover(store)
+       	return l
+}
+
+// recover reads from the log's store, to populate the log with log entries
+// from persistent storage. It should be called once, at log instantiation.
+// 日志恢复，当服务重启时，重建日志条目(一般重建都是居于于快照和日志的，可是这里没有实现快照，所以从日志中重建即可)
+// 1、这里的日志时commited之后的日志，所以重建时，commitPos也会更新
+// 2、重建日志条目，会调用apply函数，对日志进行处理，这个函数相当于&quot;状态机&quot;功能；如果有快照(相当于Redis 的RDB)，先将安装快照，再恢复日志(相当于Redis 的aof)
+func (l *raftLog) recover(r io.Reader) error {
+       	for {
+       		var entry logEntry
+       		switch err := entry.decode(r); err {
+       		case io.EOF:
+       			return nil // successful completion
+       		case nil:
+       			if err := l.appendEntry(entry); err != nil {
+       				return err
+       			}
+       			l.commitPos++
+       			l.apply(entry.Index, entry.Command)
+       		default:
+       			return err // unsuccessful completion
+       		}
+       	}
+}
+
+// entriesAfter returns a slice of log entries after (i.e. not including) the
+// passed index, and the term of the log entry specified by index, as a
+// convenience to the caller. (This function is only used by a leader attempting
+// to flush log entries to its followers.)
+//
+// This function is called to populate an AppendEntries RPC. That implies they
+// are destined for a follower, which implies the application of the commands
+// should have the response thrown away, which implies we shouldn't pass a
+// commandResponse channel (see: commitTo implementation). In the normal case,
+// the raftLogEntries we return here will get serialized as they pass thru their
+// transport, and lose their commandResponse channel anyway. But in the case of
+// a LocalPeer (or equivalent) this doesn't happen. So, we must make sure to
+// proactively strip commandResponse channels.
+// 检索index之后的日志条目
+func (l *raftLog) entriesAfter(index uint64) ([]logEntry, uint64) {
+       	l.RLock()
+       	defer l.RUnlock()
+
+  		// 1.检索出index对应term以及在实体集合entries中的位置Pos
+       	pos := 0
+       	lastTerm := uint64(0)
+       	for ; pos &lt; len(l.entries); pos++ {
+       		if l.entries[pos].Index &gt; index {
+       			break
+       		}
+       		lastTerm = l.entries[pos].Term
+       	}
+
+       	a := l.entries[pos:]
+       	if len(a) == 0 {
+       		return []logEntry{}, lastTerm
+       	}
+		// 除去command Response channel
+       	return stripResponseChannels(a), lastTerm
+}
+
+func stripResponseChannels(a []logEntry) []logEntry {
+       	stripped := make([]logEntry, len(a))
+       	for i, entry := range a {
+       		stripped[i] = logEntry{
+       			Index:           entry.Index,
+       			Term:            entry.Term,
+       			Command:         entry.Command,
+       			commandResponse: nil,
+       		}
+       	}
+       	return stripped
+}
+
+// contains returns true if a log entry with the given index and term exists in
+// the log.
+// 判断是够包含{term, index}条目
+func (l *raftLog) contains(index, term uint64) bool {
+       	l.RLock()
+       	defer l.RUnlock()
+
+       	// It's not necessarily true that l.entries[i] has index == i.
+       	for _, entry := range l.entries {
+       		if entry.Index == index &amp;&amp; entry.Term == term {
+       			return true
+       		}
+       		if entry.Index &gt; index || entry.Term &gt; term {
+       			break
+       		}
+       	}
+       	return false
+}
+
+// 判断{term, index}是否为最新的日志条目，如果是,则将则将在其之后的日志清理掉,
+// 这个条目应该在[commit_index, last_index]范围内
+func (l *raftLog) ensureLastIs(index, term uint64) error {
+       	l.Lock()
+       	defer l.Unlock()
+
+       	// Taken loosely from benbjohnson's impl
+
+       	if index &lt; l.getCommitIndexWithLock() {
+       		return errIndexTooSmall
+       	}
+
+       	if index &gt; l.lastIndexWithLock() {
+       		return errIndexTooBig
+       	}
+
+       	// It's possible that the passed index is 0. It means the leader has come to
+       	// decide we need a complete log rebuild. Of course, that's only valid if we
+       	// haven't committed anything, so this check comes after that one.
+  		// 全部重建，前提是没有commited过任何的条目
+       	if index == 0 {
+       		for pos := 0; pos &lt; len(l.entries); pos++ {
+       			if l.entries[pos].commandResponse != nil {
+       				close(l.entries[pos].commandResponse)
+       				l.entries[pos].commandResponse = nil
+       			}
+       			if l.entries[pos].committed != nil {
+       				l.entries[pos].committed &lt;- false
+       				close(l.entries[pos].committed)
+       				l.entries[pos].committed = nil
+       			}
+       		}
+       		l.entries = []logEntry{}
+       		return nil
+       	}
+
+       	// Normal case: find the position of the matching log entry.
+       	pos := 0
+       	for ; pos &lt; len(l.entries); pos++ {
+       		if l.entries[pos].Index &lt; index {
+       			continue // didn't find it yet
+       		}
+       		if l.entries[pos].Index &gt; index {
+       			return errBadIndex // somehow went past it
+       		}
+       		if l.entries[pos].Index != index {
+       			panic(&quot;not &lt;, not &gt;, but somehow !=&quot;)
+       		}
+       		if l.entries[pos].Term != term {
+       			return errBadTerm
+       		}
+       		break // good
+       	}
+
+       	// Sanity check.
+        // ? 怎么可能出现这种情况？
+       	if pos &lt; l.commitPos {
+       		panic(&quot;index &gt;= commitIndex, but pos &lt; commitPos&quot;)
+       	}
+
+       	// `pos` is the position of log entry matching index and term.
+       	// We want to truncate everything after that.
+  		// 应为{term, index}是最新的了，所以将在其之后的所有条目给cut掉
+       	truncateFrom := pos + 1
+       	if truncateFrom &gt;= len(l.entries) {
+       		return nil // nothing to truncate
+       	}
+
+       	// If we blow away log entries that haven't yet sent responses to clients,
+       	// signal the clients to stop waiting, by closing the channel without a
+       	// response value.
+       	for pos = truncateFrom; pos &lt; len(l.entries); pos++ {
+       		if l.entries[pos].commandResponse != nil {
+       			close(l.entries[pos].commandResponse)
+       			l.entries[pos].commandResponse = nil
+       		}
+       		if l.entries[pos].committed != nil {
+       			l.entries[pos].committed &lt;- false
+       			close(l.entries[pos].committed)
+       			l.entries[pos].committed = nil
+       		}
+       	}
+
+       	// Truncate the log.
+       	l.entries = l.entries[:truncateFrom]
+
+       	// Done.
+       	return nil
+}
+
+// getCommitIndex returns the commit index of the log. That is, the index of the
+// last log entry which can be considered committed.
+// 获取最新的commited日志条目
+func (l *raftLog) getCommitIndex() uint64 {
+       	l.RLock()
+       	defer l.RUnlock()
+       	return l.getCommitIndexWithLock()
+}
+
+// 获取最新的日志条目
+func (l *raftLog) getCommitIndexWithLock() uint64 {
+       	if l.commitPos &lt; 0 {
+       		return 0
+       	}
+       	if l.commitPos &gt;= len(l.entries) {
+       		panic(fmt.Sprintf(&quot;commitPos %d &gt; len(l.entries) %d; bad bookkeeping in raftLog&quot;, l.commitPos, len(l.entries)))
+       	}
+       	return l.entries[l.commitPos].Index
+}
+
+// lastIndex returns the index of the most recent log entry.
+func (l *raftLog) lastIndex() uint64 {
+       	l.RLock()
+       	defer l.RUnlock()
+       	return l.lastIndexWithLock()
+}
+
+func (l *raftLog) lastIndexWithLock() uint64 {
+       	if len(l.entries) &lt;= 0 {
+       		return 0
+       	}
+       	return l.entries[len(l.entries)-1].Index
+}
+
+// lastTerm returns the term of the most recent log entry.
+func (l *raftLog) lastTerm() uint64 {
+       	l.RLock()
+       	defer l.RUnlock()
+       	return l.lastTermWithLock()
+}
+
+func (l *raftLog) lastTermWithLock() uint64 {
+       	if len(l.entries) &lt;= 0 {
+       		return 0
+       	}
+       	return l.entries[len(l.entries)-1].Term
+}
+
+// appendEntry appends the passed log entry to the log. It will return an error
+// if the entry's term is smaller than the log's most recent term, or if the
+// entry's index is too small relative to the log's most recent entry.
+// 追加日志，注意此时还没有commit该条目
+func (l *raftLog) appendEntry(entry logEntry) error {
+       	l.Lock()
+       	defer l.Unlock()
+  		// 判定{entry.term, entry.index} &gt; {last_term, last_index}
+       	if len(l.entries) &gt; 0 {
+       		lastTerm := l.lastTermWithLock()
+       		if entry.Term &lt; lastTerm {
+       			return errTermTooSmall
+       		}
+       		lastIndex := l.lastIndexWithLock()
+       		if entry.Term == lastTerm &amp;&amp; entry.Index &lt;= lastIndex {
+       			return errIndexTooSmall
+       		}
+       	}
+
+       	l.entries = append(l.entries, entry)
+       	return nil
+}
+
+// commitTo commits all log entries up to and including the passed commitIndex.
+// Commit means: synchronize the log entry to persistent storage, and call the
+// state machine apply function for the log entry's command.
+// 注意:
+// 1、commit是一个后端任务，再此并没有&quot;1/2&quot;确认的概念(实际上是不是这样呢，这得去参考raft的论文了)
+// 2、apply函数是在commit过程中调用，而不是在append的时候调用
+// 3、apply相当于状态机函数，一般用户会将这些操作结果保存起来，用于快照
+
+// 比如，想实现一个kv存储，那么用户只要将kv相关的逻辑植入这个函数即可
+
+// committed &lt;= commitIndex &lt;= last_index
+func (l *raftLog) commitTo(commitIndex uint64) error {
+       	if commitIndex == 0 {
+       		panic(&quot;commitTo(0)&quot;)
+       	}
+
+       	l.Lock()
+       	defer l.Unlock()
+
+       	// Reject old commit indexes
+       	if commitIndex &lt; l.getCommitIndexWithLock() {
+       		return errIndexTooSmall
+       	}
+
+       	// Reject new commit indexes
+       	if commitIndex &gt; l.lastIndexWithLock() {
+       		return errIndexTooBig
+       	}
+
+       	// If we've already committed to the commitIndex, great!
+       	if commitIndex == l.getCommitIndexWithLock() {
+       		return nil
+       	}
+
+       	// We should start committing at precisely the last commitPos + 1
+       	pos := l.commitPos + 1
+       	if pos &lt; 0 {
+       		panic(&quot;pending commit pos &lt; 0&quot;)
+       	}
+
+       	// Commit entries between our existing commit index and the passed index.
+       	// Remember to include the passed index.
+       	for {
+       		// Sanity checks. TODO replace with plain `for` when this is stable.
+       		if pos &gt;= len(l.entries) {
+       			panic(fmt.Sprintf(&quot;commitTo pos=%d advanced past all log entries (%d)&quot;, pos, len(l.entries)))
+       		}
+       		if l.entries[pos].Index &gt; commitIndex {
+       			panic(&quot;commitTo advanced past the desired commitIndex&quot;)
+       		}
+
+       		// Encode the entry to persistent storage.
+       		if err := l.entries[pos].encode(l.store); err != nil {
+       			return err
+       		}
+
+       		// Forward non-configuration commands to the state machine.
+       		// Send the responses to the waiting client, if applicable.
+       		// 如果不是配置类型的Log，则调用apply function
+       		// 配置类型的Log，在其他地方处理
+       		if !l.entries[pos].isConfiguration {
+       			resp := l.apply(l.entries[pos].Index, l.entries[pos].Command)
+       			if l.entries[pos].commandResponse != nil {
+       				select {
+       				case l.entries[pos].commandResponse &lt;- resp:
+       					break
+				    // 问什么选取这个时间？？？
+       				case &lt;-time.After(maximumElectionTimeout()): // &lt;&lt; ElectionInterval
+       					panic(&quot;uncoöperative command response receiver&quot;)
+       				}
+       				close(l.entries[pos].commandResponse)
+       				l.entries[pos].commandResponse = nil
+       			}
+       		}
+
+       		// Signal the entry has been committed, if applicable.
+       		if l.entries[pos].committed != nil {
+       			l.entries[pos].committed &lt;- true
+       			close(l.entries[pos].committed)
+       			l.entries[pos].committed = nil
+       		}
+
+       		// Mark our commit position cursor.
+       		l.commitPos = pos
+
+       		// If that was the last one, we're done.
+       		if l.entries[pos].Index == commitIndex {
+       			break
+       		}
+       		if l.entries[pos].Index &gt; commitIndex {
+       			panic(fmt.Sprintf(
+       				&quot;current entry Index %d is beyond our desired commitIndex %d&quot;,
+       				l.entries[pos].Index,
+       				commitIndex,
+       			))
+       		}
+
+       		// Otherwise, advance!
+       		pos++
+       	}
+
+       	// Done.
+       	return nil
+}
+
+// logEntry is the atomic unit being managed by the distributed log. A log entry
+// always has an index (monotonically increasing), a term in which the Raft
+// network leader first sees the entry, and a command. The command is what gets
+// executed against the node state machine when the log entry is successfully
+// replicated.
+type logEntry struct {
+  		// 日志索引号
+       	Index           uint64        `json:&quot;index&quot;`
+       	// 任期号
+  		Term            uint64        `json:&quot;term&quot;` // when received by leader
+  		// 日志内容
+       	Command         []byte        `json:&quot;command,omitempty&quot;`
+  		// commited 通道
+       	committed       chan bool     `json:&quot;-&quot;`
+  		// 命令应答 通道
+       	commandResponse chan&lt;- []byte `json:&quot;-&quot;` // only non-nil on receiver's log
+  		// 日志类型标示
+       	isConfiguration bool          `json:&quot;-&quot;` // for configuration change entries
+}
+
+// encode serializes the log entry to the passed io.Writer.
+//
+// Entries are serialized in a simple binary format:
+//
+//     		 ---------------------------------------------
+//     		| uint32 | uint64 | uint64 | uint32 | []byte  |
+//     		 ---------------------------------------------
+//     		| CRC    | TERM   | INDEX  | SIZE   | COMMAND |
+//     		 ---------------------------------------------
+//
+
+// 序列化，大端
+func (e *logEntry) encode(w io.Writer) error {
+       	if len(e.Command) &lt;= 0 {
+       		return errNoCommand
+       	}
+       	if e.Index &lt;= 0 {
+       		return errBadIndex
+       	}
+       	if e.Term &lt;= 0 {
+       		return errBadTerm
+       	}
+
+       	commandSize := len(e.Command)
+       	buf := make([]byte, 24+commandSize)
+
+       	binary.LittleEndian.PutUint64(buf[4:12], e.Term)
+       	binary.LittleEndian.PutUint64(buf[12:20], e.Index)
+       	binary.LittleEndian.PutUint32(buf[20:24], uint32(commandSize))
+
+       	copy(buf[24:], e.Command)
+
+       	binary.LittleEndian.PutUint32(
+       		buf[0:4],
+       		crc32.ChecksumIEEE(buf[4:]),
+       	)
+
+       	_, err := w.Write(buf)
+       	return err
+}
+
+// 反序列化
+// decode deserializes one log entry from the passed io.Reader.
+func (e *logEntry) decode(r io.Reader) error {
+       	header := make([]byte, 24)
+
+       	if _, err := r.Read(header); err != nil {
+       		return err
+       	}
+
+       	command := make([]byte, binary.LittleEndian.Uint32(header[20:24]))
+
+       	if _, err := r.Read(command); err != nil {
+       		return err
+       	}
+
+       	crc := binary.LittleEndian.Uint32(header[:4])
+
+       	check := crc32.NewIEEE()
+       	check.Write(header[4:])
+       	check.Write(command)
+
+       	if crc != check.Sum32() {
+       		return errInvalidChecksum
+       	}
+
+       	e.Term = binary.LittleEndian.Uint64(header[4:12])
+       	e.Index = binary.LittleEndian.Uint64(header[12:20])
+       	e.Command = command
+
+       	return nil
+}
+</code></pre>
+
+<h3 id="peers-go">Peers.go</h3>
+
+<pre><code class="language-go">var (
+	errTimeout = errors.New(&quot;timeout&quot;)
+)
+// peers为节点的一个抽象，对外提供了一些访问接口，
+// 需要注意的地方是peers的序列化
+type Peer interface {
+  	// 返回server标示
+	id() uint64
+  	// 日志追加接口
+	callAppendEntries(appendEntries) appendEntriesResponse
+  	// 投票选举接口
+	callRequestVote(requestVote) requestVoteResponse
+  	// 命令调用
+	callCommand([]byte, chan&lt;- []byte) error
+  	// 集群配置变化接口
+	callSetConfiguration(...Peer) error
+}
+
+// localPeer is the simplest kind of peer, mapped to a server in the
+// same process-space. Useful for testing and demonstration; not so
+// useful for networks of independent processes.
+// 本地local peers，用于测试，不用经过网络
+type localPeer struct {
+	server *Server
+}
+
+func newLocalPeer(server *Server) *localPeer { return &amp;localPeer{server} }
+
+func (p *localPeer) id() uint64 { return p.server.id }
+
+// 追加日志
+func (p *localPeer) callAppendEntries(ae appendEntries) appendEntriesResponse {
+	return p.server.appendEntries(ae)
+}
+
+// 投票选举
+func (p *localPeer) callRequestVote(rv requestVote) requestVoteResponse {
+	return p.server.requestVote(rv)
+}
+
+// 命令
+// 实际调用为Leader
+func (p *localPeer) callCommand(cmd []byte, response chan&lt;- []byte) error {
+	return p.server.Command(cmd, response)
+}
+
+// 设置配置
+func (p *localPeer) callSetConfiguration(peers ...Peer) error {
+	return p.server.SetConfiguration(peers...)
+}
+
+// requestVoteTimeout issues the requestVote to the given peer.
+// If no response is received before timeout, an error is returned.
+// 投票
+func requestVoteTimeout(p Peer, rv requestVote, timeout time.Duration) (requestVoteResponse, error) {
+	c := make(chan requestVoteResponse, 1)
+	go func() { c &lt;- p.callRequestVote(rv) }()
+
+	select {
+	case resp := &lt;-c:
+		return resp, nil
+	case &lt;-time.After(timeout):
+		return requestVoteResponse{}, errTimeout
+	}
+}
+
+// peerMap is a collection of Peer interfaces. It provides some convenience
+// functions for actions that should apply to multiple Peers.
+type peerMap map[uint64]Peer
+
+// makePeerMap constructs a peerMap from a list of peers.
+func makePeerMap(peers ...Peer) peerMap {
+	pm := peerMap{}
+	for _, peer := range peers {
+		pm[peer.id()] = peer
+	}
+	return pm
+}
+
+// explodePeerMap converts a peerMap into a slice of peers.
+func explodePeerMap(pm peerMap) []Peer {
+	a := []Peer{}
+	for _, peer := range pm {
+		a = append(a, peer)
+	}
+	return a
+}
+
+func (pm peerMap) except(id uint64) peerMap {
+	except := peerMap{}
+	for id0, peer := range pm {
+		if id0 == id {
+			continue
+		}
+		except[id0] = peer
+	}
+	return except
+}
+
+func (pm peerMap) count() int { return len(pm) }
+
+// 法定人数
+func (pm peerMap) quorum() int {
+	switch n := len(pm); n {
+	case 0, 1:
+		return 1
+	default:
+		return (n / 2) + 1
+	}
+}
+
+// requestVotes sends the passed requestVote RPC to every peer in Peers. It
+// forwards responses along the returned requestVoteResponse channel. It makes
+// the RPCs with a timeout of BroadcastInterval * 2 (chosen arbitrarily). Peers
+// that don't respond within the timeout are retried forever. The retry loop
+// stops only when all peers have responded, or a Cancel signal is sent via the
+// returned canceler.
+func (pm peerMap) requestVotes(r requestVote) (chan voteResponseTuple, canceler) {
+	// &quot;[A server entering the candidate stage] issues requestVote RPCs in
+	// parallel to each of the other servers in the cluster. If the candidate
+	// receives no response for an RPC, it reissues the RPC repeatedly until a
+	// response arrives or the election concludes.&quot;
+
+	// construct the channels we'll return
+	abortChan := make(chan struct{})
+	tupleChan := make(chan voteResponseTuple)
+
+	go func() {
+		// We loop until all Peers have given us a response.
+		// Track which Peers have responded.
+		respondedAlready := peerMap{} // none yet
+
+		for {
+			notYetResponded := disjoint(pm, respondedAlready)
+			if len(notYetResponded) &lt;= 0 {
+				return // done
+			}
+
+			// scatter
+			tupleChan0 := make(chan voteResponseTuple, len(notYetResponded))
+			for id, peer := range notYetResponded {
+				go func(id uint64, peer Peer) {
+					resp, err := requestVoteTimeout(peer, r, 2*maximumElectionTimeout())
+					tupleChan0 &lt;- voteResponseTuple{id, resp, err}
+				}(id, peer)
+			}
+
+			// gather
+			for i := 0; i &lt; cap(tupleChan0); i++ {
+				select {
+				case t := &lt;-tupleChan0:
+					if t.err != nil {
+						continue // will need to retry
+					}
+					respondedAlready[t.id] = nil // set membership semantics
+					tupleChan &lt;- t
+
+				case &lt;-abortChan:
+					return // give up
+				}
+			}
+		}
+	}()
+
+	return tupleChan, cancel(abortChan)
+}
+
+// 选举应答
+type voteResponseTuple struct {
+	id       uint64
+	response requestVoteResponse
+	err      error
+}
+
+type canceler interface {
+	Cancel()
+}
+
+type cancel chan struct{}
+
+func (c cancel) Cancel() { close(c) }
+
+// 过滤peers
+func disjoint(all, except peerMap) peerMap {
+	d := peerMap{}
+	for id, peer := range all {
+		if _, ok := except[id]; ok {
+			continue
+		}
+		d[id] = peer
+	}
+	return d
+}
+</code></pre>
+
+<h3 id="server-go">server.go</h3>
+
+<p>这是最重要的一个逻辑</p>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/raft-consensus-1.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<p>节点配置变更</p>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/raft-state.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<pre><code class="language-go">// 角色分类  
+const (
+	follower  = &quot;Follower&quot;
+	candidate = &quot;Candidate&quot;
+	leader    = &quot;Leader&quot;
+)
+
+const (
+	unknownLeader = 0
+	noVote        = 0
+)
+
+// 选举时间随机范围[MinimumElectionTimeoutMS, maximumElectionTimeoutMS]
+var (
+	MinimumElectionTimeoutMS int32 = 250
+
+	maximumElectionTimeoutMS = 2 * MinimumElectionTimeoutMS
+)
+
+var (
+	errNotLeader             = errors.New(&quot;not the leader&quot;)
+	errUnknownLeader         = errors.New(&quot;unknown leader&quot;)
+	errDeposed               = errors.New(&quot;deposed during replication&quot;)
+	errAppendE#008000ntriesRejected = errors.New(&quot;appendEntries RPC rejected&quot;)
+	errReplicationFailed     = errors.New(&quot;command replication failed (but will keep retrying)&quot;)
+	errOutOfSync             = errors.New(&quot;out of sync&quot;)
+	errAlreadyRunning        = errors.New(&quot;already running&quot;)
+)
+
+// 重置选举时间
+func resetElectionTimeoutMS(newMin, newMax int) (int, int) {
+	oldMin := atomic.LoadInt32(&amp;MinimumElectionTimeoutMS)
+	oldMax := atomic.LoadInt32(&amp;maximumElectionTimeoutMS)
+	atomic.StoreInt32(&amp;MinimumElectionTimeoutMS, int32(newMin))
+	atomic.StoreInt32(&amp;maximumElectionTimeoutMS, int32(newMax))
+	return int(oldMin), int(oldMax)
+}
+
+// minimumElectionTimeout returns the current minimum election timeout.
+func minimumElectionTimeout() time.Duration {
+	return time.Duration(MinimumElectionTimeoutMS) * time.Millisecond
+}
+
+// maximumElectionTimeout returns the current maximum election time.
+func maximumElectionTimeout() time.Duration {
+	return time.Duration(maximumElectionTimeoutMS) * time.Millisecond
+}
+
+// 选举时间随机函数
+func electionTimeout() time.Duration {
+	n := rand.Intn(int(maximumElectionTimeoutMS - MinimumElectionTimeoutMS))
+	d := int(MinimumElectionTimeoutMS) + n
+	return time.Duration(d) * time.Millisecond
+}
+
+// broadcastInterval returns the interval between heartbeats (AppendEntry RPCs)
+// broadcast from the leader. It is the minimum election timeout / 10, as
+// dictated by the spec: BroadcastInterval &lt;&lt; ElectionTimeout &lt;&lt; MTBF.
+// 广播时间，用于Leader发送心跳广播，这个时间应小于选举时间；否则，非Leader节点会产生选举操作
+func broadcastInterval() time.Duration {
+	d := MinimumElectionTimeoutMS / 10
+	return time.Duration(d) * time.Millisecond
+}
+
+// protectedString is just a string protected by a mutex.
+type protectedString struct {
+	sync.RWMutex
+	value string
+}
+
+func (s *protectedString) Get() string {
+	s.RLock()
+	defer s.RUnlock()
+	return s.value
+}
+
+func (s *protectedString) Set(value string) {
+	s.Lock()
+	defer s.Unlock()
+	s.value = value
+}
+
+// protectedBool is just a bool protected by a mutex.
+type protectedBool struct {
+	sync.RWMutex
+	value bool
+}
+
+func (s *protectedBool) Get() bool {
+	s.RLock()
+	defer s.RUnlock()
+	return s.value
+}
+
+func (s *protectedBool) Set(value bool) {
+	s.Lock()
+	defer s.Unlock()
+	s.value = value
+}
+
+// Server is the agent that performs all of the Raft protocol logic.
+// In a typical application, each running process that wants to be part of
+// the distributed state machine will contain a server component.
+type Server struct {
+	id      uint64 // id of this server
+    // 节点状态
+	state   *protectedString
+    // 节点运行状态
+	running *protectedBool
+    // Leader节点标示
+	leader  uint64 
+    // 当前节点任期号
+	term    uint64 // &quot;current term number, which increases monotonically&quot;
+    // 0表示，当前节点还有投出自己的票;
+    // 非零表示节点已经投票了，值是获票者的标示ID
+	vote    uint64 // who we voted for this term, if applicable
+	log     *raftLog
+	config  *configuration
+
+    // 追加日志信道
+	appendEntriesChan chan appendEntriesTuple
+  	// 投票信道
+	requestVoteChan   chan requestVoteTuple
+  	// 命令信道
+	commandChan       chan commandTuple
+  	// 配置修改信道
+	configurationChan chan configurationTuple
+
+  	// 选举信道
+	electionTick &lt;-chan time.Time
+  	// 退出信道
+	quit         chan chan struct{}
+}
+
+// 状态机函数
+// 该函数不可并发执行，否则就达不到一致性状态机的效果(执行时间不要超过选举时间)
+
+// 正常来说，只有&quot;共识&quot;达成的时候，才会调用该函数，然后返回给客户端
+// 但是，在这里为了简化实现，&quot;共识“算法是放在后台任务操作的，客户端发送命令单Leader时，Leader马上
+// 应答客户端，并没有等”共识算法“的共识结果
+type ApplyFunc func(commitIndex uint64, cmd []byte) []byte
+
+// 初始化节点
+// 1. 构建日志 2.初始化为&quot;follower&quot;角色 3.leader为&quot;unknown&quot;
+func NewServer(id uint64, store io.ReadWriter, a ApplyFunc) *Server {
+	if id &lt;= 0 {
+		panic(&quot;server id must be &gt; 0&quot;)
+	}
+
+	// 5.2 Leader election: &quot;the latest term this server has seen is persisted,
+	// and is initialized to 0 on first boot.&quot;
+	log := newRaftLog(store, a)
+	latestTerm := log.lastTerm()
+
+	s := &amp;Server{
+		id:      id,
+		state:   &amp;protectedString{value: follower}, // &quot;when servers start up they begin as followers&quot;
+		running: &amp;protectedBool{value: false},
+		leader:  unknownLeader, // unknown at startup
+		log:     log,
+		term:    latestTerm,
+		config:  newConfiguration(peerMap{}),
+
+		appendEntriesChan: make(chan appendEntriesTuple),
+		requestVoteChan:   make(chan requestVoteTuple),
+		commandChan:       make(chan commandTuple),
+		configurationChan: make(chan configurationTuple),
+
+		electionTick: nil,
+		quit:         make(chan chan struct{}),
+	}
+	s.resetElectionTimeout()
+	return s
+}
+
+type configurationTuple struct {
+	Peers []Peer
+	Err   chan error
+}
+
+// 设置配置
+// 1. 服务启动时，先设置配置
+// 2. 集群变更时，设置配置
+func (s *Server) SetConfiguration(peers ...Peer) error {
+    // 节点刚启动
+	if !s.running.Get() {
+		s.config.directSet(makePeerMap(peers...))
+		return nil
+	}
+
+	err := make(chan error)
+    // 节点已经启动了
+	s.configurationChan &lt;- configurationTuple{peers, err}
+	return &lt;-err
+}
+
+// Start triggers the server to begin communicating with its peers.
+func (s *Server) Start() {
+	go s.loop()
+}
+
+// Stop terminates the server. Stopped servers should not be restarted.
+func (s *Server) Stop() {
+	q := make(chan struct{})
+	s.quit &lt;- q
+	&lt;-q
+	s.logGeneric(&quot;server stopped&quot;)
+}
+
+// 命令元组
+type commandTuple struct {
+  	// 命令内容
+	Command         []byte
+  	// 命令信道
+	CommandResponse chan&lt;- []byte
+	Err             chan error
+}
+
+// 命令接口
+func (s *Server) Command(cmd []byte, response chan&lt;- []byte) error {
+	err := make(chan error)
+	s.commandChan &lt;- commandTuple{cmd, response, err}
+	return &lt;-err
+}
+
+// 日志追加
+func (s *Server) appendEntries(ae appendEntries) appendEntriesResponse {
+	t := appendEntriesTuple{
+		Request:  ae,
+		Response: make(chan appendEntriesResponse),
+	}
+	s.appendEntriesChan &lt;- t
+	return &lt;-t.Response
+}
+
+// 投票
+func (s *Server) requestVote(rv requestVote) requestVoteResponse {
+	t := requestVoteTuple{
+		Request:  rv,
+		Response: make(chan requestVoteResponse),
+	}
+	s.requestVoteChan &lt;- t
+	return &lt;-t.Response
+}
+
+//                                  times out,
+//                                 new election
+//     |                             .-----.
+//     |                             |     |
+//     v         times out,          |     v     receives votes from
+// +----------+  starts election  +-----------+  majority of servers  +--------+
+// | Follower |------------------&gt;| Candidate |----------------------&gt;| Leader |
+// +----------+                   +-----------+                       +--------+
+//     ^ ^                              |                                 |
+//     | |    discovers current leader  |                                 |
+//     | |                 or new term  |                                 |
+//     | '------------------------------'                                 |
+//     |                                                                  |
+//     |                               discovers server with higher term  |
+//     '------------------------------------------------------------------'
+//
+//
+
+func (s *Server) loop() {
+	s.running.Set(true)
+	for s.running.Get() {
+		switch state := s.state.Get(); state {
+		case follower:
+			s.followerSelect()
+		case candidate:
+			s.candidateSelect()
+		case leader:
+			s.leaderSelect()
+		default:
+			panic(fmt.Sprintf(&quot;unknown Server State '%s'&quot;, state))
+		}
+	}
+}
+
+func (s *Server) resetElectionTimeout() {
+	s.electionTick = time.NewTimer(electionTimeout()).C
+}
+
+func (s *Server) logGeneric(format string, args ...interface{}) {
+	prefix := fmt.Sprintf(&quot;id=%d term=%d state=%s: &quot;, s.id, s.term, s.state.Get())
+	log.Printf(prefix+format, args...)
+}
+
+func (s *Server) logAppendEntriesResponse(req appendEntries, resp appendEntriesResponse, stepDown bool) {
+	s.logGeneric(
+		&quot;got appendEntries, sz=%d leader=%d prevIndex/Term=%d/%d commitIndex=%d: responded with success=%v (reason='%s') stepDown=%v&quot;,
+		len(req.Entries),
+		req.LeaderID,
+		req.PrevLogIndex,
+		req.PrevLogTerm,
+		req.CommitIndex,
+		resp.Success,
+		resp.reason,
+		stepDown,
+	)
+}
+
+func (s *Server) logRequestVoteResponse(req requestVote, resp requestVoteResponse, stepDown bool) {
+	s.logGeneric(
+		&quot;got RequestVote, candidate=%d: responded with granted=%v (reason='%s') stepDown=%v&quot;,
+		req.CandidateID,
+		resp.VoteGranted,
+		resp.reason,
+		stepDown,
+	)
+}
+
+func (s *Server) handleQuit(q chan struct{}) {
+	s.logGeneric(&quot;got quit signal&quot;)
+	s.running.Set(false)
+	close(q)
+}
+
+// 命令转发
+// 如果当前节点不是Leader节点，并且已存在Leader节点，则其会以&quot;代理“的角色，将命令转发至Leader节点
+func (s *Server) forwardCommand(t commandTuple) {
+	switch s.leader {
+	case unknownLeader:
+		s.logGeneric(&quot;got command, but don't know leader&quot;)
+		t.Err &lt;- errUnknownLeader
+
+	case s.id: // I am the leader
+		panic(&quot;impossible state in forwardCommand&quot;)
+
+	default:
+		leader, ok := s.config.get(s.leader)
+		if !ok {
+			panic(&quot;invalid state in peers&quot;)
+		}
+		s.logGeneric(&quot;got command, forwarding to leader (%d)&quot;, s.leader)
+		// We're blocking our {follower,candidate}Select function in the
+		// receive-command branch. If we continue to block while forwarding
+		// the command, the leader won't be able to get a response from us!
+		go func() { t.Err &lt;- leader.callCommand(t.Command, t.CommandResponse) }()
+	}
+}
+
+// 配置变更
+// 转发规则和命令转发一样
+func (s *Server) forwardConfiguration(t configurationTuple) {
+	switch s.leader {
+	case unknownLeader:
+		s.logGeneric(&quot;got configuration, but don't know leader&quot;)
+		t.Err &lt;- errUnknownLeader
+
+	case s.id: // I am the leader
+		panic(&quot;impossible state in forwardConfiguration&quot;)
+
+	default:
+		leader, ok := s.config.get(s.leader)
+		if !ok {
+			panic(&quot;invalid state in peers&quot;)
+		}
+		s.logGeneric(&quot;got configuration, forwarding to leader (%d)&quot;, s.leader)
+		go func() { t.Err &lt;- leader.callSetConfiguration(t.Peers...) }()
+	}
+}
+
+// follower 节点逻辑
+func (s *Server) followerSelect() {
+	for {
+		select {
+		case q := &lt;-s.quit:
+			s.handleQuit(q)
+			return
+		// 命令转发
+		case t := &lt;-s.commandChan:
+			s.forwardCommand(t)
+		// 集群变更转发
+		case t := &lt;-s.configurationChan:
+			s.forwardConfiguration(t)
+		// Leader选举
+		case &lt;-s.electionTick:
+			// 5.2 Leader election: &quot;A follower increments its current term and
+			// transitions to candidate state.&quot;
+			if s.config == nil {
+				s.logGeneric(&quot;election timeout, but no configuration: ignoring&quot;)
+				s.resetElectionTimeout()
+				continue
+			}
+			s.logGeneric(&quot;election timeout, becoming candidate&quot;)
+          	// 提高自己的任期号
+			s.term++
+          	// 投票置为空
+			s.vote = noVote
+          	// Leader 
+			s.leader = unknownLeader
+          	// 设置节点角色为&quot;候选人&quot;
+			s.state.Set(candidate)
+          	// 重置选举时间，防止马上再次出发选举
+			s.resetElectionTimeout()
+			return
+        // 日志追加(除了客户端请求，leader的心跳也会出发这个行为)
+		case t := &lt;-s.appendEntriesChan:
+			if s.leader == unknownLeader {
+				s.leader = t.Request.LeaderID
+				s.logGeneric(&quot;discovered Leader %d&quot;, s.leader)
+			}
+          	// 处理日志最佳操作
+			resp, stepDown := s.handleAppendEntries(t.Request)
+			s.logAppendEntriesResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+          	// 如果节点已经脱离了当前的集群，需要跟新Leader地址
+			if stepDown {
+				// stepDown as a Follower means just to reset the leader
+				if s.leader != unknownLeader {
+					s.logGeneric(&quot;abandoning old leader=%d&quot;, s.leader)
+				}
+				s.logGeneric(&quot;following new leader=%d&quot;, t.Request.LeaderID)
+				s.leader = t.Request.LeaderID
+			}
+		// 选举
+		case t := &lt;-s.requestVoteChan:
+          	// 选举处理
+			resp, stepDown := s.handleRequestVote(t.Request)
+			s.logRequestVoteResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+          	// 如果落后于当前节点了，把当前的Leader修改为&quot;unkownleader&quot;，等待讯据成功后，进行切换
+			if stepDown {
+				// stepDown as a Follower means just to reset the leader
+				if s.leader != unknownLeader {
+					s.logGeneric(&quot;abandoning old leader=%d&quot;, s.leader)
+				}
+				s.logGeneric(&quot;new leader unknown&quot;)
+				s.leader = unknownLeader
+			}
+		}
+	}
+}
+
+// 候选状态
+func (s *Server) candidateSelect() {
+	if s.leader != unknownLeader {
+		panic(&quot;known leader when entering candidateSelect&quot;)
+	}
+	if s.vote != 0 {
+		panic(&quot;existing vote when entering candidateSelect&quot;)
+	}
+
+	// &quot;[A server entering the candidate stage] issues requestVote RPCs in
+	// parallel to each of the other servers in the cluster. If the candidate
+	// receives no response for an RPC, it reissues the RPC repeatedly until a
+	// response arrives or the election concludes.&quot;
+	// 发起选举RPC
+	requestVoteResponses, canceler := s.config.allPeers().except(s.id).requestVotes(requestVote{
+		Term:         s.term,
+		CandidateID:  s.id,
+		LastLogIndex: s.log.lastIndex(),
+		LastLogTerm:  s.log.lastTerm(),
+	})
+	defer canceler.Cancel()
+
+	// Set up vote tallies (plus, vote for myself)
+	votes := map[uint64]bool{s.id: true}
+	s.vote = s.id
+	s.logGeneric(&quot;term=%d election started (configuration state %s)&quot;, s.term, s.config.state)
+
+	// 如果已经达到了选举“共识”，则成功选举
+	if s.config.pass(votes) {
+		s.logGeneric(&quot;I immediately won the election&quot;)
+		s.leader = s.id
+		s.state.Set(leader)
+		s.vote = noVote
+		return
+	}
+
+	// &quot;A candidate continues in this state until one of three things happens:
+	// (a) it wins the election, (b) another server establishes itself as
+	// leader, or (c) a period of time goes by with no winner.&quot;
+	for {
+		select {
+		case q := &lt;-s.quit:
+			s.handleQuit(q)
+			return
+		// 命令转发
+		case t := &lt;-s.commandChan:
+			s.forwardCommand(t)
+		// 配置更新转发，注意和Leader的不同
+		case t := &lt;-s.configurationChan:
+			s.forwardConfiguration(t)
+		// 收到选举的应答
+		case t := &lt;-requestVoteResponses:
+			s.logGeneric(&quot;got vote: id=%d term=%d granted=%v&quot;, t.id, t.response.Term, t.response.VoteGranted)
+			// &quot;A candidate wins the election if it receives votes from a
+			// majority of servers in the full cluster for the same term.&quot;
+          	// 本节点落后于其他几点
+			if t.response.Term &gt; s.term {
+				s.logGeneric(&quot;got vote from future term (%d&gt;%d); abandoning election&quot;, t.response.Term, s.term)
+				s.leader = unknownLeader
+				s.state.Set(follower)
+				s.vote = noVote
+				return // lose
+			}
+          	// 收到了&quot;落后&quot;当前节点的应答，忽略掉它
+			if t.response.Term &lt; s.term {
+				s.logGeneric(&quot;got vote from past term (%d&lt;%d); ignoring&quot;, t.response.Term, s.term)
+				break
+			}
+          	
+          	// 收到赞同票
+			if t.response.VoteGranted {
+				s.logGeneric(&quot;%d voted for me&quot;, t.id)
+				votes[t.id] = true
+			}
+			// &quot;Once a candidate wins an election, it becomes leader.&quot;
+          	// “共识”达成
+			if s.config.pass(votes) {
+				s.logGeneric(&quot;I won the election&quot;)
+				s.leader = s.id
+				s.state.Set(leader)
+				s.vote = noVote
+				return // win
+			}
+          // 收到日志追加(在这里，心跳也当做日志追加的方式发送)
+		case t := &lt;-s.appendEntriesChan:
+			// &quot;While waiting for votes, a candidate may receive an
+			// appendEntries RPC from another server claiming to be leader.
+			// If the leader's term (included in its RPC) is at least as
+			// large as the candidate's current term, then the candidate
+			// recognizes the leader as legitimate and steps down, meaning
+			// that it returns to follower state.&quot;
+            // 处理日志
+			resp, stepDown := s.handleAppendEntries(t.Request)
+			s.logAppendEntriesResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+          	// candidate节点落后于Leader节点
+			if stepDown {
+				s.logGeneric(&quot;after an appendEntries, stepping down to Follower (leader=%d)&quot;, t.Request.LeaderID)
+				s.leader = t.Request.LeaderID
+				s.state.Set(follower)
+				return // lose
+			}
+
+        // 虽然当前节点是candidate节点，但集群中此时可能存在多个candidate节点
+		case t := &lt;-s.requestVoteChan:
+			// We can also be defeated by a more recent candidate
+			resp, stepDown := s.handleRequestVote(t.Request)
+			s.logRequestVoteResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+			if stepDown {
+              	// 当前candidate节点落后于集群中已存在的candidate节点，将自己的角色变为follower，
+              	// 并且也会投赞同票
+				s.logGeneric(&quot;after a requestVote, stepping down to Follower (leader unknown)&quot;)
+				s.leader = unknownLeader
+				s.state.Set(follower)
+				return // lose
+			}
+		
+        // 选举
+		case &lt;-s.electionTick:
+			// &quot;The third possible outcome is that a candidate neither wins nor
+			// loses the election: if many followers become candidates at the
+			// same time, votes could be split so that no candidate obtains a
+			// majority. When this happens, each candidate will start a new
+			// election by incrementing its term and initiating another round of
+			// requestVote RPCs.&quot;
+			s.logGeneric(&quot;election ended with no winner; incrementing term and trying again&quot;)
+			s.resetElectionTimeout()
+			s.term++
+			s.vote = noVote
+			return // draw
+		}
+	}
+}
+
+// Leader 保存的Follower节点的所有最新同步条目
+type nextIndex struct {
+	sync.RWMutex
+	m map[uint64]uint64 // followerId: nextIndex
+}
+
+func newNextIndex(pm peerMap, defaultNextIndex uint64) *nextIndex {
+	ni := &amp;nextIndex{
+		m: map[uint64]uint64{},
+	}
+	for id := range pm {
+		ni.m[id] = defaultNextIndex
+	}
+	return ni
+}
+
+// 找出已经同步Follower的最小日志
+func (ni *nextIndex) bestIndex() uint64 {
+	ni.RLock()
+	defer ni.RUnlock()
+
+	if len(ni.m) &lt;= 0 {
+		return 0
+	}
+
+	i := uint64(math.MaxUint64)
+	for _, nextIndex := range ni.m {
+		if nextIndex &lt; i {
+			i = nextIndex
+		}
+	}
+	return i
+}
+
+// 返回节点(id)最新的同步日志
+func (ni *nextIndex) prevLogIndex(id uint64) uint64 {
+	ni.RLock()
+	defer ni.RUnlock()
+	if _, ok := ni.m[id]; !ok {
+		panic(fmt.Sprintf(&quot;peer %d not found&quot;, id))
+	}
+	return ni.m[id]
+}
+
+// 自减节点(id)的最新同步日志，用于同步失败时的回滚
+func (ni *nextIndex) decrement(id uint64, prev uint64) (uint64, error) {
+	ni.Lock()
+	defer ni.Unlock()
+
+	i, ok := ni.m[id]
+	if !ok {
+		panic(fmt.Sprintf(&quot;peer %d not found&quot;, id))
+	}
+
+	if i != prev {
+		return i, errOutOfSync
+	}
+
+	if i &gt; 0 {
+		ni.m[id]--
+	}
+	return ni.m[id], nil
+}
+
+// 更新节点(id)的同步日志
+func (ni *nextIndex) set(id, index, prev uint64) (uint64, error) {
+	ni.Lock()
+	defer ni.Unlock()
+
+	i, ok := ni.m[id]
+	if !ok {
+		panic(fmt.Sprintf(&quot;peer %d not found&quot;, id))
+	}
+	if i != prev {
+		return i, errOutOfSync
+	}
+
+	ni.m[id] = index
+	return index, nil
+}
+
+// 心跳、复制命令都会用到该函数，flush是同步的，如果对端节点不可达，则阻塞
+func (s *Server) flush(peer Peer, ni *nextIndex) error {
+	peerID := peer.id()
+	// Leader的任期号
+	currentTerm := s.term
+	// 节点(peer)的最新同步索引
+	prevLogIndex := ni.prevLogIndex(peerID)
+	// 检索出peers节点落后于Leader几点的日志条目，然后进行同步
+	entries, prevLogTerm := s.log.entriesAfter(prevLogIndex)
+	// 获取Leader committed的最新索引
+	commitIndex := s.log.getCommitIndex()
+	s.logGeneric(&quot;flush to %d: term=%d leaderId=%d prevLogIndex/Term=%d/%d sz=%d commitIndex=%d&quot;, peerID, currentTerm, s.id, prevLogIndex, prevLogTerm, len(entries), commitIndex)
+	
+	// 日志追加RPC
+	resp := peer.callAppendEntries(appendEntries{
+		Term:         currentTerm,
+		LeaderID:     s.id,
+		PrevLogIndex: prevLogIndex,
+		PrevLogTerm:  prevLogTerm,
+		Entries:      entries,
+		CommitIndex:  commitIndex,
+	})
+
+	if resp.Term &gt; currentTerm {
+		// 应答的节点比当前节点的任期号大，当前的Leader被罢免
+		s.logGeneric(&quot;flush to %d: responseTerm=%d &gt; currentTerm=%d: deposed&quot;, peerID, resp.Term, currentTerm)
+		return errDeposed
+	}
+
+	
+	if !resp.Success {
+		// 应答失败，可能是leader RPC等待超时，或者出现了网络错误(包括脑裂)，回滚
+		newPrevLogIndex, err := ni.decrement(peerID, prevLogIndex)
+		if err != nil {
+			s.logGeneric(&quot;flush to %d: while decrementing prevLogIndex: %s&quot;, peerID, err)
+			return err
+		}
+		s.logGeneric(&quot;flush to %d: rejected; prevLogIndex(%d) becomes %d&quot;, peerID, peerID, newPrevLogIndex)
+		return errAppendEntriesRejected
+	}
+
+	if len(entries) &gt; 0 {
+		// 复制成功，更新同步状态
+		newPrevLogIndex, err := ni.set(peer.id(), entries[len(entries)-1].Index, prevLogIndex)
+		if err != nil {
+			s.logGeneric(&quot;flush to %d: while moving prevLogIndex forward: %s&quot;, peerID, err)
+			return err
+		}
+		s.logGeneric(&quot;flush to %d: accepted; prevLogIndex(%d) becomes %d&quot;, peerID, peerID, newPrevLogIndex)
+		return nil
+	}
+
+	s.logGeneric(&quot;flush to %d: accepted; prevLogIndex(%d) remains %d&quot;, peerID, peerID, ni.prevLogIndex(peerID))
+	return nil
+}
+
+// Leader并发同步日志
+func (s *Server) concurrentFlush(pm peerMap, ni *nextIndex, timeout time.Duration) (int, bool) {
+	type tuple struct {
+		id  uint64
+		err error
+	}
+	responses := make(chan tuple, len(pm))
+	for _, peer := range pm {
+		go func(peer Peer) {
+			errChan := make(chan error, 1)
+			go func() { errChan &lt;- s.flush(peer, ni) }()
+			go func() { time.Sleep(timeout); errChan &lt;- errTimeout }()
+			responses &lt;- tuple{peer.id(), &lt;-errChan} // first responder wins
+		}(peer)
+	}
+
+	successes, stepDown := 0, false
+	for i := 0; i &lt; cap(responses); i++ {
+		switch t := &lt;-responses; t.err {
+		case nil:
+			s.logGeneric(&quot;concurrentFlush: peer %d: OK (prevLogIndex(%d)=%d)&quot;, t.id, t.id, ni.prevLogIndex(t.id))
+			successes++
+		case errDeposed:
+			// 当前的Leder节点落后于其他节点
+			s.logGeneric(&quot;concurrentFlush: peer %d: deposed!&quot;, t.id)
+			stepDown = true
+		default:
+			s.logGeneric(&quot;concurrentFlush: peer %d: %s (prevLogIndex(%d)=%d)&quot;, t.id, t.err, t.id, ni.prevLogIndex(t.id))
+			// nothing to do but log and continue
+		}
+	}
+	return successes, stepDown
+}
+
+// 作为Leader角色运行
+func (s *Server) leaderSelect() {
+	if s.leader != s.id {
+		panic(fmt.Sprintf(&quot;leader (%d) not me (%d) when entering leaderSelect&quot;, s.leader, s.id))
+	}
+	if s.vote != 0 {
+		panic(fmt.Sprintf(&quot;vote (%d) not zero when entering leaderSelect&quot;, s.leader))
+	}
+
+	// 5.3 Log replication: &quot;The leader maintains a nextIndex for each follower,
+	// which is the index of the next log entry the leader will send to that
+	// follower. When a leader first comes to power it initializes all nextIndex
+	// values to the index just after the last one in its log.&quot;
+	//
+	// I changed this from lastIndex+1 to simply lastIndex. Every initial
+	// communication from leader to follower was being rejected and we were
+	// doing the decrement. This was just annoying, except if you manage to
+	// sneak in a command before the first heartbeat. Then, it will never get
+	// properly replicated (it seemed).
+	
+	// Leader为每个Follower保存了最新的同步日志索引
+	ni := newNextIndex(s.config.allPeers().except(s.id), s.log.lastIndex()) // +1)
+
+	flush := make(chan struct{})
+	heartbeat := time.NewTicker(broadcastInterval())
+	defer heartbeat.Stop()
+	go func() {
+      	// 发送心跳，除了检测心跳外，还有防止Follower发送选举
+		for _ = range heartbeat.C {
+			flush &lt;- struct{}{}
+		}
+	}()
+
+	for {
+		select {
+		case q := &lt;-s.quit:
+			s.handleQuit(q)
+			return
+		// 收到命令
+		case t := &lt;-s.commandChan:
+			// Append the command to our (leader) log
+			s.logGeneric(&quot;got command, appending&quot;)
+			currentTerm := s.term
+			entry := logEntry{
+				Index:           s.log.lastIndex() + 1,
+				Term:            currentTerm,
+				Command:         t.Command,
+				commandResponse: t.CommandResponse,
+			}
+          	// 追加日志
+			if err := s.log.appendEntry(entry); err != nil {
+				t.Err &lt;- err
+				continue
+			}
+			s.logGeneric(
+				&quot;after append, commitIndex=%d lastIndex=%d lastTerm=%d&quot;,
+				s.log.getCommitIndex(),
+				s.log.lastIndex(),
+				s.log.lastTerm(),
+			)
+
+			// Now that the entry is in the log, we can fall back to the
+			// normal flushing mechanism to attempt to replicate the entry
+			// and advance the commit index. We trigger a manual flush as a
+			// convenience, so our caller might get a response a bit sooner.
+          	// 这里将日志同步放到了同步队列就返回给客户端了，正常来说，需要&quot;共识&quot;达成才返回给客户端
+			go func() { flush &lt;- struct{}{} }()
+			t.Err &lt;- nil
+        // 收到配置变更
+		case t := &lt;-s.configurationChan:
+			// Attempt to change our local configuration
+			if err := s.config.changeTo(makePeerMap(t.Peers...)); err != nil {
+				t.Err &lt;- err
+				continue
+			}
+
+			// Serialize the local (C_old,new) configuration
+			encodedConfiguration, err := s.config.encode()
+			if err != nil {
+				t.Err &lt;- err
+				continue
+			}
+
+			// We're gonna write+replicate that config via log mechanisms.
+			// Prepare the on-commit callback.
+			entry := logEntry{
+				Index:           s.log.lastIndex() + 1,
+				Term:            s.term,
+				Command:         encodedConfiguration,
+				isConfiguration: true,
+				committed:       make(chan bool),
+			}
+			go func() {
+              	// 当日志被commited时，committed将被回调
+				committed := &lt;-entry.committed
+				if !committed {
+					s.config.changeAborted()
+					return
+				}
+             	// 日志被committed了，说明其他节点都应用了最新的配置，所以当前的节点配置也需要更新
+				s.config.changeCommitted()
+				if _, ok := s.config.allPeers()[s.id]; !ok {
+                  	// 当前节点已被新集群剔除
+					s.logGeneric(&quot;leader expelled; shutting down&quot;)
+					q := make(chan struct{})
+					s.quit &lt;- q
+                  	// 节点已退出
+					&lt;-q
+				}
+			}()
+          	// 日志追加
+			if err := s.log.appendEntry(entry); err != nil {
+				t.Err &lt;- err
+				continue
+			}
+
+		case &lt;-flush:
+          	// 获取需要同步的节点
+			recipients := s.config.allPeers().except(s.id)
+
+			// Special case: network of 1
+			if len(recipients) &lt;= 0 {
+				ourLastIndex := s.log.lastIndex()
+				if ourLastIndex &gt; 0 {
+					if err := s.log.commitTo(ourLastIndex); err != nil {
+						s.logGeneric(&quot;commitTo(%d): %s&quot;, ourLastIndex, err)
+						continue
+					}
+					s.logGeneric(&quot;after commitTo(%d), commitIndex=%d&quot;, ourLastIndex, s.log.getCommitIndex())
+				}
+				continue
+			}
+
+			// Normal case: network of at-least-2
+          	// 并发同步日志
+			successes, stepDown := s.concurrentFlush(recipients, ni, 2*broadcastInterval())
+			if stepDown {
+              	// 节点已被卸任
+				s.logGeneric(&quot;deposed during flush&quot;)
+				s.state.Set(follower)
+				s.leader = unknownLeader
+				return
+			}
+
+			// Only when we know all followers accepted the flush can we
+			// consider incrementing commitIndex and pushing out another
+			// round of flushes.
+			if successes == len(recipients) {
+              	// 最小被同步的Index
+				peersBestIndex := ni.bestIndex()
+				ourLastIndex := s.log.lastIndex()
+				ourCommitIndex := s.log.getCommitIndex()
+				if peersBestIndex &gt; ourLastIndex {
+					// safety check: we've probably been deposed
+					s.logGeneric(&quot;peers' best index %d &gt; our lastIndex %d&quot;, peersBestIndex, ourLastIndex)
+					s.logGeneric(&quot;this is crazy, I'm gonna become a follower&quot;)
+					s.leader = unknownLeader
+					s.vote = noVote
+					s.state.Set(follower)
+					return
+				}
+				if peersBestIndex &gt; ourCommitIndex {
+					// committed Leader Index
+                  	if err := s.log.commitTo(peersBestIndex); err != nil {
+						s.logGeneric(&quot;commitTo(%d): %s&quot;, peersBestIndex, err)
+                      	// 比如某个Follower在同步Index时失败了，
+						continue // oh well, next time?
+					}
+					
+					if s.log.getCommitIndex() &gt; ourCommitIndex {
+						// 继续同步日志
+						s.logGeneric(&quot;after commitTo(%d), commitIndex=%d -- queueing another flush&quot;, peersBestIndex, s.log.getCommitIndex())
+						go func() { flush &lt;- struct{}{} }()
+					}
+				}
+			}
+		// 追加日志， 正常来说，Leader节点是不会受到该命令的，出现这种的可能是集群存在一个新的Leader节点，这命令就是该Leader发送过来的
+		case t := &lt;-s.appendEntriesChan:
+			resp, stepDown := s.handleAppendEntries(t.Request)
+			s.logAppendEntriesResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+			if stepDown {
+				s.logGeneric(&quot;after an appendEntries, deposed to Follower (leader=%d)&quot;, t.Request.LeaderID)
+				s.leader = t.Request.LeaderID
+				s.state.Set(follower)
+				return // deposed
+			}
+		// 受到投票请求
+		case t := &lt;-s.requestVoteChan:
+			resp, stepDown := s.handleRequestVote(t.Request)
+			s.logRequestVoteResponse(t.Request, resp, stepDown)
+			t.Response &lt;- resp
+			if stepDown {
+				s.logGeneric(&quot;after a requestVote, deposed to Follower (leader unknown)&quot;)
+				s.leader = unknownLeader
+				s.state.Set(follower)
+				return // deposed
+			}
+		}
+	}
+}
+
+// handleRequestVote will modify s.term and s.vote, but nothing else.
+// stepDown means you need to: s.leader=unknownLeader, s.state.Set(Follower).
+// 处理投票
+// 可能会修改s.term和s.vote 的值; stepDown意味着需要设置s.leader = unkownLeader, s.state.Set(Follower)
+func (s *Server) handleRequestVote(rv requestVote) (requestVoteResponse, bool) {
+	// Spec is ambiguous here; basing this (loosely!) on benbjohnson's impl
+
+	// If the request is from an old term, reject
+	if rv.Term &lt; s.term {
+		return requestVoteResponse{
+			Term:        s.term,
+			VoteGranted: false,
+			reason:      fmt.Sprintf(&quot;Term %d &lt; %d&quot;, rv.Term, s.term),
+		}, false
+	}
+
+	// If the request is from a newer term, reset our state
+	stepDown := false
+	if rv.Term &gt; s.term {
+		// 本地节点落后于集群的其他节点，需要更新一下自己的任期号
+		s.logGeneric(&quot;requestVote from newer term (%d): we defer&quot;, rv.Term)
+		s.term = rv.Term
+		s.vote = noVote
+		s.leader = unknownLeader
+		stepDown = true
+	}
+
+	// Special case: if we're the leader, and we haven't been deposed by a more
+	// recent term, then we should always deny the vote
+	if s.state.Get() == leader &amp;&amp; !stepDown {
+		// 如果本地节点是Leader，并且又不落后于req 节点，则投反对票
+		return requestVoteResponse{
+			Term:        s.term,
+			VoteGranted: false,
+			reason:      &quot;already the leader&quot;,
+		}, stepDown
+	}
+
+	// If we've already voted for someone else this term, reject
+	// 如果已经投过票，则投失败票
+	if s.vote != 0 &amp;&amp; s.vote != rv.CandidateID {
+		if stepDown {
+			panic(&quot;impossible state in handleRequestVote&quot;)
+		}
+		return requestVoteResponse{
+			Term:        s.term,
+			VoteGranted: false,
+			reason:      fmt.Sprintf(&quot;already cast vote for %d&quot;, s.vote),
+		}, stepDown
+	}
+
+	// If the candidate log isn't at least as recent as ours, reject
+	if s.log.lastIndex() &gt; rv.LastLogIndex || s.log.lastTerm() &gt; rv.LastLogTerm {
+		return requestVoteResponse{
+			Term:        s.term,
+			VoteGranted: false,
+			reason: fmt.Sprintf(
+				&quot;our index/term %d/%d &gt; %d/%d&quot;,
+				s.log.lastIndex(),
+				s.log.lastTerm(),
+				rv.LastLogIndex,
+				rv.LastLogTerm,
+			),
+		}, stepDown
+	}
+
+	// We passed all the tests: cast vote in favor
+	s.vote = rv.CandidateID
+	s.resetElectionTimeout()
+	return requestVoteResponse{
+		Term:        s.term,
+		VoteGranted: true,
+	}, stepDown
+}
+
+// handleAppendEntries will modify s.term and s.vote, but nothing else.
+// stepDown means you need to: s.leader=r.LeaderID, s.state.Set(Follower).
+// 追加日志，需要注意的是，handleAppendEntries也会修改s.term和s.vote
+// stepDown也会修改s.Leader, s,state
+// 需要注意的是，本地节点的state不同时，其行为也是不用的
+func (s *Server) handleAppendEntries(r appendEntries) (appendEntriesResponse, bool) {
+	// Spec is ambiguous here; basing this on benbjohnson's impl
+
+	// Maybe a nicer way to handle this is to define explicit handler functions
+	// for each Server state. Then, we won't try to hide too much logic (i.e.
+	// too many protocol rules) in one code path.
+
+	// If the request is from an old term, reject
+	if r.Term &lt; s.term {
+		return appendEntriesResponse{
+			Term:    s.term,
+			Success: false,
+			reason:  fmt.Sprintf(&quot;Term %d &lt; %d&quot;, r.Term, s.term),
+		}, false
+	}
+
+	// If the request is from a newer term, reset our state
+	stepDown := false
+	if r.Term &gt; s.term {
+		s.term = r.Term
+		s.vote = noVote
+		stepDown = true
+	}
+
+	// Special case for candidates: &quot;While waiting for votes, a candidate may
+	// receive an appendEntries RPC from another server claiming to be leader.
+	// If the leader’s term (included in its RPC) is at least as large as the
+	// candidate’s current term, then the candidate recognizes the leader as
+	// legitimate and steps down, meaning that it returns to follower state.&quot;
+	if s.state.Get() == candidate &amp;&amp; r.LeaderID != s.leader &amp;&amp; r.Term &gt;= s.term {
+		s.term = r.Term
+		s.vote = noVote
+		stepDown = true
+	}
+
+	// In any case, reset our election timeout
+	s.resetElectionTimeout()
+
+	// Reject if log doesn't contain a matching previous entry
+	// 如果{PreLogIndex, PreLogTerm} 不是最新的条目，则失败
+	// [{1, 2},{1, 3},		{1,4},{1,5},{1,6}] =&gt; {1,5} =&gt; [{1, 2},{1, 3},		{1,4},{1,5}]
+	if err := s.log.ensureLastIs(r.PrevLogIndex, r.PrevLogTerm); err != nil {
+		return appendEntriesResponse{
+			Term:    s.term,
+			Success: false,
+			reason: fmt.Sprintf(
+				&quot;while ensuring last log entry had index=%d term=%d: error: %s&quot;,
+				r.PrevLogIndex,
+				r.PrevLogTerm,
+				err,
+			),
+		}, stepDown
+	}
+
+	// Process the entries
+	for i, entry := range r.Entries {
+		// Configuration changes requre special preprocessing
+		var pm peerMap
+		// 处理配置
+		if entry.isConfiguration {
+			commandBuf := bytes.NewBuffer(entry.Command)
+			if err := gob.NewDecoder(commandBuf).Decode(&amp;pm); err != nil {
+				panic(&quot;gob decode of peers failed&quot;)
+			}
+
+			if s.state.Get() == leader {
+				// TODO should we instead just ignore this entry?
+				return appendEntriesResponse{
+					Term:    s.term,
+					Success: false,
+					reason: fmt.Sprintf(
+						&quot;AppendEntry %d/%d failed (configuration): %s&quot;,
+						i+1,
+						len(r.Entries),
+						&quot;Leader shouldn't receive configurations via appendEntries&quot;,
+					),
+				}, stepDown
+			}
+
+			// Expulsion recognition
+			if _, ok := pm[s.id]; !ok {
+				entry.committed = make(chan bool)
+				go func() {
+					if &lt;-entry.committed {
+						s.logGeneric(&quot;non-leader expelled; shutting down&quot;)
+						q := make(chan struct{})
+						s.quit &lt;- q
+						&lt;-q
+					}
+				}()
+			}
+		}
+
+		// Append entry to the log
+		if err := s.log.appendEntry(entry); err != nil {
+			return appendEntriesResponse{
+				Term:    s.term,
+				Success: false,
+				reason: fmt.Sprintf(
+					&quot;AppendEntry %d/%d failed: %s&quot;,
+					i+1,
+					len(r.Entries),
+					err,
+				),
+			}, stepDown
+		}
+
+		// &quot;Once a given server adds the new configuration entry to its log, it
+		// uses that configuration for all future decisions (it does not wait
+		// for the entry to become committed).&quot;
+		if entry.isConfiguration {
+			if err := s.config.directSet(pm); err != nil {
+				return appendEntriesResponse{
+					Term:    s.term,
+					Success: false,
+					reason: fmt.Sprintf(
+						&quot;AppendEntry %d/%d failed (configuration): %s&quot;,
+						i+1,
+						len(r.Entries),
+						err,
+					),
+				}, stepDown
+			}
+		}
+	}
+
+	// Commit up to the commit index.
+	//
+	// &lt; ptrb&gt; ongardie: if the new leader sends a 0-entry appendEntries
+	//  with lastIndex=5 commitIndex=4, to a follower that has lastIndex=5
+	//  commitIndex=5 -- in my impl, this fails, because commitIndex is too
+	//  small. shouldn't be?
+	// &lt;@ongardie&gt; ptrb: i don't think that should fail
+	// &lt;@ongardie&gt; there are 4 ways an appendEntries request can fail: (1)
+	//  network drops packet (2) caller has stale term (3) would leave gap in
+	//  the recipient's log (4) term of entry preceding the new entries doesn't
+	//  match the term at the same index on the recipient
+	// 
+	// 出现这种情况的原因可能是本地节点运行到committed逻辑的时候出现了问题，或者说应答给Leader时，网络出现了问题等等。
+	// 这些情况都会造成数据不同步的情况，也就是本地节点的commiitted情况和Leader节点保存的Follower(本地节点)不一致
+	if r.CommitIndex &gt; 0 &amp;&amp; r.CommitIndex &gt; s.log.getCommitIndex() {
+		if err := s.log.commitTo(r.CommitIndex); err != nil {
+			return appendEntriesResponse{
+				Term:    s.term,
+				Success: false,
+				reason:  fmt.Sprintf(&quot;CommitTo(%d) failed: %s&quot;, r.CommitIndex, err),
+			}, stepDown
+		}
+	}
+
+	// all good
+	return appendEntriesResponse{
+		Term:    s.term,
+		Success: true,
+	}, stepDown
+}
+</code></pre>
+
+<h3 id="configuration-go">configuration.go</h3>
+
+<pre><code class="language-go">var (
+       	errConfigurationAlreadyChanging = errors.New(&quot;configuration already changing&quot;)
+)
+
+const (
+       	cOld    = &quot;C_old&quot;
+       	cOldNew = &quot;C_old,new&quot;
+)
+
+// configuration represents the sets of peers and behaviors required to
+// implement joint-consensus.
+type configuration struct {
+       	sync.RWMutex
+       	state     string
+       	// 老配置
+       	cOldPeers peerMap
+       	// 新配置-》用于过度
+       	cNewPeers peerMap
+}
+
+// newConfiguration returns a new configuration in stable (C_old) state based
+// on the passed peers.
+func newConfiguration(pm peerMap) *configuration {
+       	return &amp;configuration{
+       		state:     cOld, // start in a stable state,
+       		cOldPeers: pm,   // with only C_old
+       	}
+}
+
+// directSet is used when bootstrapping, and when receiving a replicated
+// configuration from a leader. It directly sets the configuration to the
+// passed peers. It's assumed this is called on a non-leader, and therefore
+// requires no consistency dance.
+// 配置变更
+func (c *configuration) directSet(pm peerMap) error {
+       	c.Lock()
+       	defer c.Unlock()
+
+       	c.cOldPeers = pm
+       	c.cNewPeers = peerMap{}
+       	c.state = cOld
+       	return nil
+}
+
+func (c *configuration) get(id uint64) (Peer, bool) {
+       	c.RLock()
+       	defer c.RUnlock()
+
+       	if peer, ok := c.cOldPeers[id]; ok {
+       		return peer, true
+       	}
+       	if peer, ok := c.cNewPeers[id]; ok {
+       		return peer, true
+       	}
+       	return nil, false
+}
+
+func (c *configuration) encode() ([]byte, error) {
+       	buf := &amp;bytes.Buffer{}
+       	if err := gob.NewEncoder(buf).Encode(c.allPeers()); err != nil {
+       		return []byte{}, err
+       	}
+       	return buf.Bytes(), nil
+}
+
+// allPeers returns the union set of all peers in the configuration.
+func (c *configuration) allPeers() peerMap {
+       	c.RLock()
+       	defer c.RUnlock()
+
+       	union := peerMap{}
+       	for id, peer := range c.cOldPeers {
+       		union[id] = peer
+       	}
+       	for id, peer := range c.cNewPeers {
+       		union[id] = peer
+       	}
+       	return union
+}
+
+// pass returns true if the votes represented by the votes map are sufficient
+// to constitute a quorum. pass respects C_old,new requirements, which dictate
+// that any request must receive a majority from both C_old and C_new to pass.
+// 共识判断
+func (c *configuration) pass(votes map[uint64]bool) bool {
+       	c.RLock()
+       	defer c.RUnlock()
+
+       	// Count the votes
+       	cOldHave, cOldRequired := 0, c.cOldPeers.quorum()
+       	for id := range c.cOldPeers {
+       		if votes[id] {
+       			cOldHave++
+       		}
+       		if cOldHave &gt;= cOldRequired {
+       			break
+       		}
+       	}
+
+       	// If we've already failed, we can stop here
+       	if cOldHave &lt; cOldRequired {
+       		return false
+       	}
+
+       	// C_old passes: if we're in C_old, we pass
+       	if c.state == cOld {
+       		return true
+       	}
+
+       	// Not in C_old, so make sure we have some peers in C_new
+       	if len(c.cNewPeers) &lt;= 0 {
+       		panic(fmt.Sprintf(&quot;configuration state '%s', but no C_new peers&quot;, c.state))
+       	}
+
+       	// Since we're in C_old,new, we need to also pass C_new to pass overall.
+       	// It's important that we range through C_new and check our votes map, and
+       	// not the other way around: if a server casts a vote but doesn't exist in
+       	// a particular configuration, that vote should not be counted.
+       	cNewHave, cNewRequired := 0, c.cNewPeers.quorum()
+       	for id := range c.cNewPeers {
+       		if votes[id] {
+       			cNewHave++
+       		}
+       		if cNewHave &gt;= cNewRequired {
+       			break
+       		}
+       	}
+
+       	return cNewHave &gt;= cNewRequired
+}
+
+// 配置变更准备, prepare-change
+func (c *configuration) changeTo(pm peerMap) error {
+       	c.Lock()
+       	defer c.Unlock()
+
+       	if c.state != cOld {
+       		return errConfigurationAlreadyChanging
+       	}
+
+       	if len(c.cNewPeers) &gt; 0 {
+       		panic(fmt.Sprintf(&quot;configuration ChangeTo in state '%s', but have C_new peers already&quot;, c.state))
+       	}
+
+       	c.cNewPeers = pm
+       	c.state = cOldNew
+       	return nil
+}
+
+// 提交变更逻辑
+func (c *configuration) changeCommitted() {
+       	c.Lock()
+       	defer c.Unlock()
+
+       	if c.state != cOldNew {
+       		panic(&quot;configuration ChangeCommitted, but not in C_old,new&quot;)
+       	}
+
+       	if len(c.cNewPeers) &lt;= 0 {
+       		panic(&quot;configuration ChangeCommitted, but C_new peers are empty&quot;)
+       	}
+
+       	c.cOldPeers = c.cNewPeers
+       	c.cNewPeers = peerMap{}
+       	c.state = cOld
+}
+
+// 中断变更
+func (c *configuration) changeAborted() {
+       	c.Lock()
+       	defer c.Unlock()
+
+       	if c.state != cOldNew {
+       		panic(&quot;configuration ChangeAborted, but not in C_old,new&quot;)
+       	}
+
+       	c.cNewPeers = peerMap{}
+       	c.state = cOld
+}
+</code></pre>
+
+<h1 id="demo">Demo</h1>
+
+<pre><code class="language-go">package main
+
+import (
+       	&quot;bytes&quot;
+       	&quot;fmt&quot;
+       	&quot;hash/fnv&quot;
+       	&quot;net/http&quot;
+       	&quot;net/url&quot;
+       	&quot;time&quot;
+
+       	&quot;github.com/peterbourgon/raft&quot;
+)
+
+func main() {
+       	a := func(idx uint64, cmd []byte) []byte {
+       		fmt.Printf(&quot;%d, apply function: %s\n&quot;, idx, cmd)
+       		return cmd
+       	}
+
+       	mustParseURL := func(rawURL string) *url.URL {
+       		u, _ := url.Parse(rawURL)
+       		u.Path = &quot;&quot;
+       		return u
+       	}
+       	mustNewHTTPPeer := func(u *url.URL) raft.Peer {
+       		p, err := raft.NewHTTPPeer(u)
+       		if err != nil {
+       			panic(err)
+       		}
+       		return p
+       	}
+       	peersAddr := []string{
+       		&quot;127.0.0.1:7090&quot;,
+       		&quot;127.0.0.1:7091&quot;,
+       		&quot;127.0.0.1:7092&quot;,
+       		&quot;127.0.0.1:7093&quot;,
+       		&quot;127.0.0.1:7094&quot;}
+       	var ss []*raft.Server
+       	for _, addr := range peersAddr {
+       		hash := fnv.New64()
+       		hash.Write([]byte(addr))
+       		id := hash.Sum64()
+       		hash.Reset()
+       		s := raft.NewServer(id, &amp;bytes.Buffer{}, a)
+       		mux := http.NewServeMux()
+       		raft.HTTPTransport(mux, s)
+       		go func(addr string) {
+       			if err := http.ListenAndServe(addr, mux); err != nil {
+       				panic(err)
+       			}
+       		}(addr)
+       		ss = append(ss, s)
+       	}
+       	time.Sleep(time.Second)
+       	for _, s := range ss {
+       		s.SetConfiguration(
+       			mustNewHTTPPeer(mustParseURL(&quot;http://127.0.0.1:7090&quot;)),
+       			mustNewHTTPPeer(mustParseURL(&quot;http://127.0.0.1:7091&quot;)),
+       			mustNewHTTPPeer(mustParseURL(&quot;http://127.0.0.1:7092&quot;)),
+       			mustNewHTTPPeer(mustParseURL(&quot;http://127.0.0.1:7093&quot;)),
+       			mustNewHTTPPeer(mustParseURL(&quot;http://127.0.0.1:7094&quot;)),
+       		)
+       		s.Start()
+       	}
+
+       	for {
+       		cmd := []byte(time.Now().String())
+       		cmdChan := make(chan []byte)
+       		go ss[0].Command(cmd, cmdChan)
+       		&lt;-cmdChan
+       		time.Sleep(time.Millisecond * 500)
+       	}
+
+       	time.Sleep(time.Hour)
+}
+</code></pre>
+
+<p><em>Run</em></p>
+
+<pre><code class="language-sh">» go run raft-server.go 2&gt;/dev/null     
+1, apply function: 2017-09-11 11:41:13.668460404 +0800 CST
+1, apply function: 2017-09-11 11:41:13.668460404 +0800 CST
+1, apply function: 2017-09-11 11:41:13.668460404 +0800 CST
+1, apply function: 2017-09-11 11:41:13.668460404 +0800 CST
+1, apply function: 2017-09-11 11:41:13.668460404 +0800 CST
+2, apply function: 2017-09-11 11:41:14.169165702 +0800 CST
+2, apply function: 2017-09-11 11:41:14.169165702 +0800 CST
+2, apply function: 2017-09-11 11:41:14.169165702 +0800 CST
+2, apply function: 2017-09-11 11:41:14.169165702 +0800 CST
+2, apply function: 2017-09-11 11:41:14.169165702 +0800 CST
+3, apply function: 2017-09-11 11:41:14.670873193 +0800 CST
+3, apply function: 2017-09-11 11:41:14.670873193 +0800 CST
+3, apply function: 2017-09-11 11:41:14.670873193 +0800 CST
+3, apply function: 2017-09-11 11:41:14.670873193 +0800 CST
+3, apply function: 2017-09-11 11:41:14.670873193 +0800 CST
+4, apply function: 2017-09-11 11:41:15.171741805 +0800 CST
+4, apply function: 2017-09-11 11:41:15.171741805 +0800 CST
+4, apply function: 2017-09-11 11:41:15.171741805 +0800 CST
+4, apply function: 2017-09-11 11:41:15.171741805 +0800 CST
+4, apply function: 2017-09-11 11:41:15.171741805 +0800 CST
+5, apply function: 2017-09-11 11:41:15.673498401 +0800 CST
+5, apply function: 2017-09-11 11:41:15.673498401 +0800 CST
+5, apply function: 2017-09-11 11:41:15.673498401 +0800 CST
+5, apply function: 2017-09-11 11:41:15.673498401 +0800 CST
+5, apply function: 2017-09-11 11:41:15.673498401 +0800 CST
+6, apply function: 2017-09-11 11:41:16.175658603 +0800 CST
+6, apply function: 2017-09-11 11:41:16.175658603 +0800 CST
+6, apply function: 2017-09-11 11:41:16.175658603 +0800 CST
+6, apply function: 2017-09-11 11:41:16.175658603 +0800 CST
+6, apply function: 2017-09-11 11:41:16.175658603 +0800 CST
+7, apply function: 2017-09-11 11:41:16.677758823 +0800 CST
+</code></pre>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2017/09/11/filename/>https://laohanlinux.github.io/2017/09/11/filename/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/raft/">
+                    #raft</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/raft-source-analyse/">
+                    #raft source analyse</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2017/03/12/filename/" class="prev" rel="prev" title="200行区块链"><i class="iconfont icon-left"></i>&nbsp;200行区块链</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2019/03/15/filename/" class="next" rel="next" title="重新起航">重新起航&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

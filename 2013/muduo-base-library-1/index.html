@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  
+  <link rel="next" href="https://laohanlinux.github.io/2013/muduo-base-library-2/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2013/muduo-base-library-1/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           muduo_base_library_1 | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="muduo_base_library_1 | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "muduo_base_library_1",
+    "headline" : "muduo_base_library_1",
+    "description" : "muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2013",
+    "datePublished": "2013-06-10 01:09:28 &#43;0000 UTC",
+    "dateModified" : "2013-06-10 01:09:28 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2013/muduo-base-library-1/",
+    "wordCount" : "6927",
+    "keywords" : [ "muduo","muduo base library", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">muduo_base_library_1</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2013-06-10 itemprop="datePublished">June 10, 2013</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/muduo/"> muduo </a>
+                        <a href="https://laohanlinux.github.io/categories/network-program/"> network program </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="muduo-base-library">Muduo Base Library</h1>
+
+<h3 id="面向对象编程">面向对象编程</h3>
+
+<p>面向对象也就是把<code>对象</code>作为<code>接口</code>暴露出去，一般内部是一个<code>接口</code>或者<code>抽象类</code>。</p>
+
+<p><em>source code</em></p>
+
+<ul>
+<li>Thread.h</li>
+</ul>
+
+<pre><code class="language-c++">
+#ifndef _THREAD_H_ 
+#define _THREAD_H_
+#include &lt;pthread.h&gt;
+class Thread{
+public :
+ 
+    Thread();
+    virtual ~Thread();
+    void Start();
+    void Join();
+ 
+private :
+    // 纯虚函数 ²»ÐҪ 
+    void Run() =0 ;
+    pthread_t threadId_ ; 
+ 
+};#ifndef _THREAD_H_ 
+#define _THREAD_H_
+#include &lt;pthread.h&gt;
+class Thread{
+public :
+ 
+    Thread();
+    virtual ~Thread();
+    void Start();
+    void Join();
+ 
+private :
+    // 纯虚函数 ²»ÐҪ 
+    void Run() =0 ;
+    pthread_t threadId_ ; 
+ 
+};
+
+</code></pre>
+
+<ul>
+<li>Thread.cpp</li>
+</ul>
+
+<pre><code class="language-c++">
+#include &quot;Thread.h&quot;
+#include &lt;iostream&gt;
+using namespace std;
+ 
+ 
+Thread::Thread() : autoDelete_(false)
+{
+    cout&lt;&lt;&quot;Thread ...&quot;&lt;&lt;endl;
+}
+ 
+Thread::~Thread()
+{
+    cout&lt;&lt;&quot;~Thread ...&quot;&lt;&lt;endl;
+}
+ 
+void Thread::Start()
+{
+    pthread_create(&amp;threadId_, NULL, ThreadRoutine, this);
+}
+ 
+void Thread::Join()
+{
+    pthread_join(threadId_, NULL);
+}
+ 
+void* Thread::ThreadRoutine(void* arg)
+{
+    Thread* thread = static_cast&lt;Thread*&gt;(arg);
+    thread-&gt;Run();
+    if (thread-&gt;autoDelete_)
+        delete thread;
+    return NULL;
+}
+ 
+void Thread::SetAutoDelete(bool autoDelete)
+{
+    autoDelete_ = autoDelete;
+}
+
+</code></pre>
+
+<ul>
+<li>Thread test</li>
+</ul>
+
+<pre><code class="language-c++">
+#include &quot;Thread.h&quot;
+#include &lt;unistd.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+ 
+class TestThread : public Thread
+{
+public:
+    TestThread(int count) : count_(count)
+    {
+        cout&lt;&lt;&quot;TestThread ...&quot;&lt;&lt;endl;
+    }
+ 
+    ~TestThread()
+    {
+        cout&lt;&lt;&quot;~TestThread ...&quot;&lt;&lt;endl;
+    }
+ 
+private:
+    void Run()
+    {
+        while (count_--)
+        {
+            cout&lt;&lt;&quot;this is a test ...&quot;&lt;&lt;endl;
+            sleep(1);
+        }
+    }
+ 
+    int count_;
+};
+ 
+int main(void)
+{
+    /*
+    TestThread t(5);
+    t.Start();
+ 
+    t.Join();
+    */
+ 
+    TestThread* t2 = new TestThread(5);
+    t2-&gt;SetAutoDelete(true);
+    t2-&gt;Start();
+    t2-&gt;Join();
+ 
+    for (; ; )
+        pause();
+ 
+    return 0;
+}
+
+
+</code></pre>
+
+<h3 id="基于对象编程">基于对象编程</h3>
+
+<p>基于对象编程，提供出来的就不是<code>接口</code>了， 而是一个具体的类，虽然他和面向对象想一个都是起到回调的作用，但是他的回调不是通过继承来实现相应的虚函数,可以独立的函数，或者成员函数。看下面的例子就知道了。</p>
+
+<p><em>source code</em></p>
+
+<ul>
+<li>Thread.h</li>
+</ul>
+
+<pre><code class="language-c++">
+#ifndef _THREAD_
+#define _THREAD_
+#include &lt;pthread.h&gt;
+#include &lt;boost/function.hpp&gt;
+class Thread {
+public :
+    typedef boost::function&lt;void ()&gt; ThreadFunc ;
+    explicit Thread( const ThreadFunc &amp;func) ;
+    ~Thread();
+    void Start () ;
+    void Join();
+    void SetAutoDelete(bool autoDelete);
+private :
+    static void* ThreadRoutine( void *arg) ;
+    void Run();
+    ThreadFunc func ;
+    pthread_t threadId ;
+    bool autoDelete_;
+} ;
+#endif // _THREAD_H_
+
+</code></pre>
+
+<ul>
+<li>Thread.cpp</li>
+</ul>
+
+<pre><code class="language-c++">
+#include &quot;Thread.h&quot;
+#include &lt;boost/bind.hpp&gt;
+#include &lt;iostream&gt;
+using namespace std ;
+Thread::Thread( const ThreadFunc &amp;func_ ) : func(func_),autoDelete_(false){
+ 
+}
+Thread::~Thread()
+{
+    cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
+}
+ 
+ 
+void Thread::Start()
+{
+    pthread_create(&amp;threadId, NULL, ThreadRoutine, this);
+}
+ 
+void Thread::Join(){
+ 
+    pthread_join(threadId,NULL);
+}
+void * Thread::ThreadRoutine( void *arg){
+    Thread *thread = static_cast&lt;Thread*&gt;(arg) ;
+    thread-&gt;Run();
+    if ( thread-&gt;autoDelete_)
+        delete(thread);
+    cout&lt;&lt;&quot;After delete&quot;&lt;&lt;endl;
+ 
+ 
+ 
+}
+void Thread::Run(){
+    func();
+}
+void Thread::SetAutoDelete(bool autoDelete)  {
+    this-&gt;autoDelete_ = autoDelete;
+ 
+
+</code></pre>
+
+<ul>
+<li>Thread_test.cpp</li>
+</ul>
+
+<pre><code class="language-c++">
+#include &lt;unistd.h&gt;
+#include &quot;Thread.h&quot;
+#include &lt;iostream&gt;
+#include &lt;boost/bind.hpp&gt;
+using namespace std ;
+ 
+class NumberFunction{
+public :
+    NumberFunction( int count):coun_t(count){}
+        void NFunction() {
+        while(coun_t-- &amp;&amp; coun_t&gt;0){
+            cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
+            sleep(1);
+        }
+    }
+private :
+    int coun_t ;
+};
+ 
+void threadFunc (){
+ 
+    int i = 9 ;
+    while(i--){
+        cout&lt;&lt;&quot;threadFunc...!!&quot;&lt;&lt;endl ;
+        sleep(1);
+    }
+ 
+    cout&lt;&lt;endl ;
+}
+ 
+void threadFunc2(int i ){
+    while(i--&amp;&amp;i&gt;=0){
+        cout&lt;&lt;&quot;Threadfunc2 ....&quot;&lt;&lt;endl;
+        sleep(1);
+    }
+ 
+}
+int main (){
+ 
+    Thread *t = new Thread(threadFunc);
+    Thread *t2 = new Thread(boost::bind( threadFunc2 , 10)) ;
+    NumberFunction foo(10) ;
+    Thread *t3 = new Thread( boost::bind(&amp;NumberFunction::NFunction,&amp;foo)) ;
+    t-&gt;SetAutoDelete(true);
+    t-&gt;Start();
+ 
+    t2-&gt;SetAutoDelete(true) ;
+    t2-&gt;Start();
+ 
+    t3-&gt;SetAutoDelete(true) ;
+    t3-&gt;Start();
+ 
+    t2-&gt;Join();
+    t-&gt;Join();
+    t3-&gt;Join();
+    int i = 9 ;
+    while (i--){
+        cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
+    }
+ 
+ 
+    return 0 ;
+}
+
+</code></pre>
+
+<p>我们看一下下面这张图</p>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_1.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<pre><code class="language-c++">
+class EchoServer
+{
+    public :
+        EchoServer(){
+            server.SetConnectionCallback (boost::bind( onConnection()) ;
+            server.SetConnectionCallback (boost::bind( onMessage() ) ;
+            server.SetConnectionCallback (boost::bind( onClose() ) ;
+            TcpServer server ;
+        }
+}
+
+</code></pre>
+
+<p><em>面向对象风格</em>:</p>
+
+<blockquote>
+<p>用一个EchoServer 继承TcpServer(抽象类)，然后EchoServer实现三个接口onConnection、onMessage、onClose。</p>
+</blockquote>
+
+<p><em>基于对象风格</em>:</p>
+
+<blockquote>
+<p>用一个EchoServer包含一个TcpServer(具体类)对象，在构造函数中使用boost::bind来注册 三个成员函数 onConnection、onMessage、onClose。</p>
+</blockquote>
+
+<h3 id="poll">poll</h3>
+
+<p><code>signal (SIGPIPE ,SIG_IGN)</code>: 　</p>
+
+<p>Linux网络编程 第12讲 tcp 11中状态</p>
+
+<ul>
+<li><code>ＳＩＧＰＩＰＥ</code>产生的原因：<br /></li>
+</ul>
+
+<p>如果客户端关闭套接字<code>close</code> 而服务器调用一次<code>RST segment</code>(TCP传输层)如果服务器再次调用了<code>write</code> ，这个时候就会产生<code>SIGPIPE</code>信号,</p>
+
+<ul>
+<li><code>TIMEOUT</code>会对大并发服务器产生很大的影响</li>
+</ul>
+
+<p>由于服务器主动关闭连接，服务器就会进入<code>TIME_WAIT</code>,所以我们要使<code>client</code>先关闭，服务器被动关闭；</p>
+
+<ul>
+<li>踢掉不活跃的客户端</li>
+</ul>
+
+<p>如果客户端不活跃了，一些客户端不断开连接，这样子就会占用服务器的连接资源，服务器端也有要个机制来踢掉不活跃的连接，即使服务器又会进入time-wait状态。</p>
+
+<ul>
+<li>客户端关闭在<code>poll</code>中属于<code>pollin</code>事件，并且可读的数据为<code>0</code>； 对于监听套接字来说，有连接请求也属于<code>pollin</code>事件。</li>
+</ul>
+
+<p>所以我们使用了<code>nonblocking sokcet + I/O</code>复用</p>
+
+<pre><code class="language-c++">
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;poll.h&gt;
+ 
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+ 
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+ 
+#define ERR_EXIT(m) \
+        do \
+        { \
+                perror(m); \
+                exit(EXIT_FAILURE); \
+        } while(0)
+ 
+typedef std::vector&lt;struct pollfd&gt; PollFdList;
+ 
+int main(void)
+{
+    // 防止进程由于客户端的关闭产生SIG_PIPE信号而是服务器进程退出
+    signal(SIGPIPE, SIG_IGN);
+    //SIGCHLD 子进程状态改变后会产生此信号，父进程需要调用一个wait函数以确定发生了什么。
+    //如果进程特定设置该信号的配置为SIG_IGN，则调用进程的子进程不产生僵死进程。
+    //其实要想防止进程僵死，我们应该在他的父进程里面调用wait，以获取子进程的状态就不会让子进程变成僵死进程了
+    signal(SIGCHLD, SIG_IGN);
+ 
+    //int idlefd = open(&quot;/dev/null&quot;, O_RDONLY | O_CLOEXEC);
+    int listenfd;
+ 
+    //if ((listenfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) &lt; 0)
+    //SOCK_NONBLOCK:非阻塞 ，2.6.2**才有
+    //SOCK_CLOEXEC :当进程调用vfork或者fork产生进程时，继承下来的描述是关闭的状态
+    //
+    if ((listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)) &lt; 0)
+        ERR_EXIT(&quot;socket&quot;);
+ 
+    struct sockaddr_in servaddr;
+    memset(&amp;servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(5188);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+ 
+    int on = 1;
+    //SOL_SOCKET:在套接字级别上进行设置
+    // SO_REUSEADDR，打开或关闭地址复用功能。
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &amp;on, sizeof(on)) &lt; 0)
+        ERR_EXIT(&quot;setsockopt&quot;);
+ 
+    if (bind(listenfd, (struct sockaddr*)&amp;servaddr, sizeof(servaddr)) &lt; 0)
+        ERR_EXIT(&quot;bind&quot;);
+    if (listen(listenfd, SOMAXCONN) &lt; 0)
+        ERR_EXIT(&quot;listen&quot;);
+ 
+    struct pollfd pfd;
+    pfd.fd = listenfd;
+    //注册事件
+    pfd.events = POLLIN;
+ 
+    PollFdList pollfds;
+    pollfds.push_back(pfd);
+    //a positive number is returned
+    int nready;
+ 
+    struct sockaddr_in peeraddr;
+    socklen_t peerlen;
+    int connfd;
+ 
+    while (1)
+    {
+        //可用POLLIN事件数
+        //  -1 ：无限等待，直到发送POLLIN事件
+        nready = poll(&amp;*pollfds.begin(), pollfds.size(), -1);
+        if (nready == -1)
+        {
+            if (errno == EINTR)
+                continue;
+ 
+            ERR_EXIT(&quot;poll&quot;);
+        }
+        if (nready == 0)    // nothing happended
+            continue;
+ 
+        //如果POLLIN事件里面包含监听socket，那么监听socket将会
+        if (pollfds[0].revents &amp; POLLIN)
+        {
+            peerlen = sizeof(peeraddr);
+            //SOCK_NONBLOCK : 非阻塞模式
+            connfd = accept4(listenfd, (struct sockaddr*)&amp;peeraddr,
+                        &amp;peerlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
+ 
+            if (connfd == -1)
+                ERR_EXIT(&quot;accept4&quot;);
+ 
+/*
+            if (connfd == -1)
+            {
+                if (errno == EMFILE)
+                {
+                    close(idlefd);
+                    idlefd = accept(listenfd, NULL, NULL);
+                    close(idlefd);
+                    idlefd = open(&quot;/dev/null&quot;, O_RDONLY | O_CLOEXEC);
+                    continue;
+                }
+                else
+                    ERR_EXIT(&quot;accept4&quot;);
+            }
+*/
+ 
+            pfd.fd = connfd;
+            pfd.events = POLLIN;
+            pfd.revents = 0;
+            pollfds.push_back(pfd);
+            --nready;
+ 
+            // 连接成功
+            std::cout&lt;&lt;&quot;ip=&quot;&lt;&lt;inet_ntoa(peeraddr.sin_addr)&lt;&lt;
+                &quot; port=&quot;&lt;&lt;ntohs(peeraddr.sin_port)&lt;&lt;std::endl;
+            if (nready == 0)
+                continue;
+        }
+ 
+        //std::cout&lt;&lt;pollfds.size()&lt;&lt;std::endl;
+        //std::cout&lt;&lt;nready&lt;&lt;std::endl;、
+        //过滤掉第一个socketfd，也就是监听sdocket
+        for (PollFdList::iterator it=pollfds.begin()+1;
+            it != pollfds.end() &amp;&amp; nready &gt;0; ++it)
+        {
+            //如果有POLLIN事件
+                if (it-&gt;revents &amp; POLLIN)
+                {
+                    --nready;
+                    connfd = it-&gt;fd;
+                    char buf[1024] = {0};
+                    int ret = read(connfd, buf, 1024);
+                    if (ret == -1)
+                        ERR_EXIT(&quot;read&quot;);
+                    //如果等于0 ，就是说客户端已关闭，既然是POLLIN事件，那么就表示有数据可读，但现在为0（），也就是所读到了文件的EOF
+                    if (ret == 0)
+                    {
+                        std::cout&lt;&lt;&quot;client close&quot;&lt;&lt;std::endl;
+                        it = pollfds.erase(it);
+                        --it;
+ 
+                        close(connfd);
+                        continue;
+                    }
+ 
+                    std::cout&lt;&lt;buf;
+                    write(connfd, buf, strlen(buf));
+ 
+                }
+        }
+    }
+ 
+    return 0;
+}
+
+</code></pre>
+
+<h3 id="poll2">poll2</h3>
+
+<pre><code>
+application buffer          kernel buffer
+
+|------|                |--------|
+| read | &lt;--------------| buffer |
+|------|                |--------|
+
+
+|------|                |--------|
+|write | &lt;--------------| buffer |
+|------|                |--------|
+
+</code></pre>
+
+<p>数据包　粘包　一个包　两次<code>read</code>
+- Read
+可能并没有把<code>confd</code>对应的缓冲区的数据读完，那么<code>connfg</code>仍然是活跃的，我们应该将读到的数据保存在<code>connfd</code>的应用层的缓冲区（每一次都进行追加）。如何解析协议，我们让应用层的解析协议自己来解析
+- 忙等待
+ 假设客户端关注了<code>socket</code>的<code>POLLOUT</code>事件，而此时内核缓冲区有空闲，但是应用层却没数据可写，那么内核将会处于忙等待状态(<code>busy waitting loop</code>)，一直发送<code>POLLOUT</code>事件。</p>
+
+<p>解决的方法是：我们要看应用层的缓冲区，如果应用层的缓冲区有数据发，那么我们应该关注<code>POLLOUT</code>事件，要不然就取消<code>POLLOUT</code>事件的关注。</p>
+
+<p>对于客户端在读数据时，我们也应该采用相应的方法，如果应用层的空间空闲时，我们就关注<code>POLLIN</code>事件，要不然就取消<code>POLLIN</code>事件。</p>
+
+<h3 id="epoll-1">epoll 1</h3>
+
+<pre><code class="language-c++">/*
+ poll 在已连接的套接字中遍历
+ epoll_wait 返回的都是活跃的套接字，所以减少了很多无效的套接字
+ 
+ Poll模型 ：
+ 每次调用 poll函数的时候。都需要把监听套接字与已连接套接字所感兴趣的事件数组 拷贝到内核。
+ 
+ 
+ LT模式 ：
+ Write  EPOLLOUT 事件
+    高电平 writebuf内核有空闲空间，我们就说他处于高电平状态，也就是一直处于活跃状态。此时可能会产生busy waitting loop
+    低电平 当writebuf内核没有空闲空间，我们就说他处于低电平状态，没有激活。
+Read EPOLLIN 事件
+    xxx
+ 
+ 
+ 
+ ET模型 边缘触发
+ 在该模式下，一开始我们就关注EPOLLIN事件和EPOLLOUT事件 ， 此时writbuf一直处于高电平，不会触发EPOLLOUT事件.
+        而EPOLLIN可能会产生，因为开始Readbuf是空的，如果在 epoll_wait前，readbuf有数据了，那么就有unreadablr---&gt;readable,
+        也就是产生了EPOLLLIN事件，这也是为什么监听socket 能够接收到外来请求的原因。
+        关注EPOLLIN 和 EPOLLOUT事件后，我们也没必要取消他们的关注，只有到断开他们的socketfd时 ， 我们才需要取消。
+ 
+需要注意的是，在读写时，如果是读，一定要读到EAGAIN，写也是要写到EAGAIN
+ socket从unreadable变为readable或从unwritable变为writable
+ 有些人说从readable变为unreadable或者writable变为unwritable时也会触发事件。
+ 我个人觉得第一种合理一点。
+ 
+ 
+*/
+ 
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netnet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;sys/epoll.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+ 
+#include &lt;vector.h&gt;
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+ 
+typedef std::vector&lt;struct epoll_event&gt; EventList ;
+ 
+#define ERR_EXIT(m) \
+    do\
+    {\
+        perror(m);\
+        exit(EXIT_FAILURE);\
+    }while(0);
+ 
+int main ( void ) {
+    //防止进程由于客户端的关闭而使服务器进程退出
+    signal(SIGPIPE ,SIG_IGN) ;  
+    //防止僵死进程的发生
+    signal(SIGCHLD,SIG_IGN);
+ 
+ 
+    //备胎描述符
+    int idlefd = open(&quot;/dev/null&quot;,O_RDONLY | O_CLOEXEC) ;
+    //监听描述符
+    int listenfd ;
+ 
+    if((listenfd =socket(PF_INET,SOCK_STRAM|SOCK_NONBLOCK|SOCK_CLOSEXEC,IPPROTO_TCP))&lt;0){
+ 
+        ERR_EXIT(&quot;socket&quot;);
+    }
+ 
+    struct sockaddr_in servaddr ;
+    memset(&amp;servaddr,0,sizeof(servaddr)) ;
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(5188);
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY) ;
+ 
+    int on =1 ; 
+    //socketfd 重用
+    if(setsocketopt(listenfd,SOL_SOCKET,SO_REUSERADDR,&amp;on,sizeof(n))&lt;0)
+ 
+    {
+        ERR_EXIT(&quot;setsocketopt&quot;);
+    }
+ 
+    if( bind(listenfd,(struct sockaddr*)&amp;servaddr,sizeof(servaddr)) &lt;0)
+        ERR_EXIT(&quot;bind&quot;);
+ 
+    if(listen(listen,SOMAXCONN) &lt;0)
+        ERR_EXIT(&quot;listen&quot;);
+ 
+    std::vector&lt;int&gt; clients;
+    int epollfd; 
+    // 函数返回一个epoll专用的描述符epfd，epfd引用了一个新的epoll机制例程（instance.）。
+    epollfd = epoll_create1(EPOLL_CLOEXEC);
+ 
+    //事件结构体
+    struct epoll_event event ;
+    event.data.fd = listenfd ; //关注listenfd
+    event.events = EPOLLIN ; // /* | EPOLLET*/; 默认是LT模型
+ 
+    // 把lisenfd 添加到epollfd 中进行管理
+    //如果是poll的话，就不用这样了，poll直接使用一个数组就行了
+    /*函数声明：int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event) 
+该函数用于控制某个epoll文件描述符上的事件，可以注册事件，修改事件，删除事件。 
+参数： 
+epfd：由 epoll_create 生成的epoll专用的文件描述符； 
+op：要进行的操作例如注册事件，可能的取值EPOLL_CTL_ADD 注册、EPOLL_CTL_MOD 修 改、EPOLL_CTL_DEL 删除 
+ 
+fd：关联的文件描述符； 
+event：指向epoll_event的指针； 
+如果调用成功返回0,不成功返回-1 
+ 
+71 - 78 就交给epollfd 内核帮我们做了，并且只有epoll_ctl才会拷贝到内核，一次拷贝就行了，以后就不用拷贝了，
+如果我们使用poll 那么每次循环都要拷贝到内核里面去，大大降低了效率
+        */
+    epoll_ctl(epollfd , EPOLL_CTL_ADD,listenfd,&amp;event);
+ 
+    //事件列表，初始为16 个
+    EventList events(16) ;
+    struct sockaddr_in peeraddr ;
+    socklen_t peerlen ;
+    int connfd ;
+ 
+    int nready ; 
+    while(1){
+ 
+/*函数声明:int epoll_wait(int epfd,struct epoll_event * events,int maxevents,int timeout)
+该函数用于轮询I/O事件的发生；
+参数：
+epfd:由epoll_create 生成的epoll专用的文件描述符；
+epoll_event:用于回传代处理事件的数组，要处理的事件都会存储在events里面了
+maxevents:每次能处理的事件数；
+timeout:等待I/O事件发生的超时值(单位我也不太清楚)；-1相当于阻塞，0相当于非阻塞。一般用-1即可
+返回发生事件数。
+         -1 表示等待到至少一个事件发生*/
+        nready = epoll_wait(epollfd,&amp;*events.begin(),static_cast&lt;int&gt;(events.size()), -1 ); 
+        if( nready == -1){
+ 
+            if(errno == EINTR)
+                continue ;
+            ERR_EXIT(&quot;epoll_wait&quot;) ;
+        }
+ 
+        if(nready ==0 ) //nothing to happened 
+            continue ;
+        // 
+        if((size_t)nready == events.size())
+            events.resize(events.size()*2) ;
+ 
+        for (int i = 0; i &lt; nready; ++i)
+        {
+            //如果是监听socket，则accetp
+            if (events[i].data.fd == listenfd)
+            {
+                peerlen = sizeof( peeraddr ) ;
+                // 这里的处理还不够好，因为accept4每一次只能到tcp就绪队列里面拿出一个就绪socketfd ， 有可能这个队列不止一个，
+                //在并发的时候这是必然的， 所以最后是while掉accept4，把里面的就绪socketfd全部拿出来，而不时只拿一个socketfd。
+                //下面的代码可根据需求进行改进
+                connfd =::accept4(listenfd,(struct sockaddr *)&amp;peeraddr,&amp;peerlen,SOCK_NONBLOCK|SOCK_CLOSEXEC) ;
+ 
+                if( connfd == -1 )
+                {
+ 
+                    if(errno == EMFILE){
+                        close(idlefd) ;
+                        idlefd = accept(listenfd,NULL,NULL) ;
+                        close(idlefd) ;
+                        idlefd = open(&quot;/dev/null&quot;,O_RDONLY|O_CLOEXEC) ;
+                    }
+ 
+                }
+                else
+                    ERR_EXIT(&quot;accept4&quot;) ;
+                std::cout&lt;&lt;&quot;ip=&quot;&lt;&lt;inet_ntoa(peeraddr.sin_addr)&lt;&lt;&quot; port=&quot;&lt;&lt;ntohs(peeraddr.sin_port)&lt;&lt;std::endl;
+                clients.push_back(connfd) ;
+ 
+                event.data.fd =connfd ;
+                event.events = EPOLLIN/*| EPOLLET*/ ;
+                epoll_ctl(epollfd,EPOLL_CTL_ADD ,connfd ,&amp;event) ;
+            }else if (events[i].events &amp; EPOLLIN)
+            {
+                //下面的这些都要改进
+                connfd = events[i].data.fd;
+                if (connfd &lt; 0)
+                    continue;
+ 
+                char buf[1024] = {0};
+                int ret = read(connfd, buf, 1024);
+                if (ret == -1)
+                    ERR_EXIT(&quot;read&quot;);
+                if (ret == 0)
+                {
+                    std::cout&lt;&lt;&quot;client close&quot;&lt;&lt;std::endl;
+                    close(connfd);
+                    event = events[i];
+                    epoll_ctl(epollfd, EPOLL_CTL_DEL, connfd, &amp;event);
+                    clients.erase(std::remove(clients.begin(), clients.end(), connfd), clients.end());
+                    continue;
+                }
+ 
+                std::cout&lt;&lt;buf;
+                write(connfd, buf, strlen(buf));
+            }
+ 
+ 
+ 
+        }
+ 
+    }
+ 
+ 
+}
+ 
+/*
+正确的读法
+n = 0;
+while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {
+    n += nread;
+}
+if (nread == -1 &amp;&amp; errno != EAGAIN) {
+    perror(&quot;read error&quot;);
+}
+*/
+ 
+ 
+/*
+正确的写法
+int nwrite, data_size = strlen(buf);
+n = data_size;
+while (n &gt; 0) {
+    nwrite = write(fd, buf + data_size - n, n);
+    if (nwrite &lt; n) {
+        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {
+            perror(&quot;write error&quot;);
+        }
+        break;
+    }
+    n -= nwrite;
+}
+*/
+</code></pre>
+
+<h3 id="epoll-summary">epoll summary</h3>
+
+<p>下面的总结参照于c++教育网</p>
+
+<ul>
+<li>EPOLLIN事件
+内核中的<code>socket</code>接收缓冲区为空-低电平</li>
+</ul>
+
+<p>内核中的<code>socket</code>接收缓冲区不为空-高电平</p>
+
+<ul>
+<li><code>EPOLLOUT</code>事件
+内核中的<code>socket</code>发送缓冲区不满-高电平</li>
+</ul>
+
+<p>内核中的<code>socket</code>发送缓冲区满-低电平</p>
+
+<ul>
+<li>LT电平触发
+高电平触发</li>
+<li>ET 边沿触发
+低电平&ndash;》高电平 触发</li>
+</ul>
+
+<p>高电平&ndash;》低电平 触发  （注，本人不赞同这种观点）</p>
+
+<ul>
+<li>EPOLL 在有些情况下是不建议使用的</li>
+</ul>
+
+<p>如：已连接套接字不多，并且这些套接字非常活跃</p>
+
+<p>因为<code>epoll</code>内部的实现比较复杂（使用<code>callback</code>原理），编写时也需更加复杂的代码逻辑</p>
+
+<h3 id="epoll在lt和et模式下的读写方式">Epoll在LT和ET模式下的读写方式</h3>
+
+<p>在一个非阻塞的<code>socket</code>上调用<code>read/write</code>函数, 返回<code>EAGAIN</code>或者<code>EWOULDBLOCK</code>(注: <code>EAGAIN</code>就是E<code>WOULDBLOCK</code>)</p>
+
+<p>从字面上看, 意思是:
+- EAGAIN: 再试一次
+- EWOULDBLOCK: 如果这是一个阻塞socket, 操作将被block
+- perror输出:  Resource temporarily unavailable</p>
+
+<p>总结:</p>
+
+<p>这个错误表示资源暂时不够, 可能<code>read</code>时, 读缓冲区没有数据, 或者, <code>write</code>时,写缓冲区满了.  遇到这种情况, 如果是阻塞<code>socket</code>, <code>read/write</code>就要阻塞掉.而如果是非阻塞<code>socket</code>, <code>read/write</code>立即返回<code>-1</code>, 同时<code>errno</code>设置为<code>EAGAIN</code>.所以, 对于阻塞socket, read/write返回-1代表网络出错了.</p>
+
+<p>但对于非阻塞<code>socket</code>,<code>read/write</code>返回<code>-1</code>不一定网络真的出错了.可能是<code>Resource temporarily unavailable</code>. 这时你应该再试, 直到<code>Resource available</code>.</p>
+
+<p>综上, 对于<code>non-blocking</code>的<code>socket</code>,  正确的读写操作为:
+- 读: 忽略掉<code>errno = EAGAIN</code>的错误, 下次继续读　
+- 写: 忽略掉<code>errno = EAGAIN</code>的错误, 下次继续写　</p>
+
+<p>对于<code>select</code>和<code>epoll</code>的<code>LT</code>模式, 这种读写方式是没有问题的. 但对于<code>epoll</code>的<code>ET</code>模式, 这种方式还有漏洞.</p>
+
+<p><code>epoll</code>的两种模式<code>LT</code>和<code>ET</code></p>
+
+<p>二者的差异在于<code>level-trigger</code>模式下只要某个<code>socket</code>处于<code>readable/writable</code>状态，无论什么时候进行<code>epoll_wait</code>都会返回该<code>socket</code>；而<code>edge-trigger</code>模式下只有某个<code>socket</code>从<code>unreadable</code>变为<code>readable</code>或从<code>unwritable</code>变为<code>writable</code>时<code>epoll_wait</code>才会返回该<code>socket</code>。如下两个示意图:</p>
+
+<p>从<code>socket</code>读数据:</p>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_2.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<p>往<code>socket</code>写数据</p>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_3.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+
+<p>所以, 在<code>epoll</code>的<code>ET</code>模式下, 正确的读写方式为:
+- 读: 只要可读, 就一直读, 直到返回<code>0</code>, 或者<code>errno = EAGAIN</code>
+- 写: 只要可写, 就一直写, 直到数据发送完, 或者<code>errno = EAGAIN</code></p>
+
+<p>正确的读:</p>
+
+<pre><code class="language-c++">
+n = 0;  
+while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {  
+    n += nread;  
+}  
+if (nread == -1 &amp;&amp; errno != EAGAIN) {  
+    perror(&quot;read error&quot;);  
+}  
+
+</code></pre>
+
+<p>正确的写:</p>
+
+<pre><code class="language-c++">
+int nwrite, data_size = strlen(buf);  
+n = data_size;  
+while (n &gt; 0) {  
+    nwrite = write(fd, buf + data_size - n, n);  
+    if (nwrite &lt; n) {  
+        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {  
+            perror(&quot;write error&quot;);  
+        }  
+        break;  
+    }  
+    n -= nwrite;  
+}  
+</code></pre>
+
+<p>正确的<code>accept</code>，<code>accept</code>要考虑<code>2</code>个问题</p>
+
+<ul>
+<li>阻塞模式 accept 存在的问题
+考虑这种情况：<code>TCP</code>连接被客户端夭折，即在服务器调用<code>accept</code>之前，客户端主动发送<code>RST</code>终止连接，导致刚刚建立的连接从就绪队列中移出，如果套接口被设置成阻塞模式，服务器就会一直阻塞,在<code>accept</code> 调用上，直到其他某个客户建立一个新的连接为止。但是在此期间，服务器单纯地阻塞在<code>accept</code> 调用上，就绪队列中的其他描述符都得不到处理.</li>
+</ul>
+
+<p>解决办法是把监听套接口设置为非阻塞，当客户在服务器调用<code>accept</code>之前中止某个连接时,<code>accept</code>调用可以立即返回<code>-1</code>，这时源自<code>Berkeley</code>的实现会在内核中处理该事件，并不会将该事件通知给<code>epool</code>，而其他实现把<code>errno</code>设置为<code>ECONNABORTED</code>或者<code>EPROTO</code> 错误，我们应该忽略这两个错误。</p>
+
+<ul>
+<li><code>ET</code>模式下<code>accept</code>存在的问题
+考虑这种情况：多个连接同时到达，服务器的<code>TCP</code>就绪队列瞬间积累多个就绪连接，由于是边缘触发模式，<code>epoll</code>只会通知一次，<code>accept</code>只处理一个连接，导致<code>TCP</code>就绪队列中剩下的连接都得不到处理。</li>
+</ul>
+
+<p>解决办法是用<code>while</code>循环抱住<code>accept</code>调用，处理完<code>TCP</code>就绪队列中的所有连接后再退出循环。如何知道是否处理完就绪队列中的所有连接呢？<code>accept</code>  返回<code>-1</code>并且<code>errno</code>设置为<code>EAGAIN</code>就表示所有连接都处理完。</p>
+
+<p>综合以上两种情况，服务器应该使用非阻塞地<code>accept</code>，<code>accept</code>在<code>ET</code>模式下 的正确使用方式为：</p>
+
+<pre><code class="language-c++">
+while ((conn_sock = accept(listenfd,(struct sockaddr *) &amp;remote,   
+                (size_t *)&amp;addrlen)) &gt; 0) {  
+    handle_client(conn_sock);  
+}  
+if (conn_sock == -1) {  
+    if (errno != EAGAIN &amp;&amp; errno != ECONNABORTED   
+            &amp;&amp; errno != EPROTO &amp;&amp; errno != EINTR)   
+        perror(&quot;accept&quot;);  
+}  
+ 
+</code></pre>
+
+<p>一道腾讯后台开发的面试题</p>
+
+<p>使用<code>Linux epoll</code>模型，水平触发模式；当<code>socket</code>可写时，会不停的触发<code>socket</code>可写的事件，如何处理？</p>
+
+<p>第一种最普遍的方式：</p>
+
+<p>需要向<code>socket</code>写数据的时候才把<code>socket</code>加入<code>epoll</code>，等待可写事件。接受到可写事件后，调用<code>write</code>或者<code>send</code>发送数据。当所有数据都写完后，把<code>socket</code>移出<code>epoll</code>。
+这种方式的缺点是，即使发送很少的数据，也要把<code>socket</code>加入<code>epoll</code>,写完后在移出<code>epoll</code>，有一定操作代价。</p>
+
+<p>一种改进的方式：
+开始不把<code>socket</code>加入<code>epoll</code>，需要向<code>socket</code>写数据的时候，直接调用<code>write</code>或者<code>send</code>发送数据。
+如果返回<code>EAGAIN</code>，把<code>socket</code>加入<code>epoll</code>，在<code>epoll</code>的驱动下写数据，全部数据发送完毕后，再移出<code>epoll</code>。</p>
+
+<p>这种方式的优点是：数据不多的时候可以避免<code>epoll</code>的事件处理，提高效率。
+最后贴一个使用<code>epoll</code>, <code>ET</code>模式的简单<code>HTTP</code>服务器代码:</p>
+
+<pre><code class="language-c++">#include &lt;sys/socket.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;netinet/tcp.h&gt;
+#include &lt;sys/epoll.h&gt;
+#include &lt;sys/sendfile.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;strings.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;errno.h&gt; 
+ 
+#define MAX_EVENTS 10
+#define PORT 8080
+ 
+//设置socket连接为非阻塞模式
+void setnonblocking(int sockfd) {
+    int opts;
+ 
+    opts = fcntl(sockfd, F_GETFL);
+    if(opts &lt; 0) {
+        perror(&quot;fcntl(F_GETFL)\n&quot;);
+        exit(1);
+    }
+    opts = (opts | O_NONBLOCK);
+    if(fcntl(sockfd, F_SETFL, opts) &lt; 0) {
+        perror(&quot;fcntl(F_SETFL)\n&quot;);
+        exit(1);
+    }
+}
+ 
+int main(){
+    struct epoll_event ev, events[MAX_EVENTS];
+    int addrlen, listenfd, conn_sock, nfds, epfd, fd, i, nread, n;
+    struct sockaddr_in local, remote;
+    char buf[BUFSIZ];
+ 
+    //创建listen socket
+    if( (listenfd = socket(AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        perror(&quot;sockfd\n&quot;);
+        exit(1);
+    }
+    setnonblocking(listenfd);
+    bzero(&amp;local, sizeof(local));
+    local.sin_family = AF_INET;
+    local.sin_addr.s_addr = htonl(INADDR_ANY);;
+    local.sin_port = htons(PORT);
+    if( bind(listenfd, (struct sockaddr *) &amp;local, sizeof(local)) &lt; 0) {
+        perror(&quot;bind\n&quot;);
+        exit(1);
+    }
+    listen(listenfd, 20);
+ 
+    epfd = epoll_create(MAX_EVENTS);
+    if (epfd == -1) {
+        perror(&quot;epoll_create&quot;);
+        exit(EXIT_FAILURE);
+    }
+ 
+    ev.events = EPOLLIN;
+    ev.data.fd = listenfd;
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, listenfd, &amp;ev) == -1) {
+        perror(&quot;epoll_ctl: listen_sock&quot;);
+        exit(EXIT_FAILURE);
+    }
+ 
+    for (;;) {
+        nfds = epoll_wait(epfd, events, MAX_EVENTS, -1);
+        if (nfds == -1) {
+            perror(&quot;epoll_pwait&quot;);
+            exit(EXIT_FAILURE);
+        }
+ 
+        for (i = 0; i &lt; nfds; ++i) {
+            fd = events[i].data.fd;
+            if (fd == listenfd) {
+                while ((conn_sock = accept(listenfd,(struct sockaddr *) &amp;remote, 
+                                (size_t *)&amp;addrlen)) &gt; 0) {
+                    setnonblocking(conn_sock);
+                    ev.events = EPOLLIN | EPOLLET;
+                    ev.data.fd = conn_sock;
+                    if (epoll_ctl(epfd, EPOLL_CTL_ADD, conn_sock,
+                                &amp;ev) == -1) {
+                        perror(&quot;epoll_ctl: add&quot;);
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                if (conn_sock == -1) {
+                    if (errno != EAGAIN &amp;&amp; errno != ECONNABORTED 
+                            &amp;&amp; errno != EPROTO &amp;&amp; errno != EINTR) 
+                        perror(&quot;accept&quot;);
+                }
+                continue;
+            }  
+            if (events[i].events &amp; EPOLLIN) {
+                n = 0;
+                while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {
+                    n += nread;
+                }
+                if (nread == -1 &amp;&amp; errno != EAGAIN) {
+                    perror(&quot;read error&quot;);
+                }
+                ev.data.fd = fd;
+                ev.events = events[i].events | EPOLLOUT;
+                if (epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &amp;ev) == -1) {
+                    perror(&quot;epoll_ctl: mod&quot;);
+                }
+            }
+            if (events[i].events &amp; EPOLLOUT) {
+                sprintf(buf, &quot;HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World&quot;, 11);
+                int nwrite, data_size = strlen(buf);
+                n = data_size;
+                while (n &gt; 0) {
+                    nwrite = write(fd, buf + data_size - n, n);
+                    if (nwrite &lt; n) {
+                        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {
+                            perror(&quot;write error&quot;);
+                        }
+                        break;
+                    }
+                    n -= nwrite;
+                }
+                close(fd);
+            }
+        }
+    }
+ 
+    return 0;
+}
+
+</code></pre>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2013/muduo-base-library-1/>https://laohanlinux.github.io/2013/muduo-base-library-1/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/muduo/">
+                    #muduo</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/muduo-base-library/">
+                    #muduo base library</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+         
+        
+        <a href="https://laohanlinux.github.io/2013/muduo-base-library-2/" class="next" rel="next" title="muduo_base_library_2">muduo_base_library_2&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

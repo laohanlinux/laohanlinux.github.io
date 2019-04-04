@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2016/03/26/filename/" />
+  <link rel="next" href="https://laohanlinux.github.io/2016/04/04/filename/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/30/filename/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           paxos | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="paxos | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "paxos",
+    "headline" : "paxos",
+    "description" : "本文的内容源至--知行学社V.好吧，看完后，我还是一直半解...还是使用raft吧../?????",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-03-30 21:04:29 &#43;0000 UTC",
+    "dateModified" : "2016-03-30 21:04:29 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2016/03/30/filename/",
+    "wordCount" : "4387",
+    "keywords" : [ "paxos", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">paxos</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-03-30 itemprop="datePublished">March 30, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<blockquote>
+<p>本文的内容源至&ndash;知行学社V.
+<a href="http://www.tudou.com/programs/view/e8zM8dAL6hM/" rel="nofollow noreferrer" target="_blank">http://www.tudou.com/programs/view/e8zM8dAL6hM/</a></p>
+</blockquote>
+
+<h1 id="paxos-的理解困境">Paxos 的理解困境</h1>
+
+<ul>
+<li>Paxos究竟在解决什么问题？</li>
+<li>Paxos如何在分布式存储系统中应用？</li>
+<li>Paxos算法的核心思想是什么
+第一阶段在做什么
+第二阶段在做什么</li>
+</ul>
+
+<h1 id="paxos-用来确定一个不可变量的取值">Paxos 用来确定一个不可变量的取值</h1>
+
+<ul>
+<li>取值可以是任何二进制数据</li>
+<li>一旦确定将不再更改，并且可以被获取到(不可变性、可读性)</li>
+</ul>
+
+<h1 id="在分布式存储系统中应用paxos">在分布式存储系统中应用Paxos</h1>
+
+<ul>
+<li>数据本身可变，采用多副本进行存储</li>
+<li>多副本的更行操作序列[Op1,Op2,…,Opn]是相同的，不变的</li>
+<li>用Paxos依次来确定不可变量Opi的取值（即第i个操作是神什么）</li>
+<li>每次确定完Opi之后，让各个数据副本执行Opi，依次类推。</li>
+</ul>
+
+<blockquote>
+<p>Google的Chubby、Megastore 和Spanner都采用了Paxos来对数据副本的根性序列达成一致</p>
+</blockquote>
+
+<h1 id="paxos-希望解决的一直性问题">Paxos 希望解决的一直性问题</h1>
+
+<p>设计一个系统，来存储名称为var的变量
+- 系统内部由多个Acceptor组成，负责存储和管理var变量。
+- 外部有多个proposer机器任意并发调用API，想系统提交不同的var取值，var的取值可以是任意二进制数据
+- 系统对外的API库接口为：<code>propose(var,V)</code>=&gt; <code>&lt;ok,f&gt;</code> or <code>&lt;error&gt;</code></p>
+
+<h2 id="系统需要保证var的取值满足一致性">系统需要保证var的取值满足一致性</h2>
+
+<ul>
+<li>如果var的取值没有确定，则var的取值为null</li>
+<li>一旦var的取值被确定，则不可以被更改。并且可以一直获取到这个值</li>
+</ul>
+
+<h2 id="系统需要满足容错特性">系统需要满足容错特性</h2>
+
+<ul>
+<li>可以容忍任意propose机器出现故障</li>
+<li>可以容忍少数Accptor故障（半数一下）</li>
+</ul>
+
+<p>暂时不考虑 网络分化 和 acceptor故障丢去var的信息。</p>
+
+<h1 id="确定一个不可变变量-难点">确定一个不可变变量—难点</h1>
+
+<ul>
+<li>管理多个Proposer的并发执行</li>
+<li>保证var变量的不可变性</li>
+<li>容忍任意Proposer机器故障</li>
+<li>容忍半数以下Acceptor机器故障</li>
+</ul>
+
+<h2 id="确定一个不可变量变量的取值-方案1">确定一个不可变量变量的取值&mdash;-方案1</h2>
+
+<ul>
+<li>先考虑系统由单个Acceptor组成。通过类似互斥锁机制，来管理并发的proposer运行。</li>
+<li>Proposer首先向Acceptor申请Acceptor的互斥访问权，然后才能请求Acceptor接受自己的取值。</li>
+<li>Acceptor给Proposer发放互斥访问权，谁申请到互斥访问权，就接收到谁提交的取值。</li>
+<li>让Proposer按照获取互斥访问权的顺序依次访问Acceptor</li>
+<li>一旦Acceptor接受了某个Proposer的取值，则认为var取值被确定，其他Proposer不再更改</li>
+</ul>
+
+<h3 id="基于互斥访问权的acceptor的实现">基于互斥访问权的Acceptor的实现</h3>
+
+<ul>
+<li>Acceptor保存变量var和一个互斥锁lock</li>
+<li>Acceptor::pareprare():
+加互斥锁，给予var的互斥访问权，并返回var当前的取值f</li>
+<li>Acceptor::release():
+解互斥锁，收回var的互斥访问权</li>
+<li>Acceptor::accept(var,V):
+如果已经加锁，并且var没有取值，则设置var为V。并且释放锁</li>
+</ul>
+
+<h3 id="propose-var-v-的两阶段实现">Propose(var,V)的两阶段实现</h3>
+
+<ul>
+<li>第一阶段：通过Acceptor::prepare获取互斥访问权和当前var的取值，如果不能返回<error>（锁被别人占用）</li>
+<li>第二阶段：根据当前var的取值f，选择执行
+如果f为null，则通过Acceptor::accept（var,V）提交数据V
+如果f不为空，则通过Acceptor::release()释放访问权，返回<ok,f></li>
+</ul>
+
+<p>通过<code>Acceptor</code>互斥访问权让<code>Proposer</code>序列运行，可以简单的实现<code>var</code>取值的一致性</p>
+
+<blockquote>
+<p>Proposer在释放互斥访问权之前发生故障，会导致系统陷入死锁,所以方案一不能容忍任意Proposer机器故障</p>
+</blockquote>
+
+<h2 id="确定一个不可变变量的取值-方案2">确定一个不可变变量的取值&mdash;-方案2</h2>
+
+<p>引入抢占式访问权
+- <code>Acceptor</code>可以让某个<code>Proposer</code>获取到的访问权失败，不再接收它的访问，之后，可以将访问权发给其他<code>Proposer</code>，让其他<code>Proposer</code>访问<code>Acceptor</code>
+- <code>Proposer</code>向<code>Acceptor</code>申请访问权时指定编号<code>epoch</code>（越大的<code>epoch</code>越新），获取到访问权之后，才能向<code>Acceptor</code>提交取值。
+- <code>Acceptor</code>采用喜新还旧的原则
+一旦收到更大的新<code>epoch</code>的申请，马上让旧<code>epoch</code>的访问权失败，不再接受他们提交的取值。
+然后给新<code>epoch</code>发放访问权，只接收新<code>epoch</code>提交的取值
+- 新<code>epoch</code>可以抢占旧<code>epoch</code>，让旧<code>epoch</code>的访问权失败，旧<code>epoch</code>的<code>Proposer</code>将无法运行，新<code>epoch</code>的<code>Proposer</code>将开始运行
+- 为了保持一致性，不同<code>epoch</code>的<code>Proposer</code>之间采用“后者认同前者”的原则
+1、在肯定旧<code>epoch</code>无法生成确定性取值时，新的<code>epoch</code>会提交自己的<code>value</code>，不会冲突
+2、旦旧<code>epoch</code>形成确定性取值，新的<code>epoch</code>可定可以获取到此值，并且会认同此取值，不会破坏</p>
+
+<h3 id="基于抢占式访问权的acceptor的实现">基于抢占式访问权的Acceptor的实现</h3>
+
+<ul>
+<li><code>Acceptor</code>保存的状态
+当前<code>var</code>的取值<code>&lt;accepted_epoch, accepted_value&gt;</code>
+最新发放访问权的<code>epoch(lasted_prepared_epoch)</code></li>
+<li><code>Acceptor::preprare(epoch)</code>:
+只接收比<code>lasted_prepared_epoch</code>更大的<code>epoch</code>，并给予访问权，记录<code>lasted_prepares_epoch=epoch</code></li>
+<li><code>Acceptor::accept(var ,prepared_epoch, V )</code>:
+验证<code>lasted_prepared_epoch == prepared_epoch</code> ,并设置<code>var</code>的取值<code>&lt;accepted_epoch,accepted_value&gt; = &lt;prepared_epoch,v&gt;</code>.</li>
+</ul>
+
+<h3 id="proposer-var-v-的两个阶段实现">Proposer(var , V)的两个阶段实现</h3>
+
+<ul>
+<li>第一阶段：获取<code>epoch</code> 轮次的访问权和当前var的取值
+简单选取当前世界戳为<code>epoch</code>，通<code>Acceptor::prepare(epoch)</code>，获取<code>epoch</code>轮次的访问权和当前<code>var</code>的取值如果不能获取，返回<code>&lt;error&gt;</code></li>
+<li>第二阶段：采用“后者认同前者”的原则选定取值，进行提交。
+1、如果<code>var</code>的取值为空，则可定当前没有确定性取值，则通过<code>Acceptor::accept(var, epoch , V)</code>提交数据<code>V</code>，成功后返回<code>&lt;ok,V&gt;</code>;如果<code>Acceptor</code>失败，返回<code>&lt;error&gt;</code>(被<code>epoch</code>抢占或者<code>Acceptor</code>故障)
+2.如果<code>var</code>取值存在，则此值肯定是确定性取值，此时认同它不再更改，直接返回<code>&lt;ok, epoch_old , accepted_value&gt;</code></li>
+</ul>
+
+<blockquote>
+<p>总结</p>
+</blockquote>
+
+<p>基于抢占式访问权的核心思想：
+让<code>Proposer</code>将按照<code>epoch</code>递增的顺讯抢占式的依次运行，后者认同前者。可以避免<code>proposer</code>机器故障带来的死锁问题，并且可以<code>var</code>取值的一致性。但是还得引入多<code>Acceptor</code>单机模块<code>Acceptor</code>是故障导致整个系统<code>down</code>机 ，无法提供服务</p>
+
+<ul>
+<li>关于方案1
+如何控制<code>proposer</code>的并发运行？
+让<code>Propose</code>按照<code>epoch</code>递增的顺序抢占式的依次运行，后者会认同前者.(*注*：即使这样做了其实也不能够确保，因为在分布式中，获取的时钟值可能是一样的，如果真出现这种情况，<code>Acceptor</code>应该收回发出去的锁，让<code>Propose</code>重新发起申请，知道时钟是时钟是不一样的;还有就是抢占会发生<code>洪水</code>式的抢占失败，因为前者被后者抢占了，如果后者还没有执行第二阶段，那么前者也有重新抢占的可能，这样反复抢占（简称活锁），那就坑爹了)</li>
+</ul>
+
+<p>为何可以保证一致性？
+    <code>var</code>值只能被改动一次</p>
+
+<p>为什么会有死锁问题？
+    如果获取到的锁的<code>Propose</code>还有执行第二阶段，然后<code>down</code>机了，那么就会出现死锁的情况，但是如果使用抢占式的话还是可以避免到死锁的问题(如果让锁具有<code>时效性</code>，这样也是避免死锁的一种方案).
+- 关于方案2
+    如何解决方案1的死锁问题？
+    在什么情况下，<code>Proposer</code>可以将<code>var</code>的取值确定为自己提供的取值？</p>
+
+<h2 id="确定一个不可变量的取值-方案2序">确定一个不可变量的取值&mdash;方案2序</h2>
+
+<ul>
+<li><p>基于抢占访问权的核心思想
+让<code>Propose</code>将按照<code>epoch</code>递增的顺序抢占式的依次运行，后者认同前者</p></li>
+
+<li><p>可以避免<code>Proposer</code>机器故障带来的死锁问题，并且可以保证<code>var</code>取值的一致性</p></li>
+
+<li><p>仍需要引入多<code>acceptor</code>
+单机模块是故障导致整个系统<code>down</code>机，无法提供服务。</p></li>
+</ul>
+
+<h2 id="确定一个不可变量的取值-paxos">确定一个不可变量的取值&mdash;Paxos</h2>
+
+<ul>
+<li>Paxos在方案2的基础上引入多<code>Acceptor</code>
+<code>Acceptor</code>的实现保持不变，仍采用“喜新厌旧”的原则运行。</li>
+<li>Paxos采用“少数服从多数”的思路</li>
+
+<li><p>一旦某<code>epoch</code>的取值<code>f</code>被半数<code>acceptor</code>接受，则认为此<code>var</code>取值被确定为<code>f</code>
+,不在改变。</p></li>
+
+<li><p>Propose(var, v)第一阶段：选定某个<code>epoch</code>,获取epoch访问权和对应的<code>var</code>取值
+获取半数以上<code>Acceptor</code>的访问权和对应的一组<code>var</code>取值</p></li>
+
+<li><p>Propose(var,v)第二阶段：采用“后者认同前者”的原则运行
+1、肯定旧<code>epoch</code>无法生成稳定性取值时，新的<code>epoch</code>会提交自己的取值，不会冲突。
+2、一旦旧<code>epoch</code>形成确定性取值，新的<code>epoch</code>肯定可以获取到此取值，并且会认同取值，不会破坏。
+3、如果获取的<code>var</code>取值为空，则旧<code>epoch</code>无法形成确定性取值。此时努力使<code>&lt;epoch, v&gt;</code>成为确定性取值。</p>
+
+<ul>
+<li>向<code>epoch</code>对应的所有<code>acceptor</code>提交取值<code>&lt;epoch, v&gt;</code>.</li>
+<li>如果收到半数以上成功, 则返回<code>&lt;ok, v&gt;</code></li>
+<li>否则，则返回<code>&lt;error&gt;</code>(被新<code>epoch</code>抢占或者<code>acceptor</code>故障)
+4、如果<code>var</code>的取值存在，认同最大<code>acceptor_epoch</code>对应的取值<code>f</code>,努力使<code>&lt;epoch, f&gt;</code>成为确定性取值。</li>
+</ul></li>
+</ul>
+
+<p>抢占式访问权机制的运行过程</p>
+
+<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318102939343.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图一
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318103033921.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图二（#1表示P1获取了访问权）
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318103155250.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图3(现在是P2抢占获得了访问权，而P1保存着过期的访问权，此时Acceptor里面的lasted_prepared_epoch 比P1的大)
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318103235265.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图4（P2成功设置了V2）
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318103312546.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图5（P1的访问权已经失效了，所以Acceptor(#1,V1)失败）
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/erlang/paxos/20140318103359796.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+图6（P3prepare(#3)成功，但是会返回<ok.#2,V2>，因为var已经被设置了，起到了一致性作用，所以不会在更改var的值）
+</center></p>
+
+<h2 id="paxos算法的核心思想">Paxos算法的核心思想</h2>
+
+<ul>
+<li>在抢占访问权的基础上引入多<code>Acceptor</code></li>
+<li>保证一个<code>epoch</code>,只有一个<code>propose</code>运行，<code>proposer</code>按照<code>epoch</code>递增的顺序依次执行</li>
+<li>新<code>epoch</code>的<code>proposer</code>采用“后者认同前者”的思想运行
+1、在肯旧<code>epoch</code>无法生成确定性取值时，新的<code>epoch</code>会提交自己的取值，不会冲突。
+2、一旦旧<code>epoch</code>形成确定性取值，新的<code>epoch</code>肯定可以获取到此取值，并且认同此取值，不会破坏</li>
+<li>paxos算法可以满足容错要求
+1、半数一下<code>acceptor</code>出现故障时，存活的<code>acceptor</code>仍然可以生成<code>var</code>的确定性取值。
+2、一旦<code>var</code>取值被确定，即使出现半数以下<code>acceptor</code>故障，此取值可以被获取，并且将不再被更改。</li>
+<li>paxos算法的Liveness问题
+新轮次的抢占会让旧轮次停止运行，如果每一轮次在第二阶成功之前都被新一轮抢占，则导致活锁，怎么解决呢？？？</li>
+</ul>
+
+<p>可以参考<code>raft</code>选举的实现，可以使用随机时间戳来避免活锁，就说每个<code>Propse</code>每轮次的间隔时间是在某个时间段里的某个值，根据<code>raft</code>算法的验证，这种方案接近100%解决这种问题（忘记多少了，有兴趣的朋友，可以到raft的官网去查）。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2016/03/30/filename/>https://laohanlinux.github.io/2016/03/30/filename/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/paxos/">
+                    #paxos</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2016/03/26/filename/" class="prev" rel="prev" title="estatbox_crdts"><i class="iconfont icon-left"></i>&nbsp;estatbox_crdts</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2016/04/04/filename/" class="next" rel="next" title="Goim源码剖析">Goim源码剖析&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

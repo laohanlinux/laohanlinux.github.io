@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="Rg">
+  <meta name="description" content="Rg&#39;s blog">
+  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
+  
+  <link rel="prev" href="https://laohanlinux.github.io/2014/07/01/muduo-simple-example/" />
+  <link rel="next" href="https://laohanlinux.github.io/2015/07/01/muduo-net-library-chapter-1/" />
+  <link rel="canonical" href="https://laohanlinux.github.io/2015/04/25/cowboy/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           cowboy | Welcome to Rg Home
+       
+  </title>
+  <meta name="title" content="cowboy | Welcome to Rg Home">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://laohanlinux.github.io"
+    },
+    "articleSection" : "posts",
+    "name" : "cowboy",
+    "headline" : "cowboy",
+    "description" : "a web lib for erlang",
+    "inLanguage" : "en-us",
+    "author" : "Rg",
+    "creator" : "Rg",
+    "publisher": "Rg",
+    "accountablePerson" : "Rg",
+    "copyrightHolder" : "Rg",
+    "copyrightYear" : "2015",
+    "datePublished": "2015-04-25 22:59:40 &#43;0000 UTC",
+    "dateModified" : "2015-04-25 22:59:40 &#43;0000 UTC",
+    "url" : "https://laohanlinux.github.io/2015/04/25/cowboy/",
+    "wordCount" : "2826",
+    "keywords" : [ "Erlang","cowboy", "Welcome to Rg Home"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">cowboy</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2015-04-25 itemprop="datePublished">April 25, 2015</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="https://laohanlinux.github.io/categories/erlang/"> Erlang </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h2 id="cowboy-启动流程">Cowboy 启动流程</h2>
+
+<ul>
+<li>Initialization</li>
+</ul>
+
+<p>首先， <code>init</code>函数会被调用，所有的处理都会调用该函数。如果使用<code>rest</code>处理当前的请求，那么这个函数必须返回<code>upgrade</code></p>
+
+<pre><code class="language-erlang">[init({tcp, http}, Req, Opts)   -&gt;
+    {upgrade, protocol, cowboy_test}.
+</code></pre>
+
+<p><code>cowboy</code>会转为<code>REST</code>协议来开始执行状态机，如果<code>rest_init/2</code>被定义，那么将从<code>reset_init/2</code>开始执行，
+同理执行结束时会执行<code>rest_terminate/2</code>.</p>
+
+<ul>
+<li>Methods</li>
+</ul>
+
+<p><code>rest</code>支持的<code>http</code>方法有<code>Head</code>, <code>Get</code>, <code>Post</code>, <code>Patch</code>, <code>Put</code>, <code>Delete</code>, <code>Options</code> 其他方法也会被接受，但是当前没还有特定的他们的回调函数。</p>
+
+<ul>
+<li>Callbacks</li>
+</ul>
+
+<p>所有的回调都是可选的，有些回调强制依赖于其他回调的返回值。</p>
+
+<p>当<code>request</code>启动的时候，<code>Cowboy</code>调用<code>reset_init/2</code>函数如果她被定义了，<code>req</code>对象和处理选项<code>opts</code>作为参数。这个函数必须返回<code>{ok,req,state}</code>,<code>state</code>是处理句柄的状态，所有的子请求的回调函数都会接受到。</p>
+
+<ul>
+<li>在所有请求的最后，<code>rest_terminate/2</code>如果被定义都会被执行，这个函数不能发送<code>reply</code>，且必须返回<code>ok</code>.</li>
+</ul>
+
+<p>其他所有的回调都是资源的回调，都有两个参数，<code>req</code>和<code>state</code>，并且返回三元组<code>{value, req, state}</code></p>
+
+<p>下面是一张详细表，如果回调函数没有定义，那么他们的默认值将会被使用到。</p>
+
+<ul>
+<li>所有的回调都可以返回<code>{halt, req,state}</code> 来中断请求，然后<code>rest_terminate/2</code>会被调用。</li>
+</ul>
+
+<p><center>
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://7rflb0.com1.z0.glb.clouddn.com/erlang%2FD5E94589-8C2A-4934-BF20-99156847F304.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+</center></p>
+
+<p><code>cowboy</code>会尽量按照上表的默认值来处理。 <code>A Key is an Address</code></p>
+
+<p>除此之外，用户可以在<code>content_types_accpted/2</code> 和 <code>content_types_provided/2</code>中嵌入用户自定的回调函数。这些函数的名字没有限制，但是在每个回调函数的名字中增加前缀，例如, <code>from_html</code>和<code>to_html</code>，这样来指明第一个函数接收到的请求被指定为<code>HTML</code>，第二个表示服务端应该返回一个<code>HTML</code>。</p>
+
+<h3 id="meta-data-response-body">Meta data (response body)</h3>
+
+<p><code>Cowboy</code>将会在每个执行点处收集<code>meta</code>值，用户可以通过 <code>cowboy_req:meta/{2,3}</code>来进行索引。这些值如下表所示：</p>
+
+<table>
+<thead>
+<tr>
+<th>Meta key</th>
+<th>Details</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>media_type</td>
+<td>The content-type negotiated for the response entity.</td>
+</tr>
+
+<tr>
+<td>language</td>
+<td>The language negotiated for the response entity.</td>
+</tr>
+
+<tr>
+<td>charset</td>
+<td>The charset negotiated for the response entity.</td>
+</tr>
+
+<tr>
+<td>Response</td>
+<td>headers</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>cowboy</code> 会自动设置应答头,这些头信息如下：</p>
+
+<table>
+<thead>
+<tr>
+<th>Header name</th>
+<th>Details</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>content-language</td>
+<td>Languange used in the respnse body</td>
+</tr>
+
+<tr>
+<td>content-type</td>
+<td>Media type and charset of the response body</td>
+</tr>
+
+<tr>
+<td>etag</td>
+<td>Etag of the resource</td>
+</tr>
+
+<tr>
+<td>expires</td>
+<td>Expiration  data of the resource</td>
+</tr>
+
+<tr>
+<td>last-modified</td>
+<td>Last    modification data for the resource</td>
+</tr>
+
+<tr>
+<td>location</td>
+<td>Relative or absolute URL to the requested resource</td>
+</tr>
+
+<tr>
+<td>vary</td>
+<td>List of headers that may change the representation of resource</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="rest-flowcharts">REST Flowcharts</h2>
+
+<p>这章节将通过一些列不同的流程图来介绍<code>REST</code>处理状态机。</p>
+
+<p>一个请求主要有四条路线，一个是方法<code>OPTIONS</code>， 一个是方法<code>GET</code>和<code>HEAD</code>；一个是<code>PUT</code>，<code>POST</code>和<code>PATCH</code>，最后一个是<code>DELETE</code>。</p>
+
+<p>所有的路径都是从<code>“Start”</code>开始，如果资源存在，除了<code>OPTIONS</code>路径，其他全部路径都经过<code>“Content negotiation”</code>并且可选<code>“Conditional requests”</code> 图。</p>
+
+<p>红色代表引用另外的图，淡绿色表明是一个<code>response</code>，其他的图可能是一个回调或者是一个请求应答，这些都是<code>Cowboy</code>自己处。如果回调没有定义，那么绿色箭头表明默认的行为。</p>
+
+<ul>
+<li>Start</li>
+</ul>
+
+<p>所有的请求都是从这里开始</p>
+
+<ul>
+<li>rest start</li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="https://camo.githubusercontent.com/3b20c7a6d20f2ea7a6fe0f78eee23ff2c7c4dab5/687474703a2f2f6e696e656e696e65732e65752f646f63732f656e2f636f77626f792f484541442f67756964652f726573745f73746172742e706e67" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<p>所有的回调被连续执行来进行服务器，请求行，请求头的一般性进行检查。</p>
+
+<p>如果有可能，那么请求的实体不会在任何步骤里被接收（要开发者手动接收），当所有条件都满足时，<code>Cowboy</code>也只是执行到<code>PUT</code>，<code>POST</code>和<code>PATCH</code>方法的尾部。</p>
+
+<ul>
+<li><p>The known_method<code>和</code>allowed_methods<code>回调返回值是一些列的方法，然后</code>Cowboy`检查请求方法是否在这些列表里面，否则终止执行。</p></li>
+
+<li><p><code>is_authorized</code>回调可以用来检查资源的访问是否授权，授权也可一根据需要来决定是否被执行。如果授权失败，那么回调函数的返回值必须包含 可访问的资源列表， 这些列表将被以 <code>www-authenticate header</code> 的形式发送给客户端。</p></li>
+</ul>
+
+<p>当执行完上面的流程后，如果请求的方法是<code>OPTIONS</code>，那么马上会执行<code>“OPTIONS method”</code>图，否则将执行<code>“Content negotiation”</code> 图。
+<code>OPTIONS method</code></p>
+
+<p>这个流程图只适用于<code>OPTIONS</code> 请求。</p>
+
+<ul>
+<li>rest options</li>
+</ul>
+
+<p><code>OPTIONS</code> 回调可以用于添加一些关于资源的信息，如媒体类型，服务可接受的语言；可接受的方法；或者其他一些额外的信息。 尽管客户端不应该读取他，但是一个应答实体也可以被设置。</p>
+
+<p>如果 <code>options</code> 回调没有定义，<code>Cowboy</code>默认会发送一个包含可接收的方法的列表 的应答。
+<code>Content negotiation</code></p>
+
+<p>这个流程适用于所有的请求方法，除了<code>OPTIONS</code>外，在<code>“start”</code>后，它会紧跟着被执行。</p>
+
+<ul>
+<li>rest conneg</li>
+</ul>
+
+<p>这些步骤的目的是确定一个适当的结果发送给回客户端。</p>
+
+<p>该请求可以包含任意的可接受的请求头；可接受的语言头；可接受的字符集头。如果存在这些头，<code>cowboy</code>将会解析这些头然后调用相应的回调来获得提供的内容类型，此资源语言或字符集的列表，然后，它会自动选择基于请求的最佳匹配。</p>
+
+<p>如果回调没有被定义，那么<code>cowboy</code>将会选择客户端喜欢的<code>content-type</code>, <code>language</code> 和<code>charset</code>.</p>
+
+<p><code>content_types_provied</code>也可以返回每一种它可以接收的<code>content-type</code>的回调的名字。当所有的条件都满足，那么该回调只会在<code>&quot;GET</code>和<code>HEAD</code>方法&rdquo;结束时被回调。</p>
+
+<p>可选择的<code>content-type</code>,<code>language</code>和<code>charset</code>会被保存在请求对象的<code>meta</code>处，如果手动发送应答体，那么应该选择适当的具有代表性的这些类型。</p>
+
+<p>这个流程结束后，马上接下来的是<code>“GET和HEAD方法”</code>的流程图或者是<code>“PUT，POST</code>和<code>PATCH</code>方法”的流程图，再或者是<code>“DELETE方法“</code>的流程图，主要依赖于请求方法的类型。
+<code>GET</code>和<code>HEAD</code> 方法</p>
+
+<p>这个流程图只适用于<code>GET</code>和<code>HEAD</code>请求.</p>
+
+<p>请到<code>&quot;Conditional request&quot;</code>处查看 <code>cond step</code> 的详细描述。</p>
+
+<p>当资源存在时，<code>conditional step</code>也是成功的，资源也可被检索到。</p>
+
+<pre><code>When the resource exists, and the conditional steps succeed, the resource can be retrieved.
+
+Cowboy prepares the response by first retrieving metadata about the 
+representation, then by calling the ProvideResource callback. This is the callback
+you defined for each content-types you returned from content_types_provided. 
+This callback returns the body that will be sent back to the client, or a fun if the body must be streamed.
+When the resource does not exist, Cowboy will figure out whether the resource     existed previously, 
+and if so whether it was moved elsewhere in order to redirect the client to the new URI.
+The moved_permanently and moved_temporarily callbacks must return the new location of the resource if it was in fact moved.
+</code></pre>
+
+<ul>
+<li>PUT， POST， and PATCH methods</li>
+</ul>
+
+<p>当资源存在时，第一个执行的步骤是<code>conditional steps</code>，如果成功并且方法是<code>PUT</code>，<code>cowboy</code>会调用 <code>is_conflict</code> . 这个函数函数用来解决竞争条件，如资源锁。</p>
+
+<p>所有的方法都会被执行到 <code>content_types_accepted</code>这个步骤。</p>
+
+<p>当资源不存在并且方法是<code>PUT</code>,那么<code>Cowboy</code> 将会检测冲突，然后转到 <code>content_types_accepted</code>步骤。如果是其他方法，<code>Cowboy</code>会检测资源是否已经存在，如果是这样子的话，会被定向到其他地方去。</p>
+
+<p>资源真的不存在，并且方法是<code>POST</code>。<code>accepted_missing_post</code>的返回值是<code>true</code>,那么<code>Cowboy</code>会移到<code>content_types_accepted</code> 处。</p>
+
+<p>否则，请求会在这里被终止。</p>
+
+<p>如果他们都要移动，那么<code>moved_permanently</code>和<code>moved_temporaily</code>必须返回资源所在路径。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>Rg </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=https://laohanlinux.github.io/2015/04/25/cowboy/>https://laohanlinux.github.io/2015/04/25/cowboy/</span>
+            </p>
+            
+             
+            <p class="copyright-item lincese">
+                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+            </p>
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/erlang/">
+                    #Erlang</a></span>
+            
+            <span class="tag"><a href="https://laohanlinux.github.io/tags/cowboy/">
+                    #cowboy</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="https://laohanlinux.github.io">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="https://laohanlinux.github.io/2014/07/01/muduo-simple-example/" class="prev" rel="prev" title="muduo simple example"><i class="iconfont icon-left"></i>&nbsp;muduo simple example</a>
+         
+        
+        <a href="https://laohanlinux.github.io/2015/07/01/muduo-net-library-chapter-1/" class="next" rel="next" title="muduo net library chapter 1">muduo net library chapter 1&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+        
+<div id="gitalk-container" style="border:0" ></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '88e50f263d090b13460f',
+    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+    repo: 'blog',
+    owner: 'laohanlinux',
+    admin: ['laohanlinux'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+    })
+
+gitalk.render('gitalk-container')
+</script>
+
+
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2014 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>
