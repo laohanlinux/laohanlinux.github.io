@@ -84,13 +84,15 @@
 <nav id="mobile-menu" class="mobile-menu slideout-menu">
   <ul class="mobile-menu-list">
     <a href="/">
-        <li class="mobile-menu-item">cd ~/</li>
+        <li class="mobile-menu-item">CD ~/</li>
       </a><a href="/post/">
         <li class="mobile-menu-item">Archives</li>
       </a><a href="/tags/">
         <li class="mobile-menu-item">Tags</li>
       </a><a href="/categories/">
         <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
       </a>
   </ul>
 </nav>
@@ -103,13 +105,15 @@
 <nav class="site-navbar">
   <ul id="menu" class="menu">
     <li class="menu-item">
-        <a class="menu-item-link" href="/">cd ~/</a>
+        <a class="menu-item-link" href="/">CD ~/</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/post/">Archives</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/tags/">Tags</a>
       </li><li class="menu-item">
         <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
       </li>
   </ul>
 </nav>
@@ -702,9 +706,23 @@ A依赖B、C:这意味着A要正常启动,B、C要先启动, B又依赖X、Y:A�
     </span>
   </p>
   
-  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</span>
+  </p>
 </div>
-<footer class="post-footer">
+<div class="post-reward">
+  <input type="checkbox" name="reward" id="reward" hidden />
+  <label class="reward-button" for="reward">Reward</label>
+  <div class="qr-code">
+    
+    <label class="qr-code-image" for="reward">
+        <img class="image" src="https://ws2.sinaimg.cn/large/006tNc79gy1g1r15n5iquj30u014qgqe.jpg">
+        <span>wechat</span>
+      </label>
+    
+  </div>
+</div><footer class="post-footer">
       <div class="post-tags">
           <a href="/tags/riak/">riak</a>
           <a href="/tags/riak-core/">riak core</a>
