@@ -1,155 +1,126 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  <meta name="author" content="Rg">
-  <meta name="description" content="Rg&#39;s blog">
-  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
-  
-  
-  <link rel="next" href="https://laohanlinux.github.io/2013/06/10/muduo-base-library-2/" />
-  <link rel="canonical" href="https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           muduo_base_library_1 | Welcome to Rg Home
-       
-  </title>
-  <meta name="title" content="muduo_base_library_1 | Welcome to Rg Home">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>muduo_base_library_1 - Welcome to Rg Home</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-  
-  
- 
+<meta name="author" content="Rg" /><meta name="description" content="muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!" /><meta name="keywords" content="Rg, Rust, even" />
 
-<script type="application/ld+json">
- "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https://laohanlinux.github.io"
-    },
-    "articleSection" : "posts",
-    "name" : "muduo_base_library_1",
-    "headline" : "muduo_base_library_1",
-    "description" : "muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!",
-    "inLanguage" : "en-us",
-    "author" : "Rg",
-    "creator" : "Rg",
-    "publisher": "Rg",
-    "accountablePerson" : "Rg",
-    "copyrightHolder" : "Rg",
-    "copyrightYear" : "2013",
-    "datePublished": "2013-06-10 01:09:28 &#43;0000 UTC",
-    "dateModified" : "2013-06-10 01:09:28 &#43;0000 UTC",
-    "url" : "https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/",
-    "wordCount" : "6927",
-    "keywords" : [ "muduo","muduo base library", "Welcome to Rg Home"]
-}
-</script>
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="muduo_base_library_1" />
+<meta property="og:description" content="muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/" />
+<meta property="article:published_time" content="2013-06-10T01:09:28&#43;00:00"/>
+<meta property="article:modified_time" content="2013-06-10T01:09:28&#43;00:00"/>
+
+<meta itemprop="name" content="muduo_base_library_1">
+<meta itemprop="description" content="muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!">
+
+
+<meta itemprop="datePublished" content="2013-06-10T01:09:28&#43;00:00" />
+<meta itemprop="dateModified" content="2013-06-10T01:09:28&#43;00:00" />
+<meta itemprop="wordCount" content="7701">
+
+
+
+<meta itemprop="keywords" content="muduo,muduo base library," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="muduo_base_library_1"/>
+<meta name="twitter:description" content="muduo 是一个linux 网络库，使用poll和epoll模式。 这些内容是本人在大学的时候，通过  &lt;&lt; c&#43;&#43;教程网 &gt;&gt;  所学的知识笔记. 已经过去好几年了，版本也是比较老的了，属于入门级别的教程； 如有错误，纯属正常!!!"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
 
 </head>
-
-  
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Welcome come to Rg Home</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">cd ~/</li>
+      </a><a href="/posts/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
 </nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Welcome come to Rg Home</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">cd ~/</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/posts/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
 </nav>
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">muduo_base_library_1</h1>
-        <div class="post-meta">
-                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
-                <span class="post-time">
-                on <time datetime=2013-06-10 itemprop="datePublished">June 10, 2013</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://laohanlinux.github.io/categories/muduo/"> muduo </a>
-                        <a href="https://laohanlinux.github.io/categories/network-program/"> network program </a>
-                        
-                </span>
-        </div>
     </header>
-    <div class="post-content">
-        
 
-        
-            
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <div class="post-content">
+    
 
 <h1 id="muduo-base-library">Muduo Base Library</h1>
 
@@ -162,149 +133,275 @@
 <ul>
 <li>Thread.h</li>
 </ul>
-
-<pre><code class="language-c++">
-#ifndef _THREAD_H_ 
-#define _THREAD_H_
-#include &lt;pthread.h&gt;
-class Thread{
-public :
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#ifndef _THREAD_H_ 
+</span><span class="cp">#define _THREAD_H_
+</span><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">class</span><span class="err"> </span><span class="nc">Thread</span><span class="p">{</span>
+<span class="k">public</span> <span class="o">:</span>
  
-    Thread();
-    virtual ~Thread();
-    void Start();
-    void Join();
+    <span class="n">Thread</span><span class="p">();</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Thread</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Join</span><span class="p">();</span>
  
-private :
-    // 纯虚函数 ²»ÐҪ 
-    void Run() =0 ;
-    pthread_t threadId_ ; 
+<span class="k">private</span> <span class="o">:</span>
+    <span class="c1">// 纯虚函数 ²»ÐҪ 
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="n">Run</span><span class="p">()</span> <span class="o">=</span><span class="mi">0</span> <span class="p">;</span>
+    <span class="n">pthread_t</span> <span class="n">threadId_</span> <span class="p">;</span> 
  
-};#ifndef _THREAD_H_ 
-#define _THREAD_H_
-#include &lt;pthread.h&gt;
-class Thread{
-public :
+<span class="p">};</span><span class="cp">#ifndef _THREAD_H_ 
+</span><span class="cp">#define _THREAD_H_
+</span><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">class</span><span class="err"> </span><span class="nc">Thread</span><span class="p">{</span>
+<span class="k">public</span> <span class="o">:</span>
  
-    Thread();
-    virtual ~Thread();
-    void Start();
-    void Join();
+    <span class="n">Thread</span><span class="p">();</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Thread</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Start</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Join</span><span class="p">();</span>
  
-private :
-    // 纯虚函数 ²»ÐҪ 
-    void Run() =0 ;
-    pthread_t threadId_ ; 
+<span class="k">private</span> <span class="o">:</span>
+    <span class="c1">// 纯虚函数 ²»ÐҪ 
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="n">Run</span><span class="p">()</span> <span class="o">=</span><span class="mi">0</span> <span class="p">;</span>
+    <span class="n">pthread_t</span> <span class="n">threadId_</span> <span class="p">;</span> 
  
-};
-
-</code></pre>
-
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <ul>
 <li>Thread.cpp</li>
 </ul>
-
-<pre><code class="language-c++">
-#include &quot;Thread.h&quot;
-#include &lt;iostream&gt;
-using namespace std;
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&#34;Thread.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
  
  
-Thread::Thread() : autoDelete_(false)
-{
-    cout&lt;&lt;&quot;Thread ...&quot;&lt;&lt;endl;
-}
+<span class="n">Thread</span><span class="o">::</span><span class="n">Thread</span><span class="p">()</span> <span class="o">:</span> <span class="n">autoDelete_</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;Thread ...&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
  
-Thread::~Thread()
-{
-    cout&lt;&lt;&quot;~Thread ...&quot;&lt;&lt;endl;
-}
+<span class="n">Thread</span><span class="o">::~</span><span class="n">Thread</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;~Thread ...&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
  
-void Thread::Start()
-{
-    pthread_create(&amp;threadId_, NULL, ThreadRoutine, this);
-}
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">Start</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threadId_</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ThreadRoutine</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+<span class="p">}</span>
  
-void Thread::Join()
-{
-    pthread_join(threadId_, NULL);
-}
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">Join</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">pthread_join</span><span class="p">(</span><span class="n">threadId_</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
  
-void* Thread::ThreadRoutine(void* arg)
-{
-    Thread* thread = static_cast&lt;Thread*&gt;(arg);
-    thread-&gt;Run();
-    if (thread-&gt;autoDelete_)
-        delete thread;
-    return NULL;
-}
+<span class="kt">void</span><span class="o">*</span> <span class="n">Thread</span><span class="o">::</span><span class="n">ThreadRoutine</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">arg</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Thread</span><span class="o">*</span> <span class="kr">thread</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Thread</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+    <span class="kr">thread</span><span class="o">-&gt;</span><span class="n">Run</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="kr">thread</span><span class="o">-&gt;</span><span class="n">autoDelete_</span><span class="p">)</span>
+        <span class="k">delete</span> <span class="kr">thread</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
  
-void Thread::SetAutoDelete(bool autoDelete)
-{
-    autoDelete_ = autoDelete;
-}
-
-</code></pre>
-
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="kt">bool</span> <span class="n">autoDelete</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">autoDelete_</span> <span class="o">=</span> <span class="n">autoDelete</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <ul>
 <li>Thread test</li>
 </ul>
-
-<pre><code class="language-c++">
-#include &quot;Thread.h&quot;
-#include &lt;unistd.h&gt;
-#include &lt;iostream&gt;
-using namespace std;
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&#34;Thread.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
  
-class TestThread : public Thread
-{
-public:
-    TestThread(int count) : count_(count)
-    {
-        cout&lt;&lt;&quot;TestThread ...&quot;&lt;&lt;endl;
-    }
+<span class="k">class</span><span class="err"> </span><span class="nc">TestThread</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Thread</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">TestThread</span><span class="p">(</span><span class="kt">int</span> <span class="n">count</span><span class="p">)</span> <span class="o">:</span> <span class="n">count_</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;TestThread ...&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
  
-    ~TestThread()
-    {
-        cout&lt;&lt;&quot;~TestThread ...&quot;&lt;&lt;endl;
-    }
+    <span class="o">~</span><span class="n">TestThread</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;~TestThread ...&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
  
-private:
-    void Run()
-    {
-        while (count_--)
-        {
-            cout&lt;&lt;&quot;this is a test ...&quot;&lt;&lt;endl;
-            sleep(1);
-        }
-    }
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">Run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">count_</span><span class="o">--</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;this is a test ...&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
  
-    int count_;
-};
+    <span class="kt">int</span> <span class="n">count_</span><span class="p">;</span>
+<span class="p">};</span>
  
-int main(void)
-{
-    /*
-    TestThread t(5);
-    t.Start();
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/*
+</span><span class="cm">    TestThread t(5);
+</span><span class="cm">    t.Start();
+</span><span class="cm"> 
+</span><span class="cm">    t.Join();
+</span><span class="cm">    */</span>
  
-    t.Join();
-    */
+    <span class="n">TestThread</span><span class="o">*</span> <span class="n">t2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestThread</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">Join</span><span class="p">();</span>
  
-    TestThread* t2 = new TestThread(5);
-    t2-&gt;SetAutoDelete(true);
-    t2-&gt;Start();
-    t2-&gt;Join();
+    <span class="k">for</span> <span class="p">(;</span> <span class="p">;</span> <span class="p">)</span>
+        <span class="n">pause</span><span class="p">();</span>
  
-    for (; ; )
-        pause();
- 
-    return 0;
-}
-
-
-</code></pre>
-
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="基于对象编程">基于对象编程</h3>
 
 <p>基于对象编程，提供出来的就不是<code>接口</code>了， 而是一个具体的类，虽然他和面向对象想一个都是起到回调的作用，但是他的回调不是通过继承来实现相应的虚函数,可以独立的函数，或者成员函数。看下面的例子就知道了。</p>
@@ -314,166 +411,305 @@ int main(void)
 <ul>
 <li>Thread.h</li>
 </ul>
-
-<pre><code class="language-c++">
-#ifndef _THREAD_
-#define _THREAD_
-#include &lt;pthread.h&gt;
-#include &lt;boost/function.hpp&gt;
-class Thread {
-public :
-    typedef boost::function&lt;void ()&gt; ThreadFunc ;
-    explicit Thread( const ThreadFunc &amp;func) ;
-    ~Thread();
-    void Start () ;
-    void Join();
-    void SetAutoDelete(bool autoDelete);
-private :
-    static void* ThreadRoutine( void *arg) ;
-    void Run();
-    ThreadFunc func ;
-    pthread_t threadId ;
-    bool autoDelete_;
-} ;
-#endif // _THREAD_H_
-
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#ifndef _THREAD_
+</span><span class="cp">#define _THREAD_
+</span><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;boost/function.hpp&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">class</span><span class="err"> </span><span class="nc">Thread</span> <span class="p">{</span>
+<span class="k">public</span> <span class="o">:</span>
+    <span class="k">typedef</span> <span class="n">boost</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">()</span><span class="o">&gt;</span> <span class="n">ThreadFunc</span> <span class="p">;</span>
+    <span class="k">explicit</span> <span class="nf">Thread</span><span class="p">(</span> <span class="k">const</span> <span class="n">ThreadFunc</span> <span class="o">&amp;</span><span class="n">func</span><span class="p">)</span> <span class="p">;</span>
+    <span class="o">~</span><span class="n">Thread</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">Start</span> <span class="p">()</span> <span class="p">;</span>
+    <span class="kt">void</span> <span class="nf">Join</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">SetAutoDelete</span><span class="p">(</span><span class="kt">bool</span> <span class="n">autoDelete</span><span class="p">);</span>
+<span class="k">private</span> <span class="o">:</span>
+    <span class="k">static</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ThreadRoutine</span><span class="p">(</span> <span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span> <span class="p">;</span>
+    <span class="kt">void</span> <span class="nf">Run</span><span class="p">();</span>
+    <span class="n">ThreadFunc</span> <span class="n">func</span> <span class="p">;</span>
+    <span class="n">pthread_t</span> <span class="n">threadId</span> <span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">autoDelete_</span><span class="p">;</span>
+<span class="p">}</span> <span class="p">;</span>
+<span class="cp">#endif </span><span class="c1">// _THREAD_H_
+</span></code></pre></td></tr></table>
+</div>
+</div>
 <ul>
 <li>Thread.cpp</li>
 </ul>
-
-<pre><code class="language-c++">
-#include &quot;Thread.h&quot;
-#include &lt;boost/bind.hpp&gt;
-#include &lt;iostream&gt;
-using namespace std ;
-Thread::Thread( const ThreadFunc &amp;func_ ) : func(func_),autoDelete_(false){
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&#34;Thread.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;boost/bind.hpp&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span> <span class="p">;</span>
+<span class="n">Thread</span><span class="o">::</span><span class="n">Thread</span><span class="p">(</span> <span class="k">const</span> <span class="n">ThreadFunc</span> <span class="o">&amp;</span><span class="n">func_</span> <span class="p">)</span> <span class="o">:</span> <span class="n">func</span><span class="p">(</span><span class="n">func_</span><span class="p">),</span><span class="n">autoDelete_</span><span class="p">(</span><span class="nb">false</span><span class="p">){</span>
  
-}
-Thread::~Thread()
-{
-    cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
-}
+<span class="p">}</span>
+<span class="n">Thread</span><span class="o">::~</span><span class="n">Thread</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__FUNCTION__</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
  
  
-void Thread::Start()
-{
-    pthread_create(&amp;threadId, NULL, ThreadRoutine, this);
-}
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">Start</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threadId</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ThreadRoutine</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+<span class="p">}</span>
  
-void Thread::Join(){
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">Join</span><span class="p">(){</span>
  
-    pthread_join(threadId,NULL);
-}
-void * Thread::ThreadRoutine( void *arg){
-    Thread *thread = static_cast&lt;Thread*&gt;(arg) ;
-    thread-&gt;Run();
-    if ( thread-&gt;autoDelete_)
-        delete(thread);
-    cout&lt;&lt;&quot;After delete&quot;&lt;&lt;endl;
+    <span class="n">pthread_join</span><span class="p">(</span><span class="n">threadId</span><span class="p">,</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="o">*</span> <span class="n">Thread</span><span class="o">::</span><span class="n">ThreadRoutine</span><span class="p">(</span> <span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">){</span>
+    <span class="n">Thread</span> <span class="o">*</span><span class="kr">thread</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Thread</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="p">;</span>
+    <span class="kr">thread</span><span class="o">-&gt;</span><span class="n">Run</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="kr">thread</span><span class="o">-&gt;</span><span class="n">autoDelete_</span><span class="p">)</span>
+        <span class="k">delete</span><span class="p">(</span><span class="kr">thread</span><span class="p">);</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;After delete&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
  
  
  
-}
-void Thread::Run(){
-    func();
-}
-void Thread::SetAutoDelete(bool autoDelete)  {
-    this-&gt;autoDelete_ = autoDelete;
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">Run</span><span class="p">(){</span>
+    <span class="n">func</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">Thread</span><span class="o">::</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="kt">bool</span> <span class="n">autoDelete</span><span class="p">)</span>  <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">autoDelete_</span> <span class="o">=</span> <span class="n">autoDelete</span><span class="p">;</span>
  
-
-</code></pre>
-
+</code></pre></td></tr></table>
+</div>
+</div>
 <ul>
 <li>Thread_test.cpp</li>
 </ul>
-
-<pre><code class="language-c++">
-#include &lt;unistd.h&gt;
-#include &quot;Thread.h&quot;
-#include &lt;iostream&gt;
-#include &lt;boost/bind.hpp&gt;
-using namespace std ;
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;Thread.h&#34;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;boost/bind.hpp&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span> <span class="p">;</span>
  
-class NumberFunction{
-public :
-    NumberFunction( int count):coun_t(count){}
-        void NFunction() {
-        while(coun_t-- &amp;&amp; coun_t&gt;0){
-            cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
-            sleep(1);
-        }
-    }
-private :
-    int coun_t ;
-};
+<span class="k">class</span><span class="err"> </span><span class="nc">NumberFunction</span><span class="p">{</span>
+<span class="k">public</span> <span class="o">:</span>
+    <span class="n">NumberFunction</span><span class="p">(</span> <span class="kt">int</span> <span class="n">count</span><span class="p">)</span><span class="o">:</span><span class="n">coun_t</span><span class="p">(</span><span class="n">count</span><span class="p">){}</span>
+        <span class="kt">void</span> <span class="n">NFunction</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">coun_t</span><span class="o">--</span> <span class="o">&amp;&amp;</span> <span class="n">coun_t</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">){</span>
+            <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__FUNCTION__</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="k">private</span> <span class="o">:</span>
+    <span class="kt">int</span> <span class="n">coun_t</span> <span class="p">;</span>
+<span class="p">};</span>
  
-void threadFunc (){
+<span class="kt">void</span> <span class="nf">threadFunc</span> <span class="p">(){</span>
  
-    int i = 9 ;
-    while(i--){
-        cout&lt;&lt;&quot;threadFunc...!!&quot;&lt;&lt;endl ;
-        sleep(1);
-    }
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">9</span> <span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;threadFunc...!!&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span> <span class="p">;</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
  
-    cout&lt;&lt;endl ;
-}
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">endl</span> <span class="p">;</span>
+<span class="p">}</span>
  
-void threadFunc2(int i ){
-    while(i--&amp;&amp;i&gt;=0){
-        cout&lt;&lt;&quot;Threadfunc2 ....&quot;&lt;&lt;endl;
-        sleep(1);
-    }
+<span class="kt">void</span> <span class="nf">threadFunc2</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">){</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="o">--&amp;&amp;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">){</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;Threadfunc2 ....&#34;</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
  
-}
-int main (){
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(){</span>
  
-    Thread *t = new Thread(threadFunc);
-    Thread *t2 = new Thread(boost::bind( threadFunc2 , 10)) ;
-    NumberFunction foo(10) ;
-    Thread *t3 = new Thread( boost::bind(&amp;NumberFunction::NFunction,&amp;foo)) ;
-    t-&gt;SetAutoDelete(true);
-    t-&gt;Start();
+    <span class="n">Thread</span> <span class="o">*</span><span class="n">t</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="p">(</span><span class="n">threadFunc</span><span class="p">);</span>
+    <span class="n">Thread</span> <span class="o">*</span><span class="n">t2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span> <span class="n">threadFunc2</span> <span class="p">,</span> <span class="mi">10</span><span class="p">))</span> <span class="p">;</span>
+    <span class="n">NumberFunction</span> <span class="n">foo</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">;</span>
+    <span class="n">Thread</span> <span class="o">*</span><span class="n">t3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="p">(</span> <span class="n">boost</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">NumberFunction</span><span class="o">::</span><span class="n">NFunction</span><span class="p">,</span><span class="o">&amp;</span><span class="n">foo</span><span class="p">))</span> <span class="p">;</span>
+    <span class="n">t</span><span class="o">-&gt;</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+    <span class="n">t</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
  
-    t2-&gt;SetAutoDelete(true) ;
-    t2-&gt;Start();
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">;</span>
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
  
-    t3-&gt;SetAutoDelete(true) ;
-    t3-&gt;Start();
+    <span class="n">t3</span><span class="o">-&gt;</span><span class="n">SetAutoDelete</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">;</span>
+    <span class="n">t3</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">();</span>
  
-    t2-&gt;Join();
-    t-&gt;Join();
-    t3-&gt;Join();
-    int i = 9 ;
-    while (i--){
-        cout&lt;&lt;__FUNCTION__&lt;&lt;endl;
-    }
+    <span class="n">t2</span><span class="o">-&gt;</span><span class="n">Join</span><span class="p">();</span>
+    <span class="n">t</span><span class="o">-&gt;</span><span class="n">Join</span><span class="p">();</span>
+    <span class="n">t3</span><span class="o">-&gt;</span><span class="n">Join</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">9</span> <span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__FUNCTION__</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
  
  
-    return 0 ;
-}
-
-</code></pre>
-
+    <span class="k">return</span> <span class="mi">0</span> <span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>我们看一下下面这张图</p>
 
-<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_1.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
-
-<pre><code class="language-c++">
-class EchoServer
-{
-    public :
-        EchoServer(){
-            server.SetConnectionCallback (boost::bind( onConnection()) ;
-            server.SetConnectionCallback (boost::bind( onMessage() ) ;
-            server.SetConnectionCallback (boost::bind( onClose() ) ;
-            TcpServer server ;
-        }
-}
-
-</code></pre>
-
+<p><center><img src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_1.png" alt="" /></center></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">class</span><span class="err"> </span><span class="nc">EchoServer</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="o">:</span>
+        <span class="n">EchoServer</span><span class="p">(){</span>
+            <span class="n">server</span><span class="p">.</span><span class="n">SetConnectionCallback</span> <span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span> <span class="n">onConnection</span><span class="p">())</span> <span class="p">;</span>
+            <span class="n">server</span><span class="p">.</span><span class="n">SetConnectionCallback</span> <span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span> <span class="n">onMessage</span><span class="p">()</span> <span class="p">)</span> <span class="p">;</span>
+            <span class="n">server</span><span class="p">.</span><span class="n">SetConnectionCallback</span> <span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span> <span class="n">onClose</span><span class="p">()</span> <span class="p">)</span> <span class="p">;</span>
+            <span class="n">TcpServer</span> <span class="n">server</span> <span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <p><em>面向对象风格</em>:</p>
 
 <blockquote>
@@ -515,182 +751,363 @@ class EchoServer
 </ul>
 
 <p>所以我们使用了<code>nonblocking sokcet + I/O</code>复用</p>
-
-<pre><code class="language-c++">
-#include &lt;unistd.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;netinet/in.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;signal.h&gt;
-#include &lt;sys/wait.h&gt;
-#include &lt;poll.h&gt;
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;netinet/in.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;arpa/inet.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;poll.h&gt;</span><span class="cp">
+</span><span class="cp"></span> 
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;errno.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span> 
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span> 
+<span class="cp">#define ERR_EXIT(m) \
+</span><span class="cp"></span>        <span class="k">do</span> \
+        <span class="p">{</span> \
+                <span class="n">perror</span><span class="p">(</span><span class="n">m</span><span class="p">);</span> \
+                <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span> \
+        <span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
  
-#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;string.h&gt;
+<span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">struct</span> <span class="n">pollfd</span><span class="o">&gt;</span> <span class="n">PollFdList</span><span class="p">;</span>
  
-#include &lt;vector&gt;
-#include &lt;iostream&gt;
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 防止进程由于客户端的关闭产生SIG_PIPE信号而是服务器进程退出
+</span><span class="c1"></span>    <span class="n">signal</span><span class="p">(</span><span class="n">SIGPIPE</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
+    <span class="c1">//SIGCHLD 子进程状态改变后会产生此信号，父进程需要调用一个wait函数以确定发生了什么。
+</span><span class="c1"></span>    <span class="c1">//如果进程特定设置该信号的配置为SIG_IGN，则调用进程的子进程不产生僵死进程。
+</span><span class="c1"></span>    <span class="c1">//其实要想防止进程僵死，我们应该在他的父进程里面调用wait，以获取子进程的状态就不会让子进程变成僵死进程了
+</span><span class="c1"></span>    <span class="n">signal</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
  
-#define ERR_EXIT(m) \
-        do \
-        { \
-                perror(m); \
-                exit(EXIT_FAILURE); \
-        } while(0)
+    <span class="c1">//int idlefd = open(&#34;/dev/null&#34;, O_RDONLY | O_CLOEXEC);
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">listenfd</span><span class="p">;</span>
  
-typedef std::vector&lt;struct pollfd&gt; PollFdList;
+    <span class="c1">//if ((listenfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) &lt; 0)
+</span><span class="c1"></span>    <span class="c1">//SOCK_NONBLOCK:非阻塞 ，2.6.2**才有
+</span><span class="c1"></span>    <span class="c1">//SOCK_CLOEXEC :当进程调用vfork或者fork产生进程时，继承下来的描述是关闭的状态
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">((</span><span class="n">listenfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">PF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span> <span class="o">|</span> <span class="n">SOCK_NONBLOCK</span> <span class="o">|</span> <span class="n">SOCK_CLOEXEC</span><span class="p">,</span> <span class="n">IPPROTO_TCP</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;socket&#34;</span><span class="p">);</span>
  
-int main(void)
-{
-    // 防止进程由于客户端的关闭产生SIG_PIPE信号而是服务器进程退出
-    signal(SIGPIPE, SIG_IGN);
-    //SIGCHLD 子进程状态改变后会产生此信号，父进程需要调用一个wait函数以确定发生了什么。
-    //如果进程特定设置该信号的配置为SIG_IGN，则调用进程的子进程不产生僵死进程。
-    //其实要想防止进程僵死，我们应该在他的父进程里面调用wait，以获取子进程的状态就不会让子进程变成僵死进程了
-    signal(SIGCHLD, SIG_IGN);
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">servaddr</span><span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">servaddr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">servaddr</span><span class="p">));</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">5188</span><span class="p">);</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">);</span>
  
-    //int idlefd = open(&quot;/dev/null&quot;, O_RDONLY | O_CLOEXEC);
-    int listenfd;
+    <span class="kt">int</span> <span class="n">on</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//SOL_SOCKET:在套接字级别上进行设置
+</span><span class="c1"></span>    <span class="c1">// SO_REUSEADDR，打开或关闭地址复用功能。
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">on</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">on</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;setsockopt&#34;</span><span class="p">);</span>
  
-    //if ((listenfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) &lt; 0)
-    //SOCK_NONBLOCK:非阻塞 ，2.6.2**才有
-    //SOCK_CLOEXEC :当进程调用vfork或者fork产生进程时，继承下来的描述是关闭的状态
-    //
-    if ((listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)) &lt; 0)
-        ERR_EXIT(&quot;socket&quot;);
+    <span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">servaddr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">servaddr</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;bind&#34;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="n">SOMAXCONN</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;listen&#34;</span><span class="p">);</span>
  
-    struct sockaddr_in servaddr;
-    memset(&amp;servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(5188);
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    <span class="k">struct</span> <span class="n">pollfd</span> <span class="n">pfd</span><span class="p">;</span>
+    <span class="n">pfd</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">listenfd</span><span class="p">;</span>
+    <span class="c1">//注册事件
+</span><span class="c1"></span>    <span class="n">pfd</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">POLLIN</span><span class="p">;</span>
  
-    int on = 1;
-    //SOL_SOCKET:在套接字级别上进行设置
-    // SO_REUSEADDR，打开或关闭地址复用功能。
-    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &amp;on, sizeof(on)) &lt; 0)
-        ERR_EXIT(&quot;setsockopt&quot;);
+    <span class="n">PollFdList</span> <span class="n">pollfds</span><span class="p">;</span>
+    <span class="n">pollfds</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pfd</span><span class="p">);</span>
+    <span class="c1">//a positive number is returned
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">nready</span><span class="p">;</span>
  
-    if (bind(listenfd, (struct sockaddr*)&amp;servaddr, sizeof(servaddr)) &lt; 0)
-        ERR_EXIT(&quot;bind&quot;);
-    if (listen(listenfd, SOMAXCONN) &lt; 0)
-        ERR_EXIT(&quot;listen&quot;);
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">peeraddr</span><span class="p">;</span>
+    <span class="n">socklen_t</span> <span class="n">peerlen</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">connfd</span><span class="p">;</span>
  
-    struct pollfd pfd;
-    pfd.fd = listenfd;
-    //注册事件
-    pfd.events = POLLIN;
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//可用POLLIN事件数
+</span><span class="c1"></span>        <span class="c1">//  -1 ：无限等待，直到发送POLLIN事件
+</span><span class="c1"></span>        <span class="n">nready</span> <span class="o">=</span> <span class="n">poll</span><span class="p">(</span><span class="o">&amp;*</span><span class="n">pollfds</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">pollfds</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nready</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EINTR</span><span class="p">)</span>
+                <span class="k">continue</span><span class="p">;</span>
  
-    PollFdList pollfds;
-    pollfds.push_back(pfd);
-    //a positive number is returned
-    int nready;
+            <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;poll&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nready</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>    <span class="c1">// nothing happended
+</span><span class="c1"></span>            <span class="k">continue</span><span class="p">;</span>
  
-    struct sockaddr_in peeraddr;
-    socklen_t peerlen;
-    int connfd;
+        <span class="c1">//如果POLLIN事件里面包含监听socket，那么监听socket将会
+</span><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">pollfds</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">revents</span> <span class="o">&amp;</span> <span class="n">POLLIN</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">peerlen</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">peeraddr</span><span class="p">);</span>
+            <span class="c1">//SOCK_NONBLOCK : 非阻塞模式
+</span><span class="c1"></span>            <span class="n">connfd</span> <span class="o">=</span> <span class="n">accept4</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">peeraddr</span><span class="p">,</span>
+                        <span class="o">&amp;</span><span class="n">peerlen</span><span class="p">,</span> <span class="n">SOCK_NONBLOCK</span> <span class="o">|</span> <span class="n">SOCK_CLOEXEC</span><span class="p">);</span>
  
-    while (1)
-    {
-        //可用POLLIN事件数
-        //  -1 ：无限等待，直到发送POLLIN事件
-        nready = poll(&amp;*pollfds.begin(), pollfds.size(), -1);
-        if (nready == -1)
-        {
-            if (errno == EINTR)
-                continue;
+            <span class="k">if</span> <span class="p">(</span><span class="n">connfd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;accept4&#34;</span><span class="p">);</span>
  
-            ERR_EXIT(&quot;poll&quot;);
-        }
-        if (nready == 0)    // nothing happended
-            continue;
+<span class="cm">/*
+</span><span class="cm">            if (connfd == -1)
+</span><span class="cm">            {
+</span><span class="cm">                if (errno == EMFILE)
+</span><span class="cm">                {
+</span><span class="cm">                    close(idlefd);
+</span><span class="cm">                    idlefd = accept(listenfd, NULL, NULL);
+</span><span class="cm">                    close(idlefd);
+</span><span class="cm">                    idlefd = open(&#34;/dev/null&#34;, O_RDONLY | O_CLOEXEC);
+</span><span class="cm">                    continue;
+</span><span class="cm">                }
+</span><span class="cm">                else
+</span><span class="cm">                    ERR_EXIT(&#34;accept4&#34;);
+</span><span class="cm">            }
+</span><span class="cm">*/</span>
  
-        //如果POLLIN事件里面包含监听socket，那么监听socket将会
-        if (pollfds[0].revents &amp; POLLIN)
-        {
-            peerlen = sizeof(peeraddr);
-            //SOCK_NONBLOCK : 非阻塞模式
-            connfd = accept4(listenfd, (struct sockaddr*)&amp;peeraddr,
-                        &amp;peerlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
+            <span class="n">pfd</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">connfd</span><span class="p">;</span>
+            <span class="n">pfd</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">POLLIN</span><span class="p">;</span>
+            <span class="n">pfd</span><span class="p">.</span><span class="n">revents</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">pollfds</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pfd</span><span class="p">);</span>
+            <span class="o">--</span><span class="n">nready</span><span class="p">;</span>
  
-            if (connfd == -1)
-                ERR_EXIT(&quot;accept4&quot;);
+            <span class="c1">// 连接成功
+</span><span class="c1"></span>            <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;ip=&#34;</span><span class="o">&lt;&lt;</span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">peeraddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">)</span><span class="o">&lt;&lt;</span>
+                <span class="s">&#34; port=&#34;</span><span class="o">&lt;&lt;</span><span class="n">ntohs</span><span class="p">(</span><span class="n">peeraddr</span><span class="p">.</span><span class="n">sin_port</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">nready</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
  
-/*
-            if (connfd == -1)
-            {
-                if (errno == EMFILE)
-                {
-                    close(idlefd);
-                    idlefd = accept(listenfd, NULL, NULL);
-                    close(idlefd);
-                    idlefd = open(&quot;/dev/null&quot;, O_RDONLY | O_CLOEXEC);
-                    continue;
-                }
-                else
-                    ERR_EXIT(&quot;accept4&quot;);
-            }
-*/
+        <span class="c1">//std::cout&lt;&lt;pollfds.size()&lt;&lt;std::endl;
+</span><span class="c1"></span>        <span class="c1">//std::cout&lt;&lt;nready&lt;&lt;std::endl;、
+</span><span class="c1"></span>        <span class="c1">//过滤掉第一个socketfd，也就是监听sdocket
+</span><span class="c1"></span>        <span class="k">for</span> <span class="p">(</span><span class="n">PollFdList</span><span class="o">::</span><span class="n">iterator</span> <span class="n">it</span><span class="o">=</span><span class="n">pollfds</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">it</span> <span class="o">!=</span> <span class="n">pollfds</span><span class="p">.</span><span class="n">end</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">nready</span> <span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//如果有POLLIN事件
+</span><span class="c1"></span>                <span class="k">if</span> <span class="p">(</span><span class="n">it</span><span class="o">-&gt;</span><span class="n">revents</span> <span class="o">&amp;</span> <span class="n">POLLIN</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="o">--</span><span class="n">nready</span><span class="p">;</span>
+                    <span class="n">connfd</span> <span class="o">=</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">fd</span><span class="p">;</span>
+                    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+                    <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;read&#34;</span><span class="p">);</span>
+                    <span class="c1">//如果等于0 ，就是说客户端已关闭，既然是POLLIN事件，那么就表示有数据可读，但现在为0（），也就是所读到了文件的EOF
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;client close&#34;</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                        <span class="n">it</span> <span class="o">=</span> <span class="n">pollfds</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+                        <span class="o">--</span><span class="n">it</span><span class="p">;</span>
  
-            pfd.fd = connfd;
-            pfd.events = POLLIN;
-            pfd.revents = 0;
-            pollfds.push_back(pfd);
-            --nready;
+                        <span class="n">close</span><span class="p">(</span><span class="n">connfd</span><span class="p">);</span>
+                        <span class="k">continue</span><span class="p">;</span>
+                    <span class="p">}</span>
  
-            // 连接成功
-            std::cout&lt;&lt;&quot;ip=&quot;&lt;&lt;inet_ntoa(peeraddr.sin_addr)&lt;&lt;
-                &quot; port=&quot;&lt;&lt;ntohs(peeraddr.sin_port)&lt;&lt;std::endl;
-            if (nready == 0)
-                continue;
-        }
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">buf</span><span class="p">;</span>
+                    <span class="n">write</span><span class="p">(</span><span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span>
  
-        //std::cout&lt;&lt;pollfds.size()&lt;&lt;std::endl;
-        //std::cout&lt;&lt;nready&lt;&lt;std::endl;、
-        //过滤掉第一个socketfd，也就是监听sdocket
-        for (PollFdList::iterator it=pollfds.begin()+1;
-            it != pollfds.end() &amp;&amp; nready &gt;0; ++it)
-        {
-            //如果有POLLIN事件
-                if (it-&gt;revents &amp; POLLIN)
-                {
-                    --nready;
-                    connfd = it-&gt;fd;
-                    char buf[1024] = {0};
-                    int ret = read(connfd, buf, 1024);
-                    if (ret == -1)
-                        ERR_EXIT(&quot;read&quot;);
-                    //如果等于0 ，就是说客户端已关闭，既然是POLLIN事件，那么就表示有数据可读，但现在为0（），也就是所读到了文件的EOF
-                    if (ret == 0)
-                    {
-                        std::cout&lt;&lt;&quot;client close&quot;&lt;&lt;std::endl;
-                        it = pollfds.erase(it);
-                        --it;
+                <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
  
-                        close(connfd);
-                        continue;
-                    }
- 
-                    std::cout&lt;&lt;buf;
-                    write(connfd, buf, strlen(buf));
- 
-                }
-        }
-    }
- 
-    return 0;
-}
-
-</code></pre>
-
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="poll2">poll2</h3>
-
-<pre><code>
-application buffer          kernel buffer
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">application buffer          kernel buffer
 
 |------|                |--------|
 | read | &lt;--------------| buffer |
@@ -699,10 +1116,9 @@ application buffer          kernel buffer
 
 |------|                |--------|
 |write | &lt;--------------| buffer |
-|------|                |--------|
-
-</code></pre>
-
+|------|                |--------|</pre></td></tr></table>
+</div>
+</div>
 <p>数据包　粘包　一个包　两次<code>read</code>
 - Read
 可能并没有把<code>confd</code>对应的缓冲区的数据读完，那么<code>connfg</code>仍然是活跃的，我们应该将读到的数据保存在<code>connfd</code>的应用层的缓冲区（每一次都进行追加）。如何解析协议，我们让应用层的解析协议自己来解析
@@ -714,254 +1130,503 @@ application buffer          kernel buffer
 <p>对于客户端在读数据时，我们也应该采用相应的方法，如果应用层的空间空闲时，我们就关注<code>POLLIN</code>事件，要不然就取消<code>POLLIN</code>事件。</p>
 
 <h3 id="epoll-1">epoll 1</h3>
-
-<pre><code class="language-c++">/*
- poll 在已连接的套接字中遍历
- epoll_wait 返回的都是活跃的套接字，所以减少了很多无效的套接字
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span><span class="lnt">206
+</span><span class="lnt">207
+</span><span class="lnt">208
+</span><span class="lnt">209
+</span><span class="lnt">210
+</span><span class="lnt">211
+</span><span class="lnt">212
+</span><span class="lnt">213
+</span><span class="lnt">214
+</span><span class="lnt">215
+</span><span class="lnt">216
+</span><span class="lnt">217
+</span><span class="lnt">218
+</span><span class="lnt">219
+</span><span class="lnt">220
+</span><span class="lnt">221
+</span><span class="lnt">222
+</span><span class="lnt">223
+</span><span class="lnt">224
+</span><span class="lnt">225
+</span><span class="lnt">226
+</span><span class="lnt">227
+</span><span class="lnt">228
+</span><span class="lnt">229
+</span><span class="lnt">230
+</span><span class="lnt">231
+</span><span class="lnt">232
+</span><span class="lnt">233
+</span><span class="lnt">234
+</span><span class="lnt">235
+</span><span class="lnt">236
+</span><span class="lnt">237
+</span><span class="lnt">238
+</span><span class="lnt">239
+</span><span class="lnt">240
+</span><span class="lnt">241
+</span><span class="lnt">242
+</span><span class="lnt">243
+</span><span class="lnt">244
+</span><span class="lnt">245
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cm">/*
+</span><span class="cm"> poll 在已连接的套接字中遍历
+</span><span class="cm"> epoll_wait 返回的都是活跃的套接字，所以减少了很多无效的套接字
+</span><span class="cm"> 
+</span><span class="cm"> Poll模型 ：
+</span><span class="cm"> 每次调用 poll函数的时候。都需要把监听套接字与已连接套接字所感兴趣的事件数组 拷贝到内核。
+</span><span class="cm"> 
+</span><span class="cm"> 
+</span><span class="cm"> LT模式 ：
+</span><span class="cm"> Write  EPOLLOUT 事件
+</span><span class="cm">    高电平 writebuf内核有空闲空间，我们就说他处于高电平状态，也就是一直处于活跃状态。此时可能会产生busy waitting loop
+</span><span class="cm">    低电平 当writebuf内核没有空闲空间，我们就说他处于低电平状态，没有激活。
+</span><span class="cm">Read EPOLLIN 事件
+</span><span class="cm">    xxx
+</span><span class="cm"> 
+</span><span class="cm"> 
+</span><span class="cm"> 
+</span><span class="cm"> ET模型 边缘触发
+</span><span class="cm"> 在该模式下，一开始我们就关注EPOLLIN事件和EPOLLOUT事件 ， 此时writbuf一直处于高电平，不会触发EPOLLOUT事件.
+</span><span class="cm">        而EPOLLIN可能会产生，因为开始Readbuf是空的，如果在 epoll_wait前，readbuf有数据了，那么就有unreadablr---&gt;readable,
+</span><span class="cm">        也就是产生了EPOLLLIN事件，这也是为什么监听socket 能够接收到外来请求的原因。
+</span><span class="cm">        关注EPOLLIN 和 EPOLLOUT事件后，我们也没必要取消他们的关注，只有到断开他们的socketfd时 ， 我们才需要取消。
+</span><span class="cm"> 
+</span><span class="cm">需要注意的是，在读写时，如果是读，一定要读到EAGAIN，写也是要写到EAGAIN
+</span><span class="cm"> socket从unreadable变为readable或从unwritable变为writable
+</span><span class="cm"> 有些人说从readable变为unreadable或者writable变为unwritable时也会触发事件。
+</span><span class="cm"> 我个人觉得第一种合理一点。
+</span><span class="cm"> 
+</span><span class="cm"> 
+</span><span class="cm">*/</span>
  
- Poll模型 ：
- 每次调用 poll函数的时候。都需要把监听套接字与已连接套接字所感兴趣的事件数组 拷贝到内核。
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;netnet/in.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;arpa/inet.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/epoll.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;errno.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span> 
+<span class="cp">#include</span> <span class="cpf">&lt;vector.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span> 
+<span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">struct</span> <span class="n">epoll_event</span><span class="o">&gt;</span> <span class="n">EventList</span> <span class="p">;</span>
+ 
+<span class="cp">#define ERR_EXIT(m) \
+</span><span class="cp"></span>    <span class="k">do</span>\
+    <span class="p">{</span>\
+        <span class="n">perror</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>\
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>\
+    <span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+ 
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span> <span class="kt">void</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//防止进程由于客户端的关闭而使服务器进程退出
+</span><span class="c1"></span>    <span class="n">signal</span><span class="p">(</span><span class="n">SIGPIPE</span> <span class="p">,</span><span class="n">SIG_IGN</span><span class="p">)</span> <span class="p">;</span>  
+    <span class="c1">//防止僵死进程的发生
+</span><span class="c1"></span>    <span class="n">signal</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span><span class="n">SIG_IGN</span><span class="p">);</span>
  
  
- LT模式 ：
- Write  EPOLLOUT 事件
-    高电平 writebuf内核有空闲空间，我们就说他处于高电平状态，也就是一直处于活跃状态。此时可能会产生busy waitting loop
-    低电平 当writebuf内核没有空闲空间，我们就说他处于低电平状态，没有激活。
-Read EPOLLIN 事件
-    xxx
+    <span class="c1">//备胎描述符
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">idlefd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/null&#34;</span><span class="p">,</span><span class="n">O_RDONLY</span> <span class="o">|</span> <span class="n">O_CLOEXEC</span><span class="p">)</span> <span class="p">;</span>
+    <span class="c1">//监听描述符
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">listenfd</span> <span class="p">;</span>
  
+    <span class="k">if</span><span class="p">((</span><span class="n">listenfd</span> <span class="o">=</span><span class="n">socket</span><span class="p">(</span><span class="n">PF_INET</span><span class="p">,</span><span class="n">SOCK_STRAM</span><span class="o">|</span><span class="n">SOCK_NONBLOCK</span><span class="o">|</span><span class="n">SOCK_CLOSEXEC</span><span class="p">,</span><span class="n">IPPROTO_TCP</span><span class="p">))</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">){</span>
  
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;socket&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
  
- ET模型 边缘触发
- 在该模式下，一开始我们就关注EPOLLIN事件和EPOLLOUT事件 ， 此时writbuf一直处于高电平，不会触发EPOLLOUT事件.
-        而EPOLLIN可能会产生，因为开始Readbuf是空的，如果在 epoll_wait前，readbuf有数据了，那么就有unreadablr---&gt;readable,
-        也就是产生了EPOLLLIN事件，这也是为什么监听socket 能够接收到外来请求的原因。
-        关注EPOLLIN 和 EPOLLOUT事件后，我们也没必要取消他们的关注，只有到断开他们的socketfd时 ， 我们才需要取消。
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">servaddr</span> <span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">servaddr</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">servaddr</span><span class="p">))</span> <span class="p">;</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">5188</span><span class="p">);</span>
+    <span class="n">servaddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">)</span> <span class="p">;</span>
  
-需要注意的是，在读写时，如果是读，一定要读到EAGAIN，写也是要写到EAGAIN
- socket从unreadable变为readable或从unwritable变为writable
- 有些人说从readable变为unreadable或者writable变为unwritable时也会触发事件。
- 我个人觉得第一种合理一点。
+    <span class="kt">int</span> <span class="n">on</span> <span class="o">=</span><span class="mi">1</span> <span class="p">;</span> 
+    <span class="c1">//socketfd 重用
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span><span class="n">setsocketopt</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span><span class="n">SOL_SOCKET</span><span class="p">,</span><span class="n">SO_REUSERADDR</span><span class="p">,</span><span class="o">&amp;</span><span class="n">on</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
  
+    <span class="p">{</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;setsocketopt&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
  
-*/
+    <span class="k">if</span><span class="p">(</span> <span class="n">bind</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">servaddr</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">servaddr</span><span class="p">))</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;bind&#34;</span><span class="p">);</span>
  
-#include &lt;unistd.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;sys/socket.h&gt;
-#include &lt;netnet/in.h&gt;
-#include &lt;arpa/inet.h&gt;
-#include &lt;signal.h&gt;
-#include &lt;sys/wait.h&gt;
-#include &lt;sys/epoll.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;string.h&gt;
+    <span class="k">if</span><span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">listen</span><span class="p">,</span><span class="n">SOMAXCONN</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;listen&#34;</span><span class="p">);</span>
  
-#include &lt;vector.h&gt;
-#include &lt;algorithm&gt;
-#include &lt;iostream&gt;
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">clients</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">epollfd</span><span class="p">;</span> 
+    <span class="c1">// 函数返回一个epoll专用的描述符epfd，epfd引用了一个新的epoll机制例程（instance.）。
+</span><span class="c1"></span>    <span class="n">epollfd</span> <span class="o">=</span> <span class="n">epoll_create1</span><span class="p">(</span><span class="n">EPOLL_CLOEXEC</span><span class="p">);</span>
  
-typedef std::vector&lt;struct epoll_event&gt; EventList ;
+    <span class="c1">//事件结构体
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">event</span> <span class="p">;</span>
+    <span class="n">event</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">listenfd</span> <span class="p">;</span> <span class="c1">//关注listenfd
+</span><span class="c1"></span>    <span class="n">event</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">EPOLLIN</span> <span class="p">;</span> <span class="c1">// /* | EPOLLET*/; 默认是LT模型
+</span><span class="c1"></span> 
+    <span class="c1">// 把lisenfd 添加到epollfd 中进行管理
+</span><span class="c1"></span>    <span class="c1">//如果是poll的话，就不用这样了，poll直接使用一个数组就行了
+</span><span class="c1"></span>    <span class="cm">/*函数声明：int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event) 
+</span><span class="cm">该函数用于控制某个epoll文件描述符上的事件，可以注册事件，修改事件，删除事件。 
+</span><span class="cm">参数： 
+</span><span class="cm">epfd：由 epoll_create 生成的epoll专用的文件描述符； 
+</span><span class="cm">op：要进行的操作例如注册事件，可能的取值EPOLL_CTL_ADD 注册、EPOLL_CTL_MOD 修 改、EPOLL_CTL_DEL 删除 
+</span><span class="cm"> 
+</span><span class="cm">fd：关联的文件描述符； 
+</span><span class="cm">event：指向epoll_event的指针； 
+</span><span class="cm">如果调用成功返回0,不成功返回-1 
+</span><span class="cm"> 
+</span><span class="cm">71 - 78 就交给epollfd 内核帮我们做了，并且只有epoll_ctl才会拷贝到内核，一次拷贝就行了，以后就不用拷贝了，
+</span><span class="cm">如果我们使用poll 那么每次循环都要拷贝到内核里面去，大大降低了效率
+</span><span class="cm">        */</span>
+    <span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epollfd</span> <span class="p">,</span> <span class="n">EPOLL_CTL_ADD</span><span class="p">,</span><span class="n">listenfd</span><span class="p">,</span><span class="o">&amp;</span><span class="n">event</span><span class="p">);</span>
  
-#define ERR_EXIT(m) \
-    do\
-    {\
-        perror(m);\
-        exit(EXIT_FAILURE);\
-    }while(0);
+    <span class="c1">//事件列表，初始为16 个
+</span><span class="c1"></span>    <span class="n">EventList</span> <span class="n">events</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="p">;</span>
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">peeraddr</span> <span class="p">;</span>
+    <span class="n">socklen_t</span> <span class="n">peerlen</span> <span class="p">;</span>
+    <span class="kt">int</span> <span class="n">connfd</span> <span class="p">;</span>
  
-int main ( void ) {
-    //防止进程由于客户端的关闭而使服务器进程退出
-    signal(SIGPIPE ,SIG_IGN) ;  
-    //防止僵死进程的发生
-    signal(SIGCHLD,SIG_IGN);
+    <span class="kt">int</span> <span class="n">nready</span> <span class="p">;</span> 
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
  
+<span class="cm">/*函数声明:int epoll_wait(int epfd,struct epoll_event * events,int maxevents,int timeout)
+</span><span class="cm">该函数用于轮询I/O事件的发生；
+</span><span class="cm">参数：
+</span><span class="cm">epfd:由epoll_create 生成的epoll专用的文件描述符；
+</span><span class="cm">epoll_event:用于回传代处理事件的数组，要处理的事件都会存储在events里面了
+</span><span class="cm">maxevents:每次能处理的事件数；
+</span><span class="cm">timeout:等待I/O事件发生的超时值(单位我也不太清楚)；-1相当于阻塞，0相当于非阻塞。一般用-1即可
+</span><span class="cm">返回发生事件数。
+</span><span class="cm">         -1 表示等待到至少一个事件发生*/</span>
+        <span class="n">nready</span> <span class="o">=</span> <span class="n">epoll_wait</span><span class="p">(</span><span class="n">epollfd</span><span class="p">,</span><span class="o">&amp;*</span><span class="n">events</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">events</span><span class="p">.</span><span class="n">size</span><span class="p">()),</span> <span class="o">-</span><span class="mi">1</span> <span class="p">);</span> 
+        <span class="k">if</span><span class="p">(</span> <span class="n">nready</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
  
-    //备胎描述符
-    int idlefd = open(&quot;/dev/null&quot;,O_RDONLY | O_CLOEXEC) ;
-    //监听描述符
-    int listenfd ;
+            <span class="k">if</span><span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EINTR</span><span class="p">)</span>
+                <span class="k">continue</span> <span class="p">;</span>
+            <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;epoll_wait&#34;</span><span class="p">)</span> <span class="p">;</span>
+        <span class="p">}</span>
  
-    if((listenfd =socket(PF_INET,SOCK_STRAM|SOCK_NONBLOCK|SOCK_CLOSEXEC,IPPROTO_TCP))&lt;0){
+        <span class="k">if</span><span class="p">(</span><span class="n">nready</span> <span class="o">==</span><span class="mi">0</span> <span class="p">)</span> <span class="c1">//nothing to happened 
+</span><span class="c1"></span>            <span class="k">continue</span> <span class="p">;</span>
+        <span class="c1">// 
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">((</span><span class="n">size_t</span><span class="p">)</span><span class="n">nready</span> <span class="o">==</span> <span class="n">events</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+            <span class="n">events</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">events</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="p">;</span>
  
-        ERR_EXIT(&quot;socket&quot;);
-    }
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nready</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//如果是监听socket，则accetp
+</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">==</span> <span class="n">listenfd</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">peerlen</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">peeraddr</span> <span class="p">)</span> <span class="p">;</span>
+                <span class="c1">// 这里的处理还不够好，因为accept4每一次只能到tcp就绪队列里面拿出一个就绪socketfd ， 有可能这个队列不止一个，
+</span><span class="c1"></span>                <span class="c1">//在并发的时候这是必然的， 所以最后是while掉accept4，把里面的就绪socketfd全部拿出来，而不时只拿一个socketfd。
+</span><span class="c1"></span>                <span class="c1">//下面的代码可根据需求进行改进
+</span><span class="c1"></span>                <span class="n">connfd</span> <span class="o">=::</span><span class="n">accept4</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">peeraddr</span><span class="p">,</span><span class="o">&amp;</span><span class="n">peerlen</span><span class="p">,</span><span class="n">SOCK_NONBLOCK</span><span class="o">|</span><span class="n">SOCK_CLOSEXEC</span><span class="p">)</span> <span class="p">;</span>
  
-    struct sockaddr_in servaddr ;
-    memset(&amp;servaddr,0,sizeof(servaddr)) ;
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(5188);
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY) ;
+                <span class="k">if</span><span class="p">(</span> <span class="n">connfd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+                <span class="p">{</span>
  
-    int on =1 ; 
-    //socketfd 重用
-    if(setsocketopt(listenfd,SOL_SOCKET,SO_REUSERADDR,&amp;on,sizeof(n))&lt;0)
+                    <span class="k">if</span><span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EMFILE</span><span class="p">){</span>
+                        <span class="n">close</span><span class="p">(</span><span class="n">idlefd</span><span class="p">)</span> <span class="p">;</span>
+                        <span class="n">idlefd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">)</span> <span class="p">;</span>
+                        <span class="n">close</span><span class="p">(</span><span class="n">idlefd</span><span class="p">)</span> <span class="p">;</span>
+                        <span class="n">idlefd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/null&#34;</span><span class="p">,</span><span class="n">O_RDONLY</span><span class="o">|</span><span class="n">O_CLOEXEC</span><span class="p">)</span> <span class="p">;</span>
+                    <span class="p">}</span>
  
-    {
-        ERR_EXIT(&quot;setsocketopt&quot;);
-    }
+                <span class="p">}</span>
+                <span class="k">else</span>
+                    <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;accept4&#34;</span><span class="p">)</span> <span class="p">;</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;ip=&#34;</span><span class="o">&lt;&lt;</span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">peeraddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="s">&#34; port=&#34;</span><span class="o">&lt;&lt;</span><span class="n">ntohs</span><span class="p">(</span><span class="n">peeraddr</span><span class="p">.</span><span class="n">sin_port</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                <span class="n">clients</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">connfd</span><span class="p">)</span> <span class="p">;</span>
  
-    if( bind(listenfd,(struct sockaddr*)&amp;servaddr,sizeof(servaddr)) &lt;0)
-        ERR_EXIT(&quot;bind&quot;);
+                <span class="n">event</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span><span class="n">connfd</span> <span class="p">;</span>
+                <span class="n">event</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">EPOLLIN</span><span class="cm">/*| EPOLLET*/</span> <span class="p">;</span>
+                <span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epollfd</span><span class="p">,</span><span class="n">EPOLL_CTL_ADD</span> <span class="p">,</span><span class="n">connfd</span> <span class="p">,</span><span class="o">&amp;</span><span class="n">event</span><span class="p">)</span> <span class="p">;</span>
+            <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">events</span> <span class="o">&amp;</span> <span class="n">EPOLLIN</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">//下面的这些都要改进
+</span><span class="c1"></span>                <span class="n">connfd</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">connfd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="k">continue</span><span class="p">;</span>
  
-    if(listen(listen,SOMAXCONN) &lt;0)
-        ERR_EXIT(&quot;listen&quot;);
+                <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+                <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">ERR_EXIT</span><span class="p">(</span><span class="s">&#34;read&#34;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&#34;client close&#34;</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="n">close</span><span class="p">(</span><span class="n">connfd</span><span class="p">);</span>
+                    <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                    <span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epollfd</span><span class="p">,</span> <span class="n">EPOLL_CTL_DEL</span><span class="p">,</span> <span class="n">connfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">event</span><span class="p">);</span>
+                    <span class="n">clients</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">remove</span><span class="p">(</span><span class="n">clients</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">clients</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">connfd</span><span class="p">),</span> <span class="n">clients</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+                    <span class="k">continue</span><span class="p">;</span>
+                <span class="p">}</span>
  
-    std::vector&lt;int&gt; clients;
-    int epollfd; 
-    // 函数返回一个epoll专用的描述符epfd，epfd引用了一个新的epoll机制例程（instance.）。
-    epollfd = epoll_create1(EPOLL_CLOEXEC);
- 
-    //事件结构体
-    struct epoll_event event ;
-    event.data.fd = listenfd ; //关注listenfd
-    event.events = EPOLLIN ; // /* | EPOLLET*/; 默认是LT模型
- 
-    // 把lisenfd 添加到epollfd 中进行管理
-    //如果是poll的话，就不用这样了，poll直接使用一个数组就行了
-    /*函数声明：int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event) 
-该函数用于控制某个epoll文件描述符上的事件，可以注册事件，修改事件，删除事件。 
-参数： 
-epfd：由 epoll_create 生成的epoll专用的文件描述符； 
-op：要进行的操作例如注册事件，可能的取值EPOLL_CTL_ADD 注册、EPOLL_CTL_MOD 修 改、EPOLL_CTL_DEL 删除 
- 
-fd：关联的文件描述符； 
-event：指向epoll_event的指针； 
-如果调用成功返回0,不成功返回-1 
- 
-71 - 78 就交给epollfd 内核帮我们做了，并且只有epoll_ctl才会拷贝到内核，一次拷贝就行了，以后就不用拷贝了，
-如果我们使用poll 那么每次循环都要拷贝到内核里面去，大大降低了效率
-        */
-    epoll_ctl(epollfd , EPOLL_CTL_ADD,listenfd,&amp;event);
- 
-    //事件列表，初始为16 个
-    EventList events(16) ;
-    struct sockaddr_in peeraddr ;
-    socklen_t peerlen ;
-    int connfd ;
- 
-    int nready ; 
-    while(1){
- 
-/*函数声明:int epoll_wait(int epfd,struct epoll_event * events,int maxevents,int timeout)
-该函数用于轮询I/O事件的发生；
-参数：
-epfd:由epoll_create 生成的epoll专用的文件描述符；
-epoll_event:用于回传代处理事件的数组，要处理的事件都会存储在events里面了
-maxevents:每次能处理的事件数；
-timeout:等待I/O事件发生的超时值(单位我也不太清楚)；-1相当于阻塞，0相当于非阻塞。一般用-1即可
-返回发生事件数。
-         -1 表示等待到至少一个事件发生*/
-        nready = epoll_wait(epollfd,&amp;*events.begin(),static_cast&lt;int&gt;(events.size()), -1 ); 
-        if( nready == -1){
- 
-            if(errno == EINTR)
-                continue ;
-            ERR_EXIT(&quot;epoll_wait&quot;) ;
-        }
- 
-        if(nready ==0 ) //nothing to happened 
-            continue ;
-        // 
-        if((size_t)nready == events.size())
-            events.resize(events.size()*2) ;
- 
-        for (int i = 0; i &lt; nready; ++i)
-        {
-            //如果是监听socket，则accetp
-            if (events[i].data.fd == listenfd)
-            {
-                peerlen = sizeof( peeraddr ) ;
-                // 这里的处理还不够好，因为accept4每一次只能到tcp就绪队列里面拿出一个就绪socketfd ， 有可能这个队列不止一个，
-                //在并发的时候这是必然的， 所以最后是while掉accept4，把里面的就绪socketfd全部拿出来，而不时只拿一个socketfd。
-                //下面的代码可根据需求进行改进
-                connfd =::accept4(listenfd,(struct sockaddr *)&amp;peeraddr,&amp;peerlen,SOCK_NONBLOCK|SOCK_CLOSEXEC) ;
- 
-                if( connfd == -1 )
-                {
- 
-                    if(errno == EMFILE){
-                        close(idlefd) ;
-                        idlefd = accept(listenfd,NULL,NULL) ;
-                        close(idlefd) ;
-                        idlefd = open(&quot;/dev/null&quot;,O_RDONLY|O_CLOEXEC) ;
-                    }
- 
-                }
-                else
-                    ERR_EXIT(&quot;accept4&quot;) ;
-                std::cout&lt;&lt;&quot;ip=&quot;&lt;&lt;inet_ntoa(peeraddr.sin_addr)&lt;&lt;&quot; port=&quot;&lt;&lt;ntohs(peeraddr.sin_port)&lt;&lt;std::endl;
-                clients.push_back(connfd) ;
- 
-                event.data.fd =connfd ;
-                event.events = EPOLLIN/*| EPOLLET*/ ;
-                epoll_ctl(epollfd,EPOLL_CTL_ADD ,connfd ,&amp;event) ;
-            }else if (events[i].events &amp; EPOLLIN)
-            {
-                //下面的这些都要改进
-                connfd = events[i].data.fd;
-                if (connfd &lt; 0)
-                    continue;
- 
-                char buf[1024] = {0};
-                int ret = read(connfd, buf, 1024);
-                if (ret == -1)
-                    ERR_EXIT(&quot;read&quot;);
-                if (ret == 0)
-                {
-                    std::cout&lt;&lt;&quot;client close&quot;&lt;&lt;std::endl;
-                    close(connfd);
-                    event = events[i];
-                    epoll_ctl(epollfd, EPOLL_CTL_DEL, connfd, &amp;event);
-                    clients.erase(std::remove(clients.begin(), clients.end(), connfd), clients.end());
-                    continue;
-                }
- 
-                std::cout&lt;&lt;buf;
-                write(connfd, buf, strlen(buf));
-            }
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">buf</span><span class="p">;</span>
+                <span class="n">write</span><span class="p">(</span><span class="n">connfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span>
+            <span class="p">}</span>
  
  
  
-        }
+        <span class="p">}</span>
  
-    }
- 
- 
-}
- 
-/*
-正确的读法
-n = 0;
-while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {
-    n += nread;
-}
-if (nread == -1 &amp;&amp; errno != EAGAIN) {
-    perror(&quot;read error&quot;);
-}
-*/
+    <span class="p">}</span>
  
  
-/*
-正确的写法
-int nwrite, data_size = strlen(buf);
-n = data_size;
-while (n &gt; 0) {
-    nwrite = write(fd, buf + data_size - n, n);
-    if (nwrite &lt; n) {
-        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {
-            perror(&quot;write error&quot;);
-        }
-        break;
-    }
-    n -= nwrite;
-}
-*/
-</code></pre>
-
+<span class="p">}</span>
+ 
+<span class="cm">/*
+</span><span class="cm">正确的读法
+</span><span class="cm">n = 0;
+</span><span class="cm">while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {
+</span><span class="cm">    n += nread;
+</span><span class="cm">}
+</span><span class="cm">if (nread == -1 &amp;&amp; errno != EAGAIN) {
+</span><span class="cm">    perror(&#34;read error&#34;);
+</span><span class="cm">}
+</span><span class="cm">*/</span>
+ 
+ 
+<span class="cm">/*
+</span><span class="cm">正确的写法
+</span><span class="cm">int nwrite, data_size = strlen(buf);
+</span><span class="cm">n = data_size;
+</span><span class="cm">while (n &gt; 0) {
+</span><span class="cm">    nwrite = write(fd, buf + data_size - n, n);
+</span><span class="cm">    if (nwrite &lt; n) {
+</span><span class="cm">        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {
+</span><span class="cm">            perror(&#34;write error&#34;);
+</span><span class="cm">        }
+</span><span class="cm">        break;
+</span><span class="cm">    }
+</span><span class="cm">    n -= nwrite;
+</span><span class="cm">}
+</span><span class="cm">*/</span>
+</code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="epoll-summary">epoll summary</h3>
 
 <p>下面的总结参照于c++教育网</p>
@@ -1024,46 +1689,70 @@ while (n &gt; 0) {
 
 <p>从<code>socket</code>读数据:</p>
 
-<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_2.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center><img src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_2.png" alt="" /></center></p>
 
 <p>往<code>socket</code>写数据</p>
 
-<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_3.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center><img src="http://laohanlinux.github.io/images/img/blog/muduo_base_library/muduo_base_library_3.png" alt="" /></center></p>
 
 <p>所以, 在<code>epoll</code>的<code>ET</code>模式下, 正确的读写方式为:
 - 读: 只要可读, 就一直读, 直到返回<code>0</code>, 或者<code>errno = EAGAIN</code>
 - 写: 只要可写, 就一直写, 直到数据发送完, 或者<code>errno = EAGAIN</code></p>
 
 <p>正确的读:</p>
-
-<pre><code class="language-c++">
-n = 0;  
-while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {  
-    n += nread;  
-}  
-if (nread == -1 &amp;&amp; errno != EAGAIN) {  
-    perror(&quot;read error&quot;);  
-}  
-
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  
+<span class="k">while</span> <span class="p">((</span><span class="n">nread</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">BUFSIZ</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="n">n</span> <span class="o">+=</span> <span class="n">nread</span><span class="p">;</span>  
+<span class="p">}</span>  
+<span class="k">if</span> <span class="p">(</span><span class="n">nread</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="n">perror</span><span class="p">(</span><span class="s">&#34;read error&#34;</span><span class="p">);</span>  
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>正确的写:</p>
-
-<pre><code class="language-c++">
-int nwrite, data_size = strlen(buf);  
-n = data_size;  
-while (n &gt; 0) {  
-    nwrite = write(fd, buf + data_size - n, n);  
-    if (nwrite &lt; n) {  
-        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {  
-            perror(&quot;write error&quot;);  
-        }  
-        break;  
-    }  
-    n -= nwrite;  
-}  
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="n">nwrite</span><span class="p">,</span> <span class="n">data_size</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>  
+<span class="n">n</span> <span class="o">=</span> <span class="n">data_size</span><span class="p">;</span>  
+<span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="n">nwrite</span> <span class="o">=</span> <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span> <span class="o">+</span> <span class="n">data_size</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>  
+    <span class="k">if</span> <span class="p">(</span><span class="n">nwrite</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>  
+        <span class="k">if</span> <span class="p">(</span><span class="n">nwrite</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span><span class="p">)</span> <span class="p">{</span>  
+            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;write error&#34;</span><span class="p">);</span>  
+        <span class="p">}</span>  
+        <span class="k">break</span><span class="p">;</span>  
+    <span class="p">}</span>  
+    <span class="n">n</span> <span class="o">-=</span> <span class="n">nwrite</span><span class="p">;</span>  
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>正确的<code>accept</code>，<code>accept</code>要考虑<code>2</code>个问题</p>
 
 <ul>
@@ -1081,20 +1770,33 @@ while (n &gt; 0) {
 <p>解决办法是用<code>while</code>循环抱住<code>accept</code>调用，处理完<code>TCP</code>就绪队列中的所有连接后再退出循环。如何知道是否处理完就绪队列中的所有连接呢？<code>accept</code>  返回<code>-1</code>并且<code>errno</code>设置为<code>EAGAIN</code>就表示所有连接都处理完。</p>
 
 <p>综合以上两种情况，服务器应该使用非阻塞地<code>accept</code>，<code>accept</code>在<code>ET</code>模式下 的正确使用方式为：</p>
-
-<pre><code class="language-c++">
-while ((conn_sock = accept(listenfd,(struct sockaddr *) &amp;remote,   
-                (size_t *)&amp;addrlen)) &gt; 0) {  
-    handle_client(conn_sock);  
-}  
-if (conn_sock == -1) {  
-    if (errno != EAGAIN &amp;&amp; errno != ECONNABORTED   
-            &amp;&amp; errno != EPROTO &amp;&amp; errno != EINTR)   
-        perror(&quot;accept&quot;);  
-}  
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">while</span> <span class="p">((</span><span class="n">conn_sock</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">remote</span><span class="p">,</span>   
+                <span class="p">(</span><span class="n">size_t</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addrlen</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="n">handle_client</span><span class="p">(</span><span class="n">conn_sock</span><span class="p">);</span>  
+<span class="p">}</span>  
+<span class="k">if</span> <span class="p">(</span><span class="n">conn_sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">ECONNABORTED</span>   
+            <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EPROTO</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EINTR</span><span class="p">)</span>   
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;accept&#34;</span><span class="p">);</span>  
+<span class="p">}</span>  
  
-</code></pre>
-
+</code></pre></td></tr></table>
+</div>
+</div>
 <p>一道腾讯后台开发的面试题</p>
 
 <p>使用<code>Linux epoll</code>模型，水平触发模式；当<code>socket</code>可写时，会不停的触发<code>socket</code>可写的事件，如何处理？</p>
@@ -1110,257 +1812,348 @@ if (conn_sock == -1) {
 
 <p>这种方式的优点是：数据不多的时候可以避免<code>epoll</code>的事件处理，提高效率。
 最后贴一个使用<code>epoll</code>, <code>ET</code>模式的简单<code>HTTP</code>服务器代码:</p>
-
-<pre><code class="language-c++">#include &lt;sys/socket.h&gt;
-#include &lt;sys/wait.h&gt;
-#include &lt;netinet/in.h&gt;
-#include &lt;netinet/tcp.h&gt;
-#include &lt;sys/epoll.h&gt;
-#include &lt;sys/sendfile.h&gt;
-#include &lt;sys/stat.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;strings.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;errno.h&gt; 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;netinet/in.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;netinet/tcp.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/epoll.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/sendfile.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;strings.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;errno.h&gt; </span><span class="cp">
+</span><span class="cp"></span> 
+<span class="cp">#define MAX_EVENTS 10
+</span><span class="cp">#define PORT 8080
+</span><span class="cp"></span> 
+<span class="c1">//设置socket连接为非阻塞模式
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">setnonblocking</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">opts</span><span class="p">;</span>
  
-#define MAX_EVENTS 10
-#define PORT 8080
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">fcntl</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">F_GETFL</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">opts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;fcntl(F_GETFL)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="p">(</span><span class="n">opts</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fcntl</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;fcntl(F_SETFL)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
  
-//设置socket连接为非阻塞模式
-void setnonblocking(int sockfd) {
-    int opts;
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">ev</span><span class="p">,</span> <span class="n">events</span><span class="p">[</span><span class="n">MAX_EVENTS</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">addrlen</span><span class="p">,</span> <span class="n">listenfd</span><span class="p">,</span> <span class="n">conn_sock</span><span class="p">,</span> <span class="n">nfds</span><span class="p">,</span> <span class="n">epfd</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">nread</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">local</span><span class="p">,</span> <span class="n">remote</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUFSIZ</span><span class="p">];</span>
  
-    opts = fcntl(sockfd, F_GETFL);
-    if(opts &lt; 0) {
-        perror(&quot;fcntl(F_GETFL)\n&quot;);
-        exit(1);
-    }
-    opts = (opts | O_NONBLOCK);
-    if(fcntl(sockfd, F_SETFL, opts) &lt; 0) {
-        perror(&quot;fcntl(F_SETFL)\n&quot;);
-        exit(1);
-    }
-}
+    <span class="c1">//创建listen socket
+</span><span class="c1"></span>    <span class="k">if</span><span class="p">(</span> <span class="p">(</span><span class="n">listenfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;sockfd</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">setnonblocking</span><span class="p">(</span><span class="n">listenfd</span><span class="p">);</span>
+    <span class="n">bzero</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">local</span><span class="p">));</span>
+    <span class="n">local</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+    <span class="n">local</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">);;</span>
+    <span class="n">local</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">PORT</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">bind</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">local</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">local</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;bind</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">listen</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
  
-int main(){
-    struct epoll_event ev, events[MAX_EVENTS];
-    int addrlen, listenfd, conn_sock, nfds, epfd, fd, i, nread, n;
-    struct sockaddr_in local, remote;
-    char buf[BUFSIZ];
+    <span class="n">epfd</span> <span class="o">=</span> <span class="n">epoll_create</span><span class="p">(</span><span class="n">MAX_EVENTS</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">epfd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;epoll_create&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+    <span class="p">}</span>
  
-    //创建listen socket
-    if( (listenfd = socket(AF_INET, SOCK_STREAM, 0)) &lt; 0) {
-        perror(&quot;sockfd\n&quot;);
-        exit(1);
-    }
-    setnonblocking(listenfd);
-    bzero(&amp;local, sizeof(local));
-    local.sin_family = AF_INET;
-    local.sin_addr.s_addr = htonl(INADDR_ANY);;
-    local.sin_port = htons(PORT);
-    if( bind(listenfd, (struct sockaddr *) &amp;local, sizeof(local)) &lt; 0) {
-        perror(&quot;bind\n&quot;);
-        exit(1);
-    }
-    listen(listenfd, 20);
+    <span class="n">ev</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">EPOLLIN</span><span class="p">;</span>
+    <span class="n">ev</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">listenfd</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epfd</span><span class="p">,</span> <span class="n">EPOLL_CTL_ADD</span><span class="p">,</span> <span class="n">listenfd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ev</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;epoll_ctl: listen_sock&#34;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+    <span class="p">}</span>
  
-    epfd = epoll_create(MAX_EVENTS);
-    if (epfd == -1) {
-        perror(&quot;epoll_create&quot;);
-        exit(EXIT_FAILURE);
-    }
+    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+        <span class="n">nfds</span> <span class="o">=</span> <span class="n">epoll_wait</span><span class="p">(</span><span class="n">epfd</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">MAX_EVENTS</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nfds</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;epoll_pwait&#34;</span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+        <span class="p">}</span>
  
-    ev.events = EPOLLIN;
-    ev.data.fd = listenfd;
-    if (epoll_ctl(epfd, EPOLL_CTL_ADD, listenfd, &amp;ev) == -1) {
-        perror(&quot;epoll_ctl: listen_sock&quot;);
-        exit(EXIT_FAILURE);
-    }
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nfds</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="n">listenfd</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span> <span class="p">((</span><span class="n">conn_sock</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">listenfd</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">remote</span><span class="p">,</span> 
+                                <span class="p">(</span><span class="n">size_t</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">addrlen</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">setnonblocking</span><span class="p">(</span><span class="n">conn_sock</span><span class="p">);</span>
+                    <span class="n">ev</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">EPOLLIN</span> <span class="o">|</span> <span class="n">EPOLLET</span><span class="p">;</span>
+                    <span class="n">ev</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">conn_sock</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epfd</span><span class="p">,</span> <span class="n">EPOLL_CTL_ADD</span><span class="p">,</span> <span class="n">conn_sock</span><span class="p">,</span>
+                                <span class="o">&amp;</span><span class="n">ev</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;epoll_ctl: add&#34;</span><span class="p">);</span>
+                        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn_sock</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">ECONNABORTED</span> 
+                            <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EPROTO</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EINTR</span><span class="p">)</span> 
+                        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;accept&#34;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>  
+            <span class="k">if</span> <span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">events</span> <span class="o">&amp;</span> <span class="n">EPOLLIN</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="k">while</span> <span class="p">((</span><span class="n">nread</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">BUFSIZ</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">n</span> <span class="o">+=</span> <span class="n">nread</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">nread</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">perror</span><span class="p">(</span><span class="s">&#34;read error&#34;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">ev</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fd</span> <span class="o">=</span> <span class="n">fd</span><span class="p">;</span>
+                <span class="n">ev</span><span class="p">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">events</span> <span class="o">|</span> <span class="n">EPOLLOUT</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">epoll_ctl</span><span class="p">(</span><span class="n">epfd</span><span class="p">,</span> <span class="n">EPOLL_CTL_MOD</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ev</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">perror</span><span class="p">(</span><span class="s">&#34;epoll_ctl: mod&#34;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">events</span> <span class="o">&amp;</span> <span class="n">EPOLLOUT</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s">Content-Length: %d</span><span class="se">\r\n\r\n</span><span class="s">Hello World&#34;</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">nwrite</span><span class="p">,</span> <span class="n">data_size</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">data_size</span><span class="p">;</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">nwrite</span> <span class="o">=</span> <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span> <span class="o">+</span> <span class="n">data_size</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">nwrite</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">nwrite</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">!=</span> <span class="n">EAGAIN</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;write error&#34;</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="n">n</span> <span class="o">-=</span> <span class="n">nwrite</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
  
-    for (;;) {
-        nfds = epoll_wait(epfd, events, MAX_EVENTS, -1);
-        if (nfds == -1) {
-            perror(&quot;epoll_pwait&quot;);
-            exit(EXIT_FAILURE);
-        }
- 
-        for (i = 0; i &lt; nfds; ++i) {
-            fd = events[i].data.fd;
-            if (fd == listenfd) {
-                while ((conn_sock = accept(listenfd,(struct sockaddr *) &amp;remote, 
-                                (size_t *)&amp;addrlen)) &gt; 0) {
-                    setnonblocking(conn_sock);
-                    ev.events = EPOLLIN | EPOLLET;
-                    ev.data.fd = conn_sock;
-                    if (epoll_ctl(epfd, EPOLL_CTL_ADD, conn_sock,
-                                &amp;ev) == -1) {
-                        perror(&quot;epoll_ctl: add&quot;);
-                        exit(EXIT_FAILURE);
-                    }
-                }
-                if (conn_sock == -1) {
-                    if (errno != EAGAIN &amp;&amp; errno != ECONNABORTED 
-                            &amp;&amp; errno != EPROTO &amp;&amp; errno != EINTR) 
-                        perror(&quot;accept&quot;);
-                }
-                continue;
-            }  
-            if (events[i].events &amp; EPOLLIN) {
-                n = 0;
-                while ((nread = read(fd, buf + n, BUFSIZ-1)) &gt; 0) {
-                    n += nread;
-                }
-                if (nread == -1 &amp;&amp; errno != EAGAIN) {
-                    perror(&quot;read error&quot;);
-                }
-                ev.data.fd = fd;
-                ev.events = events[i].events | EPOLLOUT;
-                if (epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &amp;ev) == -1) {
-                    perror(&quot;epoll_ctl: mod&quot;);
-                }
-            }
-            if (events[i].events &amp; EPOLLOUT) {
-                sprintf(buf, &quot;HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\nHello World&quot;, 11);
-                int nwrite, data_size = strlen(buf);
-                n = data_size;
-                while (n &gt; 0) {
-                    nwrite = write(fd, buf + data_size - n, n);
-                    if (nwrite &lt; n) {
-                        if (nwrite == -1 &amp;&amp; errno != EAGAIN) {
-                            perror(&quot;write error&quot;);
-                        }
-                        break;
-                    }
-                    n -= nwrite;
-                }
-                close(fd);
-            }
-        }
-    }
- 
-    return 0;
-}
-
-</code></pre>
-
-    </div>
-
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>Rg </span>
-                </p>
-            
-           
-             
-            <p class="copyright-item">
-                    <span>Link:</span>
-                    <a href=https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/>https://laohanlinux.github.io/2013/06/10/muduo-base-library-1/</span>
-            </p>
-            
-             
-            <p class="copyright-item lincese">
-                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
-            </p>
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-tag"></i>Tag(s): 
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/muduo/">
-                    #muduo</a></span>
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/muduo-base-library/">
-                    #muduo base library</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">back</a></span> · 
-                <span><a href="https://laohanlinux.github.io">home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-         
-        
-        <a href="https://laohanlinux.github.io/2013/06/10/muduo-base-library-2/" class="next" rel="next" title="muduo_base_library_2">muduo_base_library_2&nbsp;<i class="iconfont icon-right"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-                 
-          
-        
-<div id="gitalk-container" style="border:0" ></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
-<script>
-    const gitalk = new Gitalk({
-        clientID: '88e50f263d090b13460f',
-    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
-    repo: 'blog',
-    owner: 'laohanlinux',
-    admin: ['laohanlinux'],
-    id: location.pathname, 
-    distractionFreeMode: false 
-    })
-
-gitalk.render('gitalk-container')
-</script>
-
-
-    </div>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+  </div>
 </article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2014 - 2019</span>
-        
-        <span class="with-love">
-    	 <i class="iconfont icon-love"></i> 
-         </span>
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
-         
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2013-06-10 01:09:28 \x2b0000 UTC',
+        title: 'muduo_base_library_1',
+        clientID: '88e50f263d090b13460f',
+        clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+        repo: 'blog',
+        owner: 'laohanlinux',
+        admin: ['laohanlinux'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
 
-         
-		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
-    </div>
-</footer>
+      </div>
+    </main>
 
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:daimaldd@email.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/laohanlinux" class="iconfont icon-github" title="github"></a>
+  <a href="https://laohanlinux.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
 
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
 
-
-
-
-
-
-
-
-
-
-    
-     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
-      
-     <script src="/js/vendor_gallery.min.js" async="" ></script>
-    
   
 
+  <span class="copyright-year">
+    &copy; 
+    2014 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Rg</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
 
 
-     </div>
-  </body>
+
+
+
+
+
+
+</body>
 </html>

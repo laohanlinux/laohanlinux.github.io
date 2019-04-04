@@ -5,7 +5,7 @@
     <link>https://laohanlinux.github.io/categories/blockchain/</link>
     <description>Recent content in BlockChain on Welcome to Rg Home</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en</language>
     <lastBuildDate>Sun, 12 Mar 2017 23:46:57 +0000</lastBuildDate>
     
 	<atom:link href="https://laohanlinux.github.io/categories/blockchain/index.xml" rel="self" type="application/rss+xml" />
@@ -17,7 +17,7 @@
       <pubDate>Sun, 12 Mar 2017 23:46:57 +0000</pubDate>
       
       <guid>https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/</guid>
-      <description>talk is cheap, show me the code! package main import ( &amp;quot;context&amp;quot; &amp;quot;crypto/sha256&amp;quot; &amp;quot;encoding/json&amp;quot; &amp;quot;flag&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;io/ioutil&amp;quot; &amp;quot;net&amp;quot; &amp;quot;net/http&amp;quot; &amp;quot;strings&amp;quot; &amp;quot;time&amp;quot; &amp;quot;github.com/gin-gonic/gin&amp;quot; log &amp;quot;github.com/laohanlinux/utils/gokitlog&amp;quot; &amp;quot;github.com/laohanlinux/utils/netrpc&amp;quot; pool &amp;quot;github.com/laohanlinux/utils/pool/rpc&amp;quot; ) var ( blockChain = []Block{GetGenesiseBlock()} initialPeers = flag.String(&amp;quot;peers&amp;quot;, &amp;quot;localhost:6660,localhost:6661,localhost:6662&amp;quot;, &amp;quot;&amp;quot;) httpPort = flag.String(&amp;quot;http_port&amp;quot;, &amp;quot;localhost:7000&amp;quot;, &amp;quot;&amp;quot;) p2pPort = flag.String(&amp;quot;p2p_port&amp;quot;, &amp;quot;localhost:6660&amp;quot;, &amp;quot;&amp;quot;) peersConnections = make(map[string]*pool.NetRPCRing) s Service ) func main() { flag.Parse() l, err := initP2PServer() if err != nil { log.Crit(&amp;quot;err&amp;quot;, err) }</description>
+      <description>1 talk is cheap, show me the code! 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Sun, 12 Mar 2017 23:46:57 +0000</pubDate>
       
       <guid>https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97%E9%93%BE-go%E8%AF%AD%E8%A8%80%E7%89%88%E6%9C%AC/</guid>
-      <description>talk is cheap, show me the code! package main import ( &amp;quot;context&amp;quot; &amp;quot;crypto/sha256&amp;quot; &amp;quot;encoding/json&amp;quot; &amp;quot;flag&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;io/ioutil&amp;quot; &amp;quot;net&amp;quot; &amp;quot;net/http&amp;quot; &amp;quot;strings&amp;quot; &amp;quot;time&amp;quot; &amp;quot;github.com/gin-gonic/gin&amp;quot; log &amp;quot;github.com/laohanlinux/utils/gokitlog&amp;quot; &amp;quot;github.com/laohanlinux/utils/netrpc&amp;quot; pool &amp;quot;github.com/laohanlinux/utils/pool/rpc&amp;quot; ) var ( blockChain = []Block{GetGenesiseBlock()} initialPeers = flag.String(&amp;quot;peers&amp;quot;, &amp;quot;localhost:6660,localhost:6661,localhost:6662&amp;quot;, &amp;quot;&amp;quot;) httpPort = flag.String(&amp;quot;http_port&amp;quot;, &amp;quot;localhost:7000&amp;quot;, &amp;quot;&amp;quot;) p2pPort = flag.String(&amp;quot;p2p_port&amp;quot;, &amp;quot;localhost:6660&amp;quot;, &amp;quot;&amp;quot;) peersConnections = make(map[string]*pool.NetRPCRing) s Service ) func main() { flag.Parse() l, err := initP2PServer() if err != nil { log.Crit(&amp;quot;err&amp;quot;, err) }</description>
+      <description>1 talk is cheap, show me the code! 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62</description>
     </item>
     
   </channel>

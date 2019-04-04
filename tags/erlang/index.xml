@@ -5,7 +5,7 @@
     <link>https://laohanlinux.github.io/tags/erlang/</link>
     <description>Recent content in Erlang on Welcome to Rg Home</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en</language>
     <lastBuildDate>Mon, 25 Apr 2016 00:15:14 +0000</lastBuildDate>
     
 	<atom:link href="https://laohanlinux.github.io/tags/erlang/index.xml" rel="self" type="application/rss+xml" />
@@ -17,7 +17,7 @@
       <pubDate>Mon, 25 Apr 2016 00:15:14 +0000</pubDate>
       
       <guid>https://laohanlinux.github.io/2016/04/25/erlang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>erlang 之简单的Diction实现 最近在看学erlang ，看到了字典这个demo ，把程序Copy出来和大家分享一下 -module (diction). -export([new/0,lookup/2,add/3,delete/2]). new() -&amp;gt; []. lookup(Key , [{Key,Value}|Rest]) -&amp;gt; {value,Value}; lookup(Key,[Pair|Rest]) -&amp;gt; lookup(Key,Rest); lookup(Key,[]) -&amp;gt;</description>
+      <description>erlang 之简单的Diction实现 最近在看学erlang ，看到了字典这个demo ，把程序Copy出来和大家分享一下 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Sat, 25 Apr 2015 22:59:40 +0000</pubDate>
       
       <guid>https://laohanlinux.github.io/2015/04/25/cowboy/</guid>
-      <description>Cowboy 启动流程 Initialization 首先， init函数会被调用，所有的处理都会调用该函数。如果使用rest处理当前的请求，那么这个函数必须返回upgrade [init({tcp, http}, Req, Opts)</description>
+      <description>Cowboy 启动流程 Initialization 首先， init函数会被调用，所有的处理都会调用该函数。如果使用rest处理当前的请求，那么这个函数必须返回upgrade 1 2 [init({tcp, http},</description>
     </item>
     
   </channel>

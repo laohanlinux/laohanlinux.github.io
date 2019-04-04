@@ -1,604 +1,872 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  <meta name="author" content="Rg">
-  <meta name="description" content="Rg&#39;s blog">
-  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
-  
-  <link rel="prev" href="https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97%E9%93%BE-go%E8%AF%AD%E8%A8%80%E7%89%88%E6%9C%AC/" />
-  <link rel="next" href="https://laohanlinux.github.io/2017/09/11/raft%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" />
-  <link rel="canonical" href="https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           200行区块链 | Welcome to Rg Home
-       
-  </title>
-  <meta name="title" content="200行区块链 | Welcome to Rg Home">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>200行区块链 - Welcome to Rg Home</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-  
-  
- 
+<meta name="author" content="Rg" /><meta name="description" content="在网上看到一个`200行实现的区块链`，个人感觉比较有意思，所以就使用`go`重写了一遍，不过代码量代码量多了好多。" /><meta name="keywords" content="Rg, Rust, even" />
 
-<script type="application/ld+json">
- "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https://laohanlinux.github.io"
-    },
-    "articleSection" : "posts",
-    "name" : "200行区块链",
-    "headline" : "200行区块链",
-    "description" : "在网上看到一个`200行实现的区块链`，个人感觉比较有意思，所以就使用`go`重写了一遍，不过代码量代码量多了好多。",
-    "inLanguage" : "en-us",
-    "author" : "Rg",
-    "creator" : "Rg",
-    "publisher": "Rg",
-    "accountablePerson" : "Rg",
-    "copyrightHolder" : "Rg",
-    "copyrightYear" : "2017",
-    "datePublished": "2017-03-12 23:46:57 &#43;0000 UTC",
-    "dateModified" : "2017-03-12 23:46:57 &#43;0000 UTC",
-    "url" : "https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/",
-    "wordCount" : "1024",
-    "keywords" : [ "blockchian", "Welcome to Rg Home"]
-}
-</script>
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="200行区块链" />
+<meta property="og:description" content="在网上看到一个`200行实现的区块链`，个人感觉比较有意思，所以就使用`go`重写了一遍，不过代码量代码量多了好多。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/" />
+<meta property="article:published_time" content="2017-03-12T23:46:57&#43;00:00"/>
+<meta property="article:modified_time" content="2017-03-12T23:46:57&#43;00:00"/>
+
+<meta itemprop="name" content="200行区块链">
+<meta itemprop="description" content="在网上看到一个`200行实现的区块链`，个人感觉比较有意思，所以就使用`go`重写了一遍，不过代码量代码量多了好多。">
+
+
+<meta itemprop="datePublished" content="2017-03-12T23:46:57&#43;00:00" />
+<meta itemprop="dateModified" content="2017-03-12T23:46:57&#43;00:00" />
+<meta itemprop="wordCount" content="1350">
+
+
+
+<meta itemprop="keywords" content="blockchian," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="200行区块链"/>
+<meta name="twitter:description" content="在网上看到一个`200行实现的区块链`，个人感觉比较有意思，所以就使用`go`重写了一遍，不过代码量代码量多了好多。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
 
 </head>
-
-  
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Welcome come to Rg Home</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">cd ~/</li>
+      </a><a href="/posts/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
 </nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Welcome come to Rg Home</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">cd ~/</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/posts/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
 </nav>
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">200行区块链</h1>
-        <div class="post-meta">
-                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
-                <span class="post-time">
-                on <time datetime=2017-03-12 itemprop="datePublished">March 12, 2017</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://laohanlinux.github.io/categories/blockchain/"> BlockChain </a>
-                        
-                </span>
-        </div>
     </header>
-    <div class="post-content">
-        
 
-        
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <div class="post-content">
+    <div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">talk is cheap, show me the code!</pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span><span class="lnt">206
+</span><span class="lnt">207
+</span><span class="lnt">208
+</span><span class="lnt">209
+</span><span class="lnt">210
+</span><span class="lnt">211
+</span><span class="lnt">212
+</span><span class="lnt">213
+</span><span class="lnt">214
+</span><span class="lnt">215
+</span><span class="lnt">216
+</span><span class="lnt">217
+</span><span class="lnt">218
+</span><span class="lnt">219
+</span><span class="lnt">220
+</span><span class="lnt">221
+</span><span class="lnt">222
+</span><span class="lnt">223
+</span><span class="lnt">224
+</span><span class="lnt">225
+</span><span class="lnt">226
+</span><span class="lnt">227
+</span><span class="lnt">228
+</span><span class="lnt">229
+</span><span class="lnt">230
+</span><span class="lnt">231
+</span><span class="lnt">232
+</span><span class="lnt">233
+</span><span class="lnt">234
+</span><span class="lnt">235
+</span><span class="lnt">236
+</span><span class="lnt">237
+</span><span class="lnt">238
+</span><span class="lnt">239
+</span><span class="lnt">240
+</span><span class="lnt">241
+</span><span class="lnt">242
+</span><span class="lnt">243
+</span><span class="lnt">244
+</span><span class="lnt">245
+</span><span class="lnt">246
+</span><span class="lnt">247
+</span><span class="lnt">248
+</span><span class="lnt">249
+</span><span class="lnt">250
+</span><span class="lnt">251
+</span><span class="lnt">252
+</span><span class="lnt">253
+</span><span class="lnt">254
+</span><span class="lnt">255
+</span><span class="lnt">256
+</span><span class="lnt">257
+</span><span class="lnt">258
+</span><span class="lnt">259
+</span><span class="lnt">260
+</span><span class="lnt">261
+</span><span class="lnt">262
+</span><span class="lnt">263
+</span><span class="lnt">264
+</span><span class="lnt">265
+</span><span class="lnt">266
+</span><span class="lnt">267
+</span><span class="lnt">268
+</span><span class="lnt">269
+</span><span class="lnt">270
+</span><span class="lnt">271
+</span><span class="lnt">272
+</span><span class="lnt">273
+</span><span class="lnt">274
+</span><span class="lnt">275
+</span><span class="lnt">276
+</span><span class="lnt">277
+</span><span class="lnt">278
+</span><span class="lnt">279
+</span><span class="lnt">280
+</span><span class="lnt">281
+</span><span class="lnt">282
+</span><span class="lnt">283
+</span><span class="lnt">284
+</span><span class="lnt">285
+</span><span class="lnt">286
+</span><span class="lnt">287
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
-        
-        
-     
-          
-          
-          
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;context&#34;</span>
+	<span class="s">&#34;crypto/sha256&#34;</span>
+	<span class="s">&#34;encoding/json&#34;</span>
+	<span class="s">&#34;flag&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;io/ioutil&#34;</span>
+	<span class="s">&#34;net&#34;</span>
+	<span class="s">&#34;net/http&#34;</span>
+	<span class="s">&#34;strings&#34;</span>
+	<span class="s">&#34;time&#34;</span>
 
-          
-          
-          
+	<span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+	<span class="nx">log</span> <span class="s">&#34;github.com/laohanlinux/utils/gokitlog&#34;</span>
+	<span class="s">&#34;github.com/laohanlinux/utils/netrpc&#34;</span>
+	<span class="nx">pool</span> <span class="s">&#34;github.com/laohanlinux/utils/pool/rpc&#34;</span>
+<span class="p">)</span>
 
-          <pre><code>talk is cheap, show me the code!
-</code></pre>
+<span class="kd">var</span> <span class="p">(</span>
+	<span class="nx">blockChain</span>       <span class="p">=</span> <span class="p">[]</span><span class="nx">Block</span><span class="p">{</span><span class="nf">GetGenesiseBlock</span><span class="p">()}</span>
+	<span class="nx">initialPeers</span>     <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;peers&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:6660,localhost:6661,localhost:6662&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">httpPort</span>         <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;http_port&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:7000&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">p2pPort</span>          <span class="p">=</span> <span class="nx">flag</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="s">&#34;p2p_port&#34;</span><span class="p">,</span> <span class="s">&#34;localhost:6660&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">peersConnections</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">pool</span><span class="p">.</span><span class="nx">NetRPCRing</span><span class="p">)</span>
+	<span class="nx">s</span>                <span class="nx">Service</span>
+<span class="p">)</span>
 
-<pre><code class="language-go">package main
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">flag</span><span class="p">.</span><span class="nf">Parse</span><span class="p">()</span>
+	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">initP2PServer</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Crit</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;p2pServer listener address&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">p2pPort</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+	<span class="nx">peers</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="o">*</span><span class="nx">initialPeers</span><span class="p">,</span> <span class="s">&#34;,&#34;</span><span class="p">)</span>
+	<span class="nf">conncetToPeers</span><span class="p">(</span><span class="nx">peers</span><span class="p">)</span>
+	<span class="nf">initHttpServer</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Hour</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="p">}</span>
 
-import (
-	&quot;context&quot;
-	&quot;crypto/sha256&quot;
-	&quot;encoding/json&quot;
-	&quot;flag&quot;
-	&quot;fmt&quot;
-	&quot;io/ioutil&quot;
-	&quot;net&quot;
-	&quot;net/http&quot;
-	&quot;strings&quot;
-	&quot;time&quot;
+<span class="kd">type</span> <span class="nx">Block</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Index</span>        <span class="kt">int64</span>
+	<span class="nx">PreviousHash</span> <span class="kt">string</span>
+	<span class="nx">TimeStamp</span>    <span class="kt">int64</span>
+	<span class="nx">Data</span>         <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">Hash</span>         <span class="kt">string</span>
+<span class="p">}</span>
 
-	&quot;github.com/gin-gonic/gin&quot;
-	log &quot;github.com/laohanlinux/utils/gokitlog&quot;
-	&quot;github.com/laohanlinux/utils/netrpc&quot;
-	pool &quot;github.com/laohanlinux/utils/pool/rpc&quot;
-)
+<span class="kd">func</span> <span class="nf">NewBlock</span><span class="p">(</span><span class="nx">index</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">previousHash</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">timeStamp</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">Data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">Hash</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">Block</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">Block</span><span class="p">{</span>
+		<span class="nx">Index</span><span class="p">:</span>        <span class="nx">index</span><span class="p">,</span>
+		<span class="nx">PreviousHash</span><span class="p">:</span> <span class="nx">previousHash</span><span class="p">,</span>
+		<span class="nx">TimeStamp</span><span class="p">:</span>    <span class="nx">timeStamp</span><span class="p">,</span>
+		<span class="nx">Data</span><span class="p">:</span>         <span class="nx">Data</span><span class="p">,</span>
+		<span class="nx">Hash</span><span class="p">:</span>         <span class="nx">Hash</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-var (
-	blockChain       = []Block{GetGenesiseBlock()}
-	initialPeers     = flag.String(&quot;peers&quot;, &quot;localhost:6660,localhost:6661,localhost:6662&quot;, &quot;&quot;)
-	httpPort         = flag.String(&quot;http_port&quot;, &quot;localhost:7000&quot;, &quot;&quot;)
-	p2pPort          = flag.String(&quot;p2p_port&quot;, &quot;localhost:6660&quot;, &quot;&quot;)
-	peersConnections = make(map[string]*pool.NetRPCRing)
-	s                Service
-)
+<span class="kd">func</span> <span class="nf">CalculationHashForBlock</span><span class="p">(</span><span class="nx">block</span> <span class="nx">Block</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nf">CalculationHash</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">Index</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">PreviousHash</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">TimeStamp</span><span class="p">,</span> <span class="nx">block</span><span class="p">.</span><span class="nx">Data</span><span class="p">)</span>
+<span class="p">}</span>
 
-func main() {
-	flag.Parse()
-	l, err := initP2PServer()
-	if err != nil {
-		log.Crit(&quot;err&quot;, err)
-	}
-	log.Debug(&quot;p2pServer listener address&quot;, *p2pPort)
-	defer l.Close()
-	peers := strings.Split(*initialPeers, &quot;,&quot;)
-	conncetToPeers(peers)
-	initHttpServer()
-	time.Sleep(time.Hour * 10000)
-}
+<span class="kd">func</span> <span class="nf">CalculationHash</span><span class="p">(</span><span class="nx">index</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">previousHash</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">timeStamp</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%x&#34;</span><span class="p">,</span> <span class="nx">sha256</span><span class="p">.</span><span class="nf">Sum256</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%v%v%v%s&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">previousHash</span><span class="p">,</span> <span class="nx">timeStamp</span><span class="p">,</span> <span class="nx">data</span><span class="p">))))</span>
+<span class="p">}</span>
 
-type Block struct {
-	Index        int64
-	PreviousHash string
-	TimeStamp    int64
-	Data         []byte
-	Hash         string
-}
+<span class="kd">func</span> <span class="nf">GenerateNextBlock</span><span class="p">(</span><span class="nx">blockData</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="nx">Block</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="p">(</span>
+		<span class="nx">previousBlock</span> <span class="p">=</span> <span class="nf">getLatestBlock</span><span class="p">()</span>
+		<span class="nx">nextIndex</span>     <span class="p">=</span> <span class="nx">previousBlock</span><span class="p">.</span><span class="nx">Index</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="nx">nextTimeStamp</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span>
+		<span class="nx">nextHash</span>      <span class="p">=</span> <span class="nf">CalculationHash</span><span class="p">(</span><span class="nx">nextIndex</span><span class="p">,</span> <span class="nx">previousBlock</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">nextTimeStamp</span><span class="p">,</span> <span class="nx">blockData</span><span class="p">)</span>
+	<span class="p">)</span>
+	<span class="k">return</span> <span class="nf">NewBlock</span><span class="p">(</span><span class="nx">nextIndex</span><span class="p">,</span> <span class="nx">previousBlock</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">nextTimeStamp</span><span class="p">,</span> <span class="nx">blockData</span><span class="p">,</span> <span class="nx">nextHash</span><span class="p">)</span>
+<span class="p">}</span>
 
-func NewBlock(index int64, previousHash string, timeStamp int64, Data []byte, Hash string) Block {
-	return Block{
-		Index:        index,
-		PreviousHash: previousHash,
-		TimeStamp:    timeStamp,
-		Data:         Data,
-		Hash:         Hash,
-	}
-}
+<span class="kd">func</span> <span class="nf">GetGenesiseBlock</span><span class="p">()</span> <span class="nx">Block</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nf">NewBlock</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#34;0&#34;</span><span class="p">,</span> <span class="mi">1465154705</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;my genesis block!!&#34;</span><span class="p">),</span> <span class="s">&#34;816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7&#34;</span><span class="p">)</span>
+<span class="p">}</span>
 
-func CalculationHashForBlock(block Block) string {
-	return CalculationHash(block.Index, block.PreviousHash, block.TimeStamp, block.Data)
-}
+<span class="kd">func</span> <span class="nf">AddBlock</span><span class="p">(</span><span class="nx">newBlock</span> <span class="nx">Block</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nf">isValidNewBlock</span><span class="p">(</span><span class="nx">newBlock</span><span class="p">,</span> <span class="nf">getLatestBlock</span><span class="p">())</span> <span class="p">{</span>
+		<span class="nx">blockChain</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">blockChain</span><span class="p">,</span> <span class="nx">newBlock</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-func CalculationHash(index int64, previousHash string, timeStamp int64, data []byte) string {
-	return fmt.Sprintf(&quot;%x&quot;, sha256.Sum256([]byte(fmt.Sprintf(&quot;%v%v%v%s&quot;, index, previousHash, timeStamp, data))))
-}
+<span class="kd">func</span> <span class="nf">replaceChain</span><span class="p">(</span><span class="nx">newBlocks</span> <span class="p">[]</span><span class="nx">Block</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nf">isValidBlock</span><span class="p">(</span><span class="nx">newBlocks</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">newBlocks</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">blockChain</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Warnf</span><span class="p">(</span><span class="s">&#34;received blockchain is valid, replacing current blockchain with received blockchain&#34;</span><span class="p">)</span>
+		<span class="nx">blockChain</span> <span class="p">=</span> <span class="nx">newBlocks</span>
+		<span class="c1">// broadcast
+</span><span class="c1"></span>		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peerClient</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peersConnections</span> <span class="p">{</span>
+			<span class="k">go</span> <span class="nx">peerClient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">serviceAddBlockChain</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">AddBlockChainArgs</span><span class="p">{</span><span class="nx">NewBlockChain</span><span class="p">:</span> <span class="nx">blockChain</span><span class="p">},</span> <span class="o">&amp;</span><span class="nx">AddBlockChainReply</span><span class="p">{})</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;received blockchain invalid&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-func GenerateNextBlock(blockData []byte) Block {
-	var (
-		previousBlock = getLatestBlock()
-		nextIndex     = previousBlock.Index + 1
-		nextTimeStamp = time.Now().Unix()
-		nextHash      = CalculationHash(nextIndex, previousBlock.Hash, nextTimeStamp, blockData)
-	)
-	return NewBlock(nextIndex, previousBlock.Hash, nextTimeStamp, blockData, nextHash)
-}
+<span class="kd">func</span> <span class="nf">isValidNewBlock</span><span class="p">(</span><span class="nx">newBlock</span><span class="p">,</span> <span class="nx">previousBlock</span> <span class="nx">Block</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">previousBlock</span><span class="p">.</span><span class="nx">Index</span><span class="o">+</span><span class="mi">1</span> <span class="o">!=</span> <span class="nx">newBlock</span><span class="p">.</span><span class="nx">Index</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;msg&#34;</span><span class="p">,</span> <span class="s">&#34;invalid index&#34;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">previousBlock</span><span class="p">.</span><span class="nx">Hash</span> <span class="o">!=</span> <span class="nx">newBlock</span><span class="p">.</span><span class="nx">PreviousHash</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;msg&#34;</span><span class="p">,</span> <span class="s">&#34;invalid previousHash&#34;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="c1">// check wether newBlock.Hash is right calculation by his content
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nf">CalculationHashForBlock</span><span class="p">(</span><span class="nx">newBlock</span><span class="p">)</span> <span class="o">!=</span> <span class="nx">newBlock</span><span class="p">.</span><span class="nx">Hash</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;invalid hash: %v, %v&#34;</span><span class="p">,</span> <span class="nf">CalculationHashForBlock</span><span class="p">(</span><span class="nx">newBlock</span><span class="p">),</span> <span class="nx">newBlock</span><span class="p">.</span><span class="nx">Hash</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
 
-func GetGenesiseBlock() Block {
-	return NewBlock(0, &quot;0&quot;, 1465154705, []byte(&quot;my genesis block!!&quot;), &quot;816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7&quot;)
-}
+<span class="kd">func</span> <span class="nf">isValidBlock</span><span class="p">(</span><span class="nx">blockChainToValidate</span> <span class="p">[]</span><span class="nx">Block</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c1">// check genesis block
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">blockChainToValidate</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Hash</span> <span class="o">!=</span> <span class="nf">GetGenesiseBlock</span><span class="p">().</span><span class="nx">Hash</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
 
-func AddBlock(newBlock Block) {
-	if isValidNewBlock(newBlock, getLatestBlock()) {
-		blockChain = append(blockChain, newBlock)
-	}
-}
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">blockChainToValidate</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nf">isValidNewBlock</span><span class="p">(</span><span class="nx">blockChainToValidate</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">blockChainToValidate</span><span class="p">[</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">false</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
 
-func replaceChain(newBlocks []Block) {
-	if isValidBlock(newBlocks) &amp;&amp; len(newBlocks) &gt; len(blockChain) {
-		log.Warnf(&quot;received blockchain is valid, replacing current blockchain with received blockchain&quot;)
-		blockChain = newBlocks
-		// broadcast
-		for _, peerClient := range peersConnections {
-			go peerClient.Call(serviceAddBlockChain, &amp;AddBlockChainArgs{NewBlockChain: blockChain}, &amp;AddBlockChainReply{})
-		}
-	} else {
-		log.Debugf(&quot;received blockchain invalid&quot;)
-	}
-}
+<span class="kd">func</span> <span class="nf">getLatestBlock</span><span class="p">()</span> <span class="nx">Block</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">blockChain</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">blockChain</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
 
-func isValidNewBlock(newBlock, previousBlock Block) bool {
-	if previousBlock.Index+1 != newBlock.Index {
-		log.Debug(&quot;msg&quot;, &quot;invalid index&quot;)
-		return false
-	}
-	if previousBlock.Hash != newBlock.PreviousHash {
-		log.Debug(&quot;msg&quot;, &quot;invalid previousHash&quot;)
-		return false
-	}
-	// check wether newBlock.Hash is right calculation by his content
-	if CalculationHashForBlock(newBlock) != newBlock.Hash {
-		log.Debugf(&quot;invalid hash: %v, %v&quot;, CalculationHashForBlock(newBlock), newBlock.Hash)
-		return false
-	}
-	return true
-}
+<span class="kd">func</span> <span class="nf">initHttpServer</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">router</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+	<span class="nx">router</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/blocks&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">).</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">blockChain</span><span class="p">)</span> <span class="p">})</span>
+	<span class="nx">router</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/mineBlock&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="p">(</span>
+			<span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+			<span class="nx">err</span> <span class="kt">error</span>
+		<span class="p">)</span>
+		<span class="k">if</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadAll</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Body</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusInternalServerError</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+		<span class="nf">AddBlock</span><span class="p">(</span><span class="nf">GenerateNextBlock</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
+		<span class="c1">// broadcast to notify peers our has add new block
+</span><span class="c1"></span>		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peerClient</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peersConnections</span> <span class="p">{</span>
+			<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">rpcArgs</span><span class="p">,</span> <span class="nx">rpcReply</span> <span class="p">=</span> <span class="nx">AddBlockChainArgs</span><span class="p">{</span><span class="nx">NewBlockChain</span><span class="p">:</span> <span class="nx">blockChain</span><span class="p">},</span> <span class="nx">AddBlockChainReply</span><span class="p">{}</span>
+				<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peerClient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">serviceAddBlockChain</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcArgs</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcReply</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+					<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+				<span class="p">}</span>
+			<span class="p">}()</span>
+		<span class="p">}</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">)</span>
+	<span class="p">})</span>
+	<span class="nx">router</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/peers&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">peers</span> <span class="p">[]</span><span class="kt">string</span>
+		<span class="k">for</span> <span class="nx">peer</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peersConnections</span> <span class="p">{</span>
+			<span class="nx">peers</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">peers</span><span class="p">,</span> <span class="nx">peer</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewEncoder</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">).</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">peers</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">})</span>
+	<span class="nx">router</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;/addPeer&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">peers</span> <span class="p">[]</span><span class="kt">string</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Body</span><span class="p">).</span><span class="nf">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">peers</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nx">Writer</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+		<span class="nf">conncetToPeers</span><span class="p">(</span><span class="nx">peers</span><span class="p">)</span>
+	<span class="p">})</span>
+	<span class="k">go</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="o">*</span><span class="nx">httpPort</span><span class="p">,</span> <span class="nx">router</span><span class="p">)</span>
+<span class="p">}</span>
 
-func isValidBlock(blockChainToValidate []Block) bool {
-	// check genesis block
-	if blockChainToValidate[0].Hash != GetGenesiseBlock().Hash {
-		return false
-	}
+<span class="kd">func</span> <span class="nf">initP2PServer</span><span class="p">()</span> <span class="p">(</span><span class="nx">net</span><span class="p">.</span><span class="nx">Listener</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 
-	for i := 1; i &lt; len(blockChainToValidate); i++ {
-		if !isValidNewBlock(blockChainToValidate[i], blockChainToValidate[i-1]) {
-			return false
-		}
-	}
-	return true
-}
+	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">p2pPort</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">server</span> <span class="o">:=</span> <span class="nx">netrpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+	<span class="nx">server</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">)</span>
+	<span class="nx">server</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">netrpc</span><span class="p">.</span><span class="nx">HealthCheck</span><span class="p">{})</span>
+	<span class="k">go</span> <span class="nx">server</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span>
 
-func getLatestBlock() Block { return blockChain[len(blockChain)-1] }
+	<span class="k">return</span> <span class="nx">l</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
 
-func initHttpServer() {
-	router := gin.Default()
-	router.GET(&quot;/blocks&quot;, func(c *gin.Context) { json.NewEncoder(c.Writer).Encode(blockChain) })
-	router.POST(&quot;/mineBlock&quot;, func(c *gin.Context) {
-		var (
-			buf []byte
-			err error
-		)
-		if buf, err = ioutil.ReadAll(c.Request.Body); err != nil {
-			log.Error(&quot;err&quot;, err)
-			c.Writer.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		AddBlock(GenerateNextBlock(buf))
-		// broadcast to notify peers our has add new block
-		for _, peerClient := range peersConnections {
-			go func() {
-				var rpcArgs, rpcReply = AddBlockChainArgs{NewBlockChain: blockChain}, AddBlockChainReply{}
-				if err := peerClient.Call(serviceAddBlockChain, &amp;rpcArgs, &amp;rpcReply); err != nil {
-					log.Error(&quot;err&quot;, err)
-				}
-			}()
-		}
-		c.Writer.WriteHeader(http.StatusOK)
-	})
-	router.GET(&quot;/peers&quot;, func(c *gin.Context) {
-		var peers []string
-		for peer, _ := range peersConnections {
-			peers = append(peers, peer)
-		}
-		if err := json.NewEncoder(c.Writer).Encode(peers); err != nil {
-			log.Error(&quot;err&quot;, err)
-		}
-	})
-	router.POST(&quot;/addPeer&quot;, func(c *gin.Context) {
-		var peers []string
-		if err := json.NewDecoder(c.Request.Body).Decode(&amp;peers); err != nil {
-			log.Error(&quot;err&quot;, err)
-			c.Writer.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		conncetToPeers(peers)
-	})
-	go http.ListenAndServe(*httpPort, router)
-}
+<span class="kd">func</span> <span class="nf">conncetToPeers</span><span class="p">(</span><span class="nx">peers</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="p">(</span>
+		<span class="nx">rpcOpt</span> <span class="nx">pool</span><span class="p">.</span><span class="nx">NetRPCRingOpt</span>
+	<span class="p">)</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peer</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peers</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">peersConnections</span><span class="p">[</span><span class="nx">peer</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+			<span class="k">continue</span>
+		<span class="p">}</span>
+		<span class="nx">rpcOpt</span><span class="p">.</span><span class="nx">Addr</span><span class="p">,</span> <span class="nx">rpcOpt</span><span class="p">.</span><span class="nx">NetWork</span><span class="p">,</span> <span class="nx">rpcOpt</span><span class="p">.</span><span class="nx">PoolSize</span> <span class="p">=</span> <span class="nx">peer</span><span class="p">,</span> <span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="nx">pools</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">pool</span><span class="p">.</span><span class="nf">NewNetRPCRing</span><span class="p">([]</span><span class="nx">pool</span><span class="p">.</span><span class="nx">NetRPCRingOpt</span><span class="p">{</span><span class="nx">rpcOpt</span><span class="p">});</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">peersConnections</span><span class="p">[</span><span class="nx">peer</span><span class="p">]</span> <span class="p">=</span> <span class="nx">pools</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-func initP2PServer() (net.Listener, error) {
+<span class="c1">// AddBlockChain add new blockchain into cluster
+</span><span class="c1">// if the new block is new than local lasted block, agree it
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">handleBlockChain</span><span class="p">(</span><span class="nx">args</span> <span class="nx">AddBlockChainArgs</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;who&#34;</span><span class="p">,</span> <span class="o">*</span><span class="nx">p2pPort</span><span class="p">,</span> <span class="s">&#34;do&#34;</span><span class="p">,</span> <span class="s">&#34;handle blockchain&#34;</span><span class="p">)</span>
+	<span class="kd">var</span> <span class="p">(</span>
+		<span class="nx">receivedBlocks</span>      <span class="p">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">NewBlockChain</span>
+		<span class="nx">latestBlockReceived</span> <span class="p">=</span> <span class="nx">receivedBlocks</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">receivedBlocks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="nx">latestBlockHeld</span>     <span class="p">=</span> <span class="nf">getLatestBlock</span><span class="p">()</span>
+	<span class="p">)</span>
+	<span class="k">if</span> <span class="nx">latestBlockReceived</span><span class="p">.</span><span class="nx">Index</span> <span class="p">&gt;</span> <span class="nx">latestBlockHeld</span><span class="p">.</span><span class="nx">Index</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Warnf</span><span class="p">(</span><span class="s">&#34;blockchain possibly behind. We got: %v Peer got: %v&#34;</span><span class="p">,</span> <span class="nx">latestBlockHeld</span><span class="p">.</span><span class="nx">Index</span><span class="p">,</span> <span class="nx">latestBlockReceived</span><span class="p">.</span><span class="nx">Index</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">latestBlockHeld</span><span class="p">.</span><span class="nx">Hash</span> <span class="o">==</span> <span class="nx">latestBlockReceived</span><span class="p">.</span><span class="nx">PreviousHash</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Warnf</span><span class="p">(</span><span class="s">&#34;We can append the received block to our block&#34;</span><span class="p">)</span>
+			<span class="nx">blockChain</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">blockChain</span><span class="p">,</span> <span class="nx">latestBlockReceived</span><span class="p">)</span>
+			<span class="c1">// broadcast to other
+</span><span class="c1"></span>			<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peerClient</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peersConnections</span> <span class="p">{</span>
+				<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">rpcArgs</span><span class="p">,</span> <span class="nx">rpcReply</span> <span class="p">=</span> <span class="nx">AddBlockChainArgs</span><span class="p">{</span><span class="nx">NewBlockChain</span><span class="p">:</span> <span class="nx">args</span><span class="p">.</span><span class="nx">NewBlockChain</span><span class="p">},</span> <span class="nx">AddBlockChainReply</span><span class="p">{}</span>
+					<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">peerClient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">serviceAddBlockChain</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcArgs</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcReply</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+						<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+					<span class="p">}</span>
+				<span class="p">}()</span>
+			<span class="p">}</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">receivedBlocks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Warnf</span><span class="p">(</span><span class="s">&#34;we have must query the chain from our peer&#34;</span><span class="p">)</span>
+			<span class="c1">// broadcast
+</span><span class="c1"></span>			<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">peersClient</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">peersConnections</span> <span class="p">{</span>
+				<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+					<span class="kd">var</span> <span class="p">(</span>
+						<span class="nx">rpcArgs</span>  <span class="nx">QueryAllBlockChainsArgs</span>
+						<span class="nx">rpcreply</span> <span class="nx">QueryAllBlockChainsReply</span>
+						<span class="nx">err</span>      <span class="kt">error</span>
+					<span class="p">)</span>
+					<span class="k">if</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">peersClient</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">serviceQueryAllBlockChains</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcArgs</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">rpcreply</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+						<span class="nx">log</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+					<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+						<span class="nf">handleBlockChain</span><span class="p">(</span><span class="nx">AddBlockChainArgs</span><span class="p">{</span><span class="nx">NewBlockChain</span><span class="p">:</span> <span class="nx">rpcreply</span><span class="p">.</span><span class="nx">NewBlockChains</span><span class="p">})</span>
+					<span class="p">}</span>
+				<span class="p">}()</span>
+			<span class="p">}</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">log</span><span class="p">.</span><span class="nf">Debugf</span><span class="p">(</span><span class="s">&#34;Received blockchain is longer than current blockchain&#34;</span><span class="p">)</span>
+			<span class="nf">replaceChain</span><span class="p">(</span><span class="nx">receivedBlocks</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Debug</span><span class="p">(</span><span class="s">&#34;received blockchain is not longer than received blockchain. Do nothing&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-	l, err := net.Listen(&quot;tcp&quot;, *p2pPort)
-	if err != nil {
-		return nil, err
-	}
-	server := netrpc.NewServer()
-	server.Register(&amp;s)
-	server.Register(&amp;netrpc.HealthCheck{})
-	go server.Accept(l)
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">serviceName</span>                <span class="p">=</span> <span class="s">&#34;Service&#34;</span>
+	<span class="nx">serviceAddBlockChain</span>       <span class="p">=</span> <span class="nx">serviceName</span> <span class="o">+</span> <span class="s">&#34;.AddBlockChain&#34;</span>
+	<span class="nx">serviceQueryAllBlockChains</span> <span class="p">=</span> <span class="nx">serviceName</span> <span class="o">+</span> <span class="s">&#34;.QueryAllBlockChains&#34;</span>
+<span class="p">)</span>
 
-	return l, nil
-}
+<span class="kd">type</span> <span class="nx">AddBlockChainArgs</span> <span class="kd">struct</span><span class="p">{</span> <span class="nx">NewBlockChain</span> <span class="p">[]</span><span class="nx">Block</span> <span class="p">}</span>
 
-func conncetToPeers(peers []string) {
-	var (
-		rpcOpt pool.NetRPCRingOpt
-	)
-	for _, peer := range peers {
-		if _, ok := peersConnections[peer]; ok {
-			continue
-		}
-		rpcOpt.Addr, rpcOpt.NetWork, rpcOpt.PoolSize = peer, &quot;tcp&quot;, 1
-		if pools, err := pool.NewNetRPCRing([]pool.NetRPCRingOpt{rpcOpt}); err != nil {
-			log.Error(&quot;err&quot;, err)
-		} else {
-			peersConnections[peer] = pools
-		}
-	}
-}
+<span class="kd">type</span> <span class="nx">AddBlockChainReply</span> <span class="kd">struct</span><span class="p">{}</span>
 
-// AddBlockChain add new blockchain into cluster
-// if the new block is new than local lasted block, agree it
-func handleBlockChain(args AddBlockChainArgs) {
-	log.Debug(&quot;who&quot;, *p2pPort, &quot;do&quot;, &quot;handle blockchain&quot;)
-	var (
-		receivedBlocks      = args.NewBlockChain
-		latestBlockReceived = receivedBlocks[len(receivedBlocks)-1]
-		latestBlockHeld     = getLatestBlock()
-	)
-	if latestBlockReceived.Index &gt; latestBlockHeld.Index {
-		log.Warnf(&quot;blockchain possibly behind. We got: %v Peer got: %v&quot;, latestBlockHeld.Index, latestBlockReceived.Index)
-		if latestBlockHeld.Hash == latestBlockReceived.PreviousHash {
-			log.Warnf(&quot;We can append the received block to our block&quot;)
-			blockChain = append(blockChain, latestBlockReceived)
-			// broadcast to other
-			for _, peerClient := range peersConnections {
-				go func() {
-					var rpcArgs, rpcReply = AddBlockChainArgs{NewBlockChain: args.NewBlockChain}, AddBlockChainReply{}
-					if err := peerClient.Call(serviceAddBlockChain, &amp;rpcArgs, &amp;rpcReply); err != nil {
-						log.Error(&quot;err&quot;, err)
-					}
-				}()
-			}
-		} else if len(receivedBlocks) == 1 {
-			log.Warnf(&quot;we have must query the chain from our peer&quot;)
-			// broadcast
-			for _, peersClient := range peersConnections {
-				go func() {
-					var (
-						rpcArgs  QueryAllBlockChainsArgs
-						rpcreply QueryAllBlockChainsReply
-						err      error
-					)
-					if err = peersClient.Call(serviceQueryAllBlockChains, &amp;rpcArgs, &amp;rpcreply); err != nil {
-						log.Error(&quot;err&quot;, err)
-					} else {
-						handleBlockChain(AddBlockChainArgs{NewBlockChain: rpcreply.NewBlockChains})
-					}
-				}()
-			}
-		} else {
-			log.Debugf(&quot;Received blockchain is longer than current blockchain&quot;)
-			replaceChain(receivedBlocks)
-		}
-	} else {
-		log.Debug(&quot;received blockchain is not longer than received blockchain. Do nothing&quot;)
-	}
-}
+<span class="c1">///////
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">QueryAllBlockChainsArgs</span> <span class="kd">struct</span><span class="p">{}</span>
+<span class="kd">type</span> <span class="nx">QueryAllBlockChainsReply</span> <span class="kd">struct</span><span class="p">{</span> <span class="nx">NewBlockChains</span> <span class="p">[]</span><span class="nx">Block</span> <span class="p">}</span>
 
-const (
-	serviceName                = &quot;Service&quot;
-	serviceAddBlockChain       = serviceName + &quot;.AddBlockChain&quot;
-	serviceQueryAllBlockChains = serviceName + &quot;.QueryAllBlockChains&quot;
-)
+<span class="c1">//////
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Service</span> <span class="kd">struct</span><span class="p">{}</span>
 
-type AddBlockChainArgs struct{ NewBlockChain []Block }
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Service</span><span class="p">)</span> <span class="nf">QueryAllMsg</span><span class="p">(</span><span class="nx">_</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">_</span> <span class="o">*</span><span class="nx">QueryAllBlockChainsArgs</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="nx">QueryAllBlockChainsReply</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">reply</span><span class="p">.</span><span class="nx">NewBlockChains</span> <span class="p">=</span> <span class="nx">blockChain</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
 
-type AddBlockChainReply struct{}
-
-///////
-type QueryAllBlockChainsArgs struct{}
-type QueryAllBlockChainsReply struct{ NewBlockChains []Block }
-
-//////
-type Service struct{}
-
-func (s *Service) QueryAllMsg(_ context.Context, _ *QueryAllBlockChainsArgs, reply *QueryAllBlockChainsReply) error {
-	reply.NewBlockChains = blockChain
-	return nil
-}
-
-func (s *Service) AddBlockChain(_ context.Context, args *AddBlockChainArgs, reply *AddBlockChainReply) error {
-	handleBlockChain(*args)
-	return nil
-}
-</code></pre>
-
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Service</span><span class="p">)</span> <span class="nf">AddBlockChain</span><span class="p">(</span><span class="nx">_</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">args</span> <span class="o">*</span><span class="nx">AddBlockChainArgs</span><span class="p">,</span> <span class="nx">reply</span> <span class="o">*</span><span class="nx">AddBlockChainReply</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nf">handleBlockChain</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>启动脚本：</p>
-
-<pre><code class="language-sh">go build -o blockchain main.go
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh">go build -o blockchain main.go
 
 sudo pkill -9 blockchain 
 
-./blockchain -http_port=&quot;localhost:7000&quot; -p2p_port=&quot;localhost:6660&quot;   -peers=&quot;localhost:6661&quot; &amp;
+./blockchain -http_port<span class="o">=</span><span class="s2">&#34;localhost:7000&#34;</span> -p2p_port<span class="o">=</span><span class="s2">&#34;localhost:6660&#34;</span>   -peers<span class="o">=</span><span class="s2">&#34;localhost:6661&#34;</span> <span class="p">&amp;</span>
 
-./blockchain -http_port=&quot;localhost:7001&quot; -p2p_port=&quot;localhost:6661&quot;   -peers=&quot;localhost:6660&quot; &amp; 
+./blockchain -http_port<span class="o">=</span><span class="s2">&#34;localhost:7001&#34;</span> -p2p_port<span class="o">=</span><span class="s2">&#34;localhost:6661&#34;</span>   -peers<span class="o">=</span><span class="s2">&#34;localhost:6660&#34;</span> <span class="p">&amp;</span> 
 
-sleep 1 
+sleep <span class="m">1</span> 
 
-curl -v -XPOST &quot;http://localhost:7001/addPeer&quot; -d '[localhost:6660]' | jq 
-sleep 2
-curl -v -XPOST &quot;http://localhost:7000/addPeer&quot; -d '[localhost:6661]' | jq 
-sleep 2
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/addPeer&#34;</span> -d <span class="s1">&#39;[localhost:6660]&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">2</span>
+curl -v -XPOST <span class="s2">&#34;http://localhost:7000/addPeer&#34;</span> -d <span class="s1">&#39;[localhost:6661]&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">2</span>
 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
-curl -v -XPOST &quot;http://localhost:7001/mineBlock&quot; -d 'hello word' | jq 
-sleep 1 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
+curl -v -XPOST <span class="s2">&#34;http://localhost:7001/mineBlock&#34;</span> -d <span class="s1">&#39;hello word&#39;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
 
 
-curl -v &quot;http://localhost:7001/blocks&quot; | jq 
-sleep 1 
+curl -v <span class="s2">&#34;http://localhost:7001/blocks&#34;</span> <span class="p">|</span> jq 
+sleep <span class="m">1</span> 
 
-curl -v &quot;http://localhost:7000/blocks&quot; | jq 
+curl -v <span class="s2">&#34;http://localhost:7000/blocks&#34;</span> <span class="p">|</span> jq 
 
-curl -v &quot;http://localhost:7000/peers&quot; | jq 
-curl -v &quot;http://localhost:7001/peers&quot; | jq 
-</code></pre>
-
+curl -v <span class="s2">&#34;http://localhost:7000/peers&#34;</span> <span class="p">|</span> jq 
+curl -v <span class="s2">&#34;http://localhost:7001/peers&#34;</span> <span class="p">|</span> jq </code></pre></td></tr></table>
+</div>
+</div>
 <p>比较简单，拿来看看就好了，别太在意&hellip;.</p>
 
 <blockquote>
-<p>原版 <a href="https://github.com/lhartikk/naivechain.git" rel="nofollow noreferrer" target="_blank">https://github.com/lhartikk/naivechain.git</a></p>
+<p>原版 <a href="https://github.com/lhartikk/naivechain.git">https://github.com/lhartikk/naivechain.git</a></p>
 </blockquote>
 
-    </div>
-
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>Rg </span>
-                </p>
-            
-           
-             
-            <p class="copyright-item">
-                    <span>Link:</span>
-                    <a href=https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/>https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97/</span>
-            </p>
-            
-             
-            <p class="copyright-item lincese">
-                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
-            </p>
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-tag"></i>Tag(s): 
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/blockchian/">
-                    #blockchian</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">back</a></span> · 
-                <span><a href="https://laohanlinux.github.io">home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://laohanlinux.github.io/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97%E9%93%BE-go%E8%AF%AD%E8%A8%80%E7%89%88%E6%9C%AC/" class="prev" rel="prev" title="200行区块链-go语言版本"><i class="iconfont icon-left"></i>&nbsp;200行区块链-go语言版本</a>
-         
-        
-        <a href="https://laohanlinux.github.io/2017/09/11/raft%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="next" rel="next" title="raft源码分析">raft源码分析&nbsp;<i class="iconfont icon-right"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-                 
-          
-        
-<div id="gitalk-container" style="border:0" ></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
-<script>
-    const gitalk = new Gitalk({
-        clientID: '88e50f263d090b13460f',
-    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
-    repo: 'blog',
-    owner: 'laohanlinux',
-    admin: ['laohanlinux'],
-    id: location.pathname, 
-    distractionFreeMode: false 
-    })
-
-gitalk.render('gitalk-container')
-</script>
-
-
-    </div>
+  </div>
 </article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2014 - 2019</span>
-        
-        <span class="with-love">
-    	 <i class="iconfont icon-love"></i> 
-         </span>
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
-         
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2017-03-12 23:46:57 \x2b0000 UTC',
+        title: '200行区块链',
+        clientID: '88e50f263d090b13460f',
+        clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+        repo: 'blog',
+        owner: 'laohanlinux',
+        admin: ['laohanlinux'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
 
-         
-		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
-    </div>
-</footer>
+      </div>
+    </main>
 
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:daimaldd@email.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/laohanlinux" class="iconfont icon-github" title="github"></a>
+  <a href="https://laohanlinux.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
 
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
 
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
   
 
+  <span class="copyright-year">
+    &copy; 
+    2014 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Rg</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
 
 
-     </div>
-  </body>
+
+
+
+
+
+
+</body>
 </html>

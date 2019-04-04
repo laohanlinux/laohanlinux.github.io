@@ -1,154 +1,126 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  <meta name="author" content="Rg">
-  <meta name="description" content="Rg&#39;s blog">
-  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
-  
-  <link rel="prev" href="https://laohanlinux.github.io/2016/03/20/epoll/" />
-  <link rel="next" href="https://laohanlinux.github.io/2016/03/26/estatbox-crdts/" />
-  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           SFS Store 一种简单应用存储架构 | Welcome to Rg Home
-       
-  </title>
-  <meta name="title" content="SFS Store 一种简单应用存储架构 | Welcome to Rg Home">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>SFS Store 一种简单应用存储架构 - Welcome to Rg Home</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-  
-  
- 
+<meta name="author" content="Rg" /><meta name="description" content="SFS Store 是一个应用层的分布式存储架构抽象， 满足一般的中小型公司（ps：架构有些地方还不够详细，后缀会不停的更新完善，尽量做到直接对文档就可以写代码了...........）" /><meta name="keywords" content="Rg, Rust, even" />
 
-<script type="application/ld+json">
- "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https://laohanlinux.github.io"
-    },
-    "articleSection" : "posts",
-    "name" : "SFS Store 一种简单应用存储架构",
-    "headline" : "SFS Store 一种简单应用存储架构",
-    "description" : "SFS Store 是一个应用层的分布式存储架构抽象， 满足一般的中小型公司（ps：架构有些地方还不够详细，后缀会不停的更新完善，尽量做到直接对文档就可以写代码了...........）",
-    "inLanguage" : "en-us",
-    "author" : "Rg",
-    "creator" : "Rg",
-    "publisher": "Rg",
-    "accountablePerson" : "Rg",
-    "copyrightHolder" : "Rg",
-    "copyrightYear" : "2016",
-    "datePublished": "2016-03-24 23:02:34 &#43;0000 UTC",
-    "dateModified" : "2016-03-24 23:02:34 &#43;0000 UTC",
-    "url" : "https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/",
-    "wordCount" : "4376",
-    "keywords" : [ "存储系统","分布式存储架构","SFS Store", "Welcome to Rg Home"]
-}
-</script>
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="SFS Store 一种简单应用存储架构" />
+<meta property="og:description" content="SFS Store 是一个应用层的分布式存储架构抽象， 满足一般的中小型公司（ps：架构有些地方还不够详细，后缀会不停的更新完善，尽量做到直接对文档就可以写代码了...........）" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/" />
+<meta property="article:published_time" content="2016-03-24T23:02:34&#43;00:00"/>
+<meta property="article:modified_time" content="2016-03-24T23:02:34&#43;00:00"/>
+
+<meta itemprop="name" content="SFS Store 一种简单应用存储架构">
+<meta itemprop="description" content="SFS Store 是一个应用层的分布式存储架构抽象， 满足一般的中小型公司（ps：架构有些地方还不够详细，后缀会不停的更新完善，尽量做到直接对文档就可以写代码了...........）">
+
+
+<meta itemprop="datePublished" content="2016-03-24T23:02:34&#43;00:00" />
+<meta itemprop="dateModified" content="2016-03-24T23:02:34&#43;00:00" />
+<meta itemprop="wordCount" content="4383">
+
+
+
+<meta itemprop="keywords" content="存储系统,分布式存储架构,SFS Store," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SFS Store 一种简单应用存储架构"/>
+<meta name="twitter:description" content="SFS Store 是一个应用层的分布式存储架构抽象， 满足一般的中小型公司（ps：架构有些地方还不够详细，后缀会不停的更新完善，尽量做到直接对文档就可以写代码了...........）"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
 
 </head>
-
-  
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Welcome come to Rg Home</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">cd ~/</li>
+      </a><a href="/posts/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
 </nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Welcome come to Rg Home</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">cd ~/</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/posts/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
 </nav>
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">SFS Store 一种简单应用存储架构</h1>
-        <div class="post-meta">
-                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
-                <span class="post-time">
-                on <time datetime=2016-03-24 itemprop="datePublished">March 24, 2016</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
-                        
-                </span>
-        </div>
     </header>
-    <div class="post-content">
-        
 
-        
-            
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <div class="post-content">
+    
 
 <p><code>sfs store</code> 全称为<code>simple file system store</code>，是一个应用层存储系统的抽象，其接口类似于亚马逊的<code>s3</code>存储系统，对外全部提供<code>http</code>接口. 满足一般的中小型私有云存储业务。</p>
 
@@ -156,7 +128,7 @@
 
 <p><strong>bucket：</strong> 业务方的身份标识，如果一个用户注册一个bucket，那么在该bucket下面的所有文件都属于该用户所有。<code>bucket</code>除了可以标识对象所属空间，同时也可以作为对象的默认域名，比如：用户申请了一个<code>mvpic</code>的<code>bucket</code>，那么对象访问默认为：<code>http://mvpic.sfs.com/key.ext</code>，当然用户可以配置访问域名。</p>
 
-<p><strong>key：</strong> bucket下的文件唯一标识，也可以把一个文件抽象为一个对象，而该对象的唯一标示就是这个<code>key</code>。 在同一个bucket下，不会出现相同的对象，但是不同的bucket下对象是可以相同的，比如：&rdquo;<a href="http://www.mvpic.sfs.com/20193/axdffkasddd.jpg&quot;" rel="nofollow noreferrer" target="_blank">http://www.mvpic.sfs.com/20193/axdffkasddd.jpg&quot;</a> 和 &ldquo;<a href="http://www.audio.sfs.com/20193/axdffkasddd.jpg&quot;" rel="nofollow noreferrer" target="_blank">http://www.audio.sfs.com/20193/axdffkasddd.jpg&quot;</a> 虽然他们的key一样，都是<code>20193/axdffkasddd</code>，但是他们的bucket不一样，分别为<code>mvpic</code>和<code>audio</code>。</p>
+<p><strong>key：</strong> bucket下的文件唯一标识，也可以把一个文件抽象为一个对象，而该对象的唯一标示就是这个<code>key</code>。 在同一个bucket下，不会出现相同的对象，但是不同的bucket下对象是可以相同的，比如：&rdquo;<a href="http://www.mvpic.sfs.com/20193/axdffkasddd.jpg&quot;">http://www.mvpic.sfs.com/20193/axdffkasddd.jpg&quot;</a> 和 &ldquo;<a href="http://www.audio.sfs.com/20193/axdffkasddd.jpg&quot;">http://www.audio.sfs.com/20193/axdffkasddd.jpg&quot;</a> 虽然他们的key一样，都是<code>20193/axdffkasddd</code>，但是他们的bucket不一样，分别为<code>mvpic</code>和<code>audio</code>。</p>
 
 <p>该系统主要有5个子系统，分别是*SFSUpload*、*SFSDownload*、*SFSTranscoder*、*SFSResource*、<em>ImageRealTimeTranscoder</em></p>
 
@@ -164,17 +136,21 @@
 
 <p>总体机构如下：</p>
 
-<p><center> <figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_1.jpg" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center> <img src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_1.jpg" alt="" /></center></p>
 
 <h2 id="1-sfsupload">1. SFSUpload</h2>
 
 <p><code>SFSUplpad</code>是控制文件上传调度的服务。</p>
 
 <p>如：一个业务方需要上传一个文件，那么其上传的接口可简化表示为：</p>
-
-<pre><code class="language-shell">curl -XPOST “http://upload-sfs.com/bucket/&lt;bucketName&gt;/key/&lt;key&gt;.ext”-d $data 
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">curl -XPOST “http://upload-sfs.com/bucket/&lt;bucketName&gt;/key/&lt;key&gt;.ext”-d <span class="nv">$data</span> </code></pre></td></tr></table>
+</div>
+</div>
 <p>如果调用方没有指定该对象的<code>key</code>，那么服务也会自动生成一个<code>key</code>并返回给调用方，这个<code>key</code>的生成算法为：<code>randKey</code>=<code>md5(bucket+timeStamp+value)</code>,则该对象的访问地址为<code>http://bucketName.fs.kugou.com/randKey?kge=13123123&amp;kgtoken=xxxxxxxxxxxxx</code></p>
 
 <p>除此之外，<code>SFSUpload</code>还支持断点上传的逻辑。</p>
@@ -185,18 +161,27 @@
 
 <p>其架构可以简化为下图：</p>
 
-<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_2.jpg" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center><img src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_2.jpg" alt="" /></center></p>
 
 <p>上传流程：</p>
-
-<pre><code class="language-coffeescript">客户端---》最近的CDN接入点---》源站服务器
-				|
-				|
-				|
-				⬇️
-				底层存储系统
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-coffeescript" data-lang="coffeescript"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-coffeescript" data-lang="coffeescript"><span class="err">客户端</span><span class="o">---</span><span class="err">》最近的</span><span class="nx">CDN接入点</span><span class="o">---</span><span class="err">》源站服务器</span>
+				<span class="o">|</span>
+				<span class="o">|</span>
+				<span class="o">|</span>
+				<span class="err">⬇️</span>
+				<span class="err">底层存储系统</span></code></pre></td></tr></table>
+</div>
+</div>
 <blockquote>
 <p>需要注意的地方以及需要说明的地方:
 1、cache层是非重要的一个主键，应该要考虑容灾，因为一般的上传QPS都不会很高，所以cache 可采用Redis Sentinel架构，在每一台服务器机上服用部署即可
@@ -250,7 +235,7 @@
 
 <p><code>ImageReadlTimeTranscoder</code>为图片实时作图服务，可采用<code>imagemagick+lua+openresty</code>这套成熟的方案。</p>
 
-<p><center><figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_3.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center><img src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_3.png" alt="" /></center></p>
 
 <h2 id="3-sfstranscoder">3. SFSTranscoder</h2>
 
@@ -258,7 +243,7 @@
 
 <p>因为音视频转码是比较耗时的任务，一半采用异步转码即可，由应用服务发送转码任务到<code>SFSTranscoder</code>，<code>SFSTranscoer</code>采用生产者或消费者模式，具体架构如下：</p>
 
-<p><center> <figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_4.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></center></p>
+<p><center> <img src="http://laohanlinux.github.io/images/img//blog/SFS-Store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/sfssfs_4.png" alt="" /></center></p>
 
 <blockquote>
 <p>注意：</p>
@@ -474,126 +459,77 @@
 <li>如果对性能要求比较高，服务之间可以是用<code>rpc</code>方式调用，而不是是<code>http dns</code>的方式，<code>dns</code>控制也不灵活，有时候可能得找运维才能下线出错的机器，这样灾难恢复时间过长了。</li>
 </ul>
 
-    </div>
-
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>Rg </span>
-                </p>
-            
-           
-             
-            <p class="copyright-item">
-                    <span>Link:</span>
-                    <a href=https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/>https://laohanlinux.github.io/2016/03/24/sfs-store-%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E5%BA%94%E7%94%A8%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/</span>
-            </p>
-            
-             
-            <p class="copyright-item lincese">
-                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
-            </p>
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-tag"></i>Tag(s): 
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
-                    #存储系统</a></span>
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84/">
-                    #分布式存储架构</a></span>
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/sfs-store/">
-                    #SFS Store</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">back</a></span> · 
-                <span><a href="https://laohanlinux.github.io">home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://laohanlinux.github.io/2016/03/20/epoll/" class="prev" rel="prev" title="Linux epoll"><i class="iconfont icon-left"></i>&nbsp;Linux epoll</a>
-         
-        
-        <a href="https://laohanlinux.github.io/2016/03/26/estatbox-crdts/" class="next" rel="next" title="estatbox_crdts">estatbox_crdts&nbsp;<i class="iconfont icon-right"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-                 
-          
-        
-<div id="gitalk-container" style="border:0" ></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
-<script>
-    const gitalk = new Gitalk({
-        clientID: '88e50f263d090b13460f',
-    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
-    repo: 'blog',
-    owner: 'laohanlinux',
-    admin: ['laohanlinux'],
-    id: location.pathname, 
-    distractionFreeMode: false 
-    })
-
-gitalk.render('gitalk-container')
-</script>
-
-
-    </div>
+  </div>
 </article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2014 - 2019</span>
-        
-        <span class="with-love">
-    	 <i class="iconfont icon-love"></i> 
-         </span>
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
-         
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2016-03-24 23:02:34 \x2b0000 UTC',
+        title: 'SFS Store 一种简单应用存储架构',
+        clientID: '88e50f263d090b13460f',
+        clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+        repo: 'blog',
+        owner: 'laohanlinux',
+        admin: ['laohanlinux'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
 
-         
-		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
-    </div>
-</footer>
+      </div>
+    </main>
 
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:daimaldd@email.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/laohanlinux" class="iconfont icon-github" title="github"></a>
+  <a href="https://laohanlinux.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
 
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
 
-
-
-
-
-
-
-
-
-
-    
-     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
-      
-     <script src="/js/vendor_gallery.min.js" async="" ></script>
-    
   
 
+  <span class="copyright-year">
+    &copy; 
+    2014 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Rg</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
 
 
-     </div>
-  </body>
+
+
+
+
+
+
+</body>
 </html>

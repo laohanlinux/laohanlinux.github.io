@@ -1,152 +1,126 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-  <meta http-equiv="content-type" content="text/html;charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noodp"/>
-  <meta name="author" content="Rg">
-  <meta name="description" content="Rg&#39;s blog">
-  <meta name="keywords" content="blog, Hugo, Rust, Golang, Raft, 火箭少女, Rocket Girl">
-  
-  <link rel="prev" href="https://laohanlinux.github.io/2016/03/13/udon-riak-core/" />
-  <link rel="next" href="https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/" />
-  <link rel="canonical" href="https://laohanlinux.github.io/2016/03/13/riak-core-guide/" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>
-       
-       
-           riak core 导读 | Welcome to Rg Home
-       
-  </title>
-  <meta name="title" content="riak core 导读 | Welcome to Rg Home">
-    
-  
-  <link rel="stylesheet" href="/font/iconfont.css">
-  <link rel="stylesheet" href="/css/main.min.css">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>riak core 导读 - Welcome to Rg Home</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-  
-  
- 
+<meta name="author" content="Rg" /><meta name="description" content="riak core 原理分析的导读部分，后续会发布更加细节的部分" /><meta name="keywords" content="Rg, Rust, even" />
 
-<script type="application/ld+json">
- "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https://laohanlinux.github.io"
-    },
-    "articleSection" : "posts",
-    "name" : "riak core 导读",
-    "headline" : "riak core 导读",
-    "description" : "riak core 原理分析的导读部分，后续会发布更加细节的部分",
-    "inLanguage" : "en-us",
-    "author" : "Rg",
-    "creator" : "Rg",
-    "publisher": "Rg",
-    "accountablePerson" : "Rg",
-    "copyrightHolder" : "Rg",
-    "copyrightYear" : "2016",
-    "datePublished": "2016-03-13 22:13:13 &#43;0000 UTC",
-    "dateModified" : "2016-03-13 22:13:13 &#43;0000 UTC",
-    "url" : "https://laohanlinux.github.io/2016/03/13/riak-core-guide/",
-    "wordCount" : "9320",
-    "keywords" : [ "riak","riak core", "Welcome to Rg Home"]
-}
-</script>
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://laohanlinux.github.io/2016/03/13/riak-core-guide/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="riak core 导读" />
+<meta property="og:description" content="riak core 原理分析的导读部分，后续会发布更加细节的部分" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://laohanlinux.github.io/2016/03/13/riak-core-guide/" />
+<meta property="article:published_time" content="2016-03-13T22:13:13&#43;00:00"/>
+<meta property="article:modified_time" content="2016-03-13T22:13:13&#43;00:00"/>
+
+<meta itemprop="name" content="riak core 导读">
+<meta itemprop="description" content="riak core 原理分析的导读部分，后续会发布更加细节的部分">
+
+
+<meta itemprop="datePublished" content="2016-03-13T22:13:13&#43;00:00" />
+<meta itemprop="dateModified" content="2016-03-13T22:13:13&#43;00:00" />
+<meta itemprop="wordCount" content="9390">
+
+
+
+<meta itemprop="keywords" content="riak,riak core," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="riak core 导读"/>
+<meta name="twitter:description" content="riak core 原理分析的导读部分，后续会发布更加细节的部分"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
 
 </head>
-
-  
-
-
-  <body class="">
-    <div class="wrapper">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-header header-logo">
-        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a>
-        </div>
-        <div class="menu navbar-right">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Welcome come to Rg Home</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">cd ~/</li>
+      </a><a href="/posts/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
 </nav>
-<nav class="navbar-mobile" id="nav-mobile" style="display: none">
-     <div class="container">
-        <div class="navbar-header">
-            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="https://laohanlinux.github.io">Welcome to Rg Home</a></div>
-            <div class="menu-toggle">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-     
-          <div class="menu" id="mobile-menu">
-                
-                
-                <a class="menu-item" href="/posts/" title="">Blog</a>
-                
-                <a class="menu-item" href="/categories/" title="">Categories</a>
-                
-                <a class="menu-item" href="/tags/" title="">Tags</a>
-                
-                <a class="menu-item" href="/about/" title="">About</a>
-                
-        </div>
-    </div>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Welcome come to Rg Home</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">cd ~/</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/posts/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
 </nav>
-    	 <main class="main">
-          <div class="container">
-      		
-<article class="post-warp" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">riak core 导读</h1>
-        <div class="post-meta">
-                Written by <a itemprop="name" href="https://laohanlinux.github.io" rel="author">Rg</a> with ♥ 
-                <span class="post-time">
-                on <time datetime=2016-03-13 itemprop="datePublished">March 13, 2016</time>
-                </span>
-                in
-                <i class="iconfont icon-folder"></i>
-                <span class="post-category">
-                        <a href="https://laohanlinux.github.io/categories/distribute-system/"> Distribute System </a>
-                        
-                </span>
-        </div>
     </header>
-    <div class="post-content">
-        
 
-        
-
-        
-        
-     
-          
-          
-          
-
-          
-          
-          
-
-          
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <div class="post-content">
+    
 
 <p>这一部分的文章整理主要参照于 <code>try-try-try</code> 和 <em>书写是对思维的缓存 / 好记性不如烂博客</em> <code>http://cryolite.iteye.com/</code></p>
 
@@ -279,27 +253,46 @@
 </blockquote>
 
 <p>【业务逻辑的注入】</p>
-
-<pre><code class="language-erlang">
-    -module(rts_sup).
-    -behaviour(supervisor).
-    %% API -export([start_link/0]).
-    %% Supervisor callbacks -export([init/1]).
-    start_link() -&gt;
-        supervisor:start_link({local, ?MODULE}, ?MODULE, []).
-    init(_Args) -&gt;
-        VMaster = { rts_vnode_master,
-        {riak_core_vnode_master, start_link, [rts_vnode]}, permanent, 5000, worker,     [riak_core_vnode_master] },
-        Entry = { rts_entry_vnode_master,
-        {riak_core_vnode_master, start_link, [rts_entry_vnode]},
-        permanent, 5000, worker, [riak_core_vnode_master] },
-        Stat = { rts_stat_vnode_master,
-        {riak_core_vnode_master, start_link, [rts_stat_vnode]},
-        permanent, 5000, worker, [riak_core_vnode_master] },
-        {ok,{{one_for_one, 5, 10},
-            [VMaster, Entry, Stat]}}.
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang">    <span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">rts_sup</span><span class="p">).</span>
+    <span class="p">-</span><span class="ni">behaviour</span><span class="p">(</span><span class="n">supervisor</span><span class="p">).</span>
+    <span class="c">%% API -export([start_link/0]).
+</span><span class="c"></span>    <span class="c">%% Supervisor callbacks -export([init/1]).
+</span><span class="c"></span>    <span class="nf">start_link</span><span class="p">()</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err">        </span><span class="ni">supervisor</span><span class="p">:</span><span class="nf">start_link</span><span class="p">({</span><span class="n">local</span><span class="p">,</span> <span class="o">?</span><span class="nv">MODULE</span><span class="p">},</span> <span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[]).</span>
+    <span class="nf">init</span><span class="p">(_</span><span class="nv">Args</span><span class="p">)</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err">        VM</span><span class="ni">aster</span> <span class="o">=</span> <span class="p">{</span> <span class="n">rts_vnode_master</span><span class="p">,</span>
+        <span class="p">{</span><span class="n">riak_core_vnode_master</span><span class="p">,</span> <span class="n">start_link</span><span class="p">,</span> <span class="p">[</span><span class="n">rts_vnode</span><span class="p">]},</span> <span class="n">permanent</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span>     <span class="p">[</span><span class="n">riak_core_vnode_master</span><span class="p">]</span> <span class="p">},</span>
+        <span class="nv">Entry</span> <span class="o">=</span> <span class="p">{</span> <span class="n">rts_entry_vnode_master</span><span class="p">,</span>
+        <span class="p">{</span><span class="n">riak_core_vnode_master</span><span class="p">,</span> <span class="n">start_link</span><span class="p">,</span> <span class="p">[</span><span class="n">rts_entry_vnode</span><span class="p">]},</span>
+        <span class="n">permanent</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="p">[</span><span class="n">riak_core_vnode_master</span><span class="p">]</span> <span class="p">},</span>
+        <span class="nv">Stat</span> <span class="o">=</span> <span class="p">{</span> <span class="n">rts_stat_vnode_master</span><span class="p">,</span>
+        <span class="p">{</span><span class="n">riak_core_vnode_master</span><span class="p">,</span> <span class="n">start_link</span><span class="p">,</span> <span class="p">[</span><span class="n">rts_stat_vnode</span><span class="p">]},</span>
+        <span class="n">permanent</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="p">[</span><span class="n">riak_core_vnode_master</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span><span class="n">ok</span><span class="p">,{{</span><span class="n">one_for_one</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">},</span>
+            <span class="p">[</span><span class="nv">VMaster</span><span class="p">,</span> <span class="nv">Entry</span><span class="p">,</span> <span class="nv">Stat</span><span class="p">]}}.</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>有几种执行特定分区上业务逻辑的API方法,都是<code>riak_core_vnode_master</code>模块提供的,这 些函数的参数都是三个,分别是: <strong>IdxNode, Msg, VMasterMod</strong></p>
 
 <ul>
@@ -335,29 +328,52 @@
 <p>最后得到<code>IndexNod [{IndexNode, _Type}] = PrefList</code></p>
 
 <p><em>BTW: 应用启动过程</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="p">-</span><span class="err"> </span><span class="ni">module</span><span class="p">(</span><span class="n">rts_app</span><span class="p">).</span> 
+<span class="p">-</span><span class="ni">behaviour</span><span class="p">(</span><span class="n">application</span><span class="p">).</span>
+<span class="c">%% Application callbacks -export([start/2, stop/1]).
+</span><span class="c"></span><span class="nf">start</span><span class="p">(_</span><span class="nv">StartType</span><span class="p">,</span> <span class="p">_</span><span class="nv">StartArgs</span><span class="p">)</span> <span class="p">-</span><span class="err">&gt; 
+</span><span class="err">    </span><span class="ni">case</span> <span class="nn">rts_sup</span><span class="p">:</span><span class="nf">start_link</span><span class="p">()</span> <span class="k">of</span>
+        <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">}</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err">            </span><span class="ni">ok</span> <span class="o">=</span> <span class="nn">riak_core</span><span class="p">:</span><span class="nf">register_vnode_module</span><span class="p">(</span><span class="n">rts_vnode</span><span class="p">),</span> 
+            <span class="n">ok</span> <span class="o">=</span> <span class="nn">riak_core_node_watcher</span><span class="p">:</span><span class="nf">service_up</span><span class="p">(</span><span class="n">rts</span><span class="p">,</span> <span class="nf">self</span><span class="p">()),</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="nn">riak_core</span><span class="p">:</span><span class="nf">register_vnode_module</span><span class="p">(</span><span class="n">rts_entry_vnode</span><span class="p">),</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="nn">riak_core_node_watcher</span><span class="p">:</span><span class="nf">service_up</span><span class="p">(</span><span class="n">rts_entry</span><span class="p">,</span> <span class="nf">self</span><span class="p">()),</span>
+            <span class="n">ok</span> <span class="o">=</span> <span class="nn">riak_core</span><span class="p">:</span><span class="nf">register_vnode_module</span><span class="p">(</span><span class="n">rts_stat_vnode</span><span class="p">),</span> 
+            <span class="n">ok</span> <span class="o">=</span> <span class="nn">riak_core_node_watcher</span><span class="p">:</span><span class="nf">service_up</span><span class="p">(</span><span class="n">rts_stat</span><span class="p">,</span> <span class="nf">self</span><span class="p">()),</span>
+            <span class="nv">EntryRoute</span> <span class="o">=</span> <span class="p">{[</span><span class="s">&#34;rts&#34;</span><span class="p">,</span> <span class="s">&#34;entry&#34;</span><span class="p">,</span> <span class="n">client</span><span class="p">],</span> <span class="n">rts_wm_entry</span><span class="p">,</span> <span class="p">[]},</span> 
+            <span class="nn">webmachine_router</span><span class="p">:</span><span class="nf">add_route</span><span class="p">(</span><span class="nv">EntryRoute</span><span class="p">),</span>
+        <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">};</span> <span class="p">{</span><span class="n">error</span><span class="p">,</span> <span class="nv">Reason</span><span class="p">}</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err">            {</span><span class="ni">error</span><span class="p">,</span> <span class="nv">Reason</span><span class="p">}</span> 
+    <span class="k">end</span><span class="p">.</span>
 
-<pre><code class="language-erlang">- module(rts_app). 
--behaviour(application).
-%% Application callbacks -export([start/2, stop/1]).
-start(_StartType, _StartArgs) -&gt; 
-    case rts_sup:start_link() of
-        {ok, Pid} -&gt;
-            ok = riak_core:register_vnode_module(rts_vnode), 
-            ok = riak_core_node_watcher:service_up(rts, self()),
-            ok = riak_core:register_vnode_module(rts_entry_vnode),
-            ok = riak_core_node_watcher:service_up(rts_entry, self()),
-            ok = riak_core:register_vnode_module(rts_stat_vnode), 
-            ok = riak_core_node_watcher:service_up(rts_stat, self()),
-            EntryRoute = {[&quot;rts&quot;, &quot;entry&quot;, client], rts_wm_entry, []}, 
-            webmachine_router:add_route(EntryRoute),
-        {ok, Pid}; {error, Reason} -&gt;
-            {error, Reason} 
-    end.
-
-stop(_State) -&gt; 
-    ok.
-</code></pre>
-
+<span class="nf">stop</span><span class="p">(_</span><span class="nv">State</span><span class="p">)</span> <span class="p">-</span><span class="err">&gt; 
+</span><span class="err">    </span><span class="ni">ok</span><span class="p">.</span></code></pre></td></tr></table>
+</div>
+</div>
 <h2 id="riack-core-系统的数据的分布和处理步骤">Riack Core 系统的数据的分布和处理步骤</h2>
 
 <p>从原理上讲,<code>Riak Core</code>通过<code>hash</code>算法将数据随机均匀的分布在一个环上,数据的hash值也 就是在环上的位置(源码中常用<code>Index</code>表示),知道了<code>Index</code>就知道了对应的分区<code>partition</code>, 知道了分区就知道了对应的管理节点。知道了这个节点我们可以向其发送对应的处理命令:如 取出这块数据、修改这块数据、对这块数据进行计算等等。
@@ -387,27 +403,46 @@ stop(_State) -&gt;
 <li>2.哈希的对象:hash函数接收一个对象参数,这个参数是一个含两个二进制数据的term;我们根据数据的特点自行确定term的组合方式,例如对于riak这样的key-value数据库,这个 term的值就是这样子: <code>{&lt;&lt;&quot;bucket&quot;, &quot;key&quot;&gt;&gt;}</code>
 实际上Riak Core提供的了两个hash函数,一个叫<code>chash_std_keyfun</code>,一个叫 <code>chash_bucketonly_keyfun</code>,缺省的是<code>chash_std_keyfun</code>函数。相同的是它们都采用了SHA 哈希算法,不同的是哈希对象的选取:</li>
 </ul>
-
-<pre><code class="language-erlang">chash_std_keyfun({Bucket, Key}) -&gt; chash:key_of({Bucket, Key}).
-chash_bucketonly_keyfun({Bucket, _Key}) -&gt; chash:key_of(Bucket).
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="nf">chash_std_keyfun</span><span class="p">({</span><span class="nv">Bucket</span><span class="p">,</span> <span class="nv">Key</span><span class="p">})</span> <span class="p">-</span><span class="err">&gt; </span><span class="ni">chash</span><span class="p">:</span><span class="nf">key_of</span><span class="p">({</span><span class="nv">Bucket</span><span class="p">,</span> <span class="nv">Key</span><span class="p">}).</span>
+<span class="nf">chash_bucketonly_keyfun</span><span class="p">({</span><span class="nv">Bucket</span><span class="p">,</span> <span class="p">_</span><span class="nv">Key</span><span class="p">})</span> <span class="p">-</span><span class="err">&gt; </span><span class="ni">chash</span><span class="p">:</span><span class="nf">key_of</span><span class="p">(</span><span class="nv">Bucket</span><span class="p">).</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>可以看到,<code>has</code>h的对象不同,一个对<code>{Bucket,Key}</code>整体做hash,一个只对<code>Bucket</code>做hash, 他们都调用的<code>key_of</code>使用的是<code>SHA哈希算法</code>:</p>
-
-<pre><code class="language-erlang">-spec key_of(ObjectName :: term()) -&gt; index().
-key_of(ObjectName) -&gt;
-crypto:sha(term_to_binary(ObjectName)).
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="p">-</span><span class="ni">spec</span> <span class="nf">key_of</span><span class="p">(</span><span class="nv">ObjectName</span> <span class="p">::</span> <span class="nf">term</span><span class="p">())</span> <span class="p">-</span><span class="err">&gt; </span><span class="ni">index</span><span class="p">().</span>
+<span class="nf">key_of</span><span class="p">(</span><span class="nv">ObjectName</span><span class="p">)</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err"></span><span class="ni">crypto</span><span class="p">:</span><span class="nf">sha</span><span class="p">(</span><span class="nb">term_to_binary</span><span class="p">(</span><span class="nv">ObjectName</span><span class="p">)).</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>这些工作是通过Riak Core提供助手模块<code>riak_core_util</code>中的函数<code>chash_key</code>进行,一般在交给 <code>vnode_master</code>之前要预先计算好了数据在<code>ring上</code>的位置(Index)。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="na">@spec</span> <span class="n">chash_key</span><span class="p">(</span><span class="nc">BKey</span> <span class="o">::</span> <span class="p">{</span><span class="n">binary</span><span class="p">(),</span> <span class="n">binary</span><span class="p">()})</span> <span class="o">-&gt;</span> <span class="n">chash</span><span class="ss">:index</span><span class="p">()</span> 
 
-<pre><code class="language-elixir">@spec chash_key(BKey :: {binary(), binary()}) -&gt; chash:index() 
-
-chash_key({Bucket,Key}) -&gt;
-BucketProps = riak_core_bucket:get_bucket(Bucket),
-{chash_keyfun, {M, F}} = proplists:lookup(chash_keyfun, BucketProps), M:F({Bucket,Key}).
-</code></pre>
-
+<span class="n">chash_key</span><span class="p">({</span><span class="nc">Bucket</span><span class="p">,</span><span class="nc">Key</span><span class="p">})</span> <span class="o">-&gt;</span>
+<span class="nc">BucketProps</span> <span class="o">=</span> <span class="n">riak_core_bucket</span><span class="ss">:get_bucket</span><span class="p">(</span><span class="nc">Bucket</span><span class="p">),</span>
+<span class="p">{</span><span class="n">chash_keyfun</span><span class="p">,</span> <span class="p">{</span><span class="nc">M</span><span class="p">,</span> <span class="nc">F</span><span class="p">}}</span> <span class="o">=</span> <span class="n">proplists</span><span class="ss">:lookup</span><span class="p">(</span><span class="n">chash_keyfun</span><span class="p">,</span> <span class="nc">BucketProps</span><span class="p">),</span> <span class="nc">M</span><span class="ss">:F</span><span class="p">({</span><span class="nc">Bucket</span><span class="p">,</span><span class="nc">Key</span><span class="p">})</span><span class="o">.</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>代码不是很直观,原因是中间插入了额外的逻辑,为了实现不同<code>bucket</code>可以有不同的<code>hash</code>策略。
 可以看到<code>chash_key</code>不做具体的<code>hash</code>计算,它只是调用了配置文件中设定的<code>hash</code>函数(用红色标注),换句话,我们可以自定义自己的hash函数,这个函数有唯一的参数,这个参数也是
 <code>{Bucket::binary(), Key::binary()}</code></p>
@@ -488,17 +523,28 @@ BucketProps = riak_core_bucket:get_bucket(Bucket),
 <p><strong><em>数据处理:一个完整的例子</em></strong></p>
 
 <p><code>try-try-try</code>的例子代码要简单许多,这个例子是随机ping一个分区vnode,返回结果是该分区 的ID和物理节点,整个过程如下:</p>
-
-<pre><code class="language-erlang">ping() -&gt;
-    DocIdx = riak_core_util:chash_key({&lt;&lt;&quot;ping&quot;&gt;&gt;, term_to_binary(now())}), 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="nf">ping</span><span class="p">()</span> <span class="p">-</span><span class="err">&gt;
+</span><span class="err">    D</span><span class="ni">ocIdx</span> <span class="o">=</span> <span class="nn">riak_core_util</span><span class="p">:</span><span class="nf">chash_key</span><span class="p">({</span><span class="o">&lt;&lt;</span><span class="s">&#34;ping&#34;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="nb">term_to_binary</span><span class="p">(</span><span class="nf">now</span><span class="p">())}),</span> 
     
-    PrefList = riak_core_apl:get_primary_apl(DocIdx, 1, rts),
+    <span class="nv">PrefList</span> <span class="o">=</span> <span class="nn">riak_core_apl</span><span class="p">:</span><span class="nf">get_primary_apl</span><span class="p">(</span><span class="nv">DocIdx</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rts</span><span class="p">),</span>
 
-    [{IndexNode, _Type}] = PrefList,
+    <span class="p">[{</span><span class="nv">IndexNode</span><span class="p">,</span> <span class="p">_</span><span class="nv">Type</span><span class="p">}]</span> <span class="o">=</span> <span class="nv">PrefList</span><span class="p">,</span>
 
-    riak_core_vnode_master:sync_spawn_command(IndexNode, ping, rts_vnode_master).
-</code></pre>
-
+    <span class="nn">riak_core_vnode_master</span><span class="p">:</span><span class="nf">sync_spawn_command</span><span class="p">(</span><span class="nv">IndexNode</span><span class="p">,</span> <span class="n">ping</span><span class="p">,</span> <span class="n">rts_vnode_master</span><span class="p">).</span></code></pre></td></tr></table>
+</div>
+</div>
 <p><code>riak_kv</code>中的例子要复杂很多,不过基本过程还是类似的.</p>
 
 <p><strong><em>其它</em></strong></p>
@@ -541,152 +587,132 @@ A依赖B、C:这意味着A要正常启动,B、C要先启动, B又依赖X、Y:A�
 <p>一般在每个应用对应的<code>.app</code>文件中,有个<code>applications</code>的配置,其值是个列表(list),这个 list就是该应用依赖的其它应用。在系统发布时(release),发布工具会自动将这个列表里的所以依赖应用都启动。</p>
 
 <p>如果不是作为发布(<code>release</code>),在开发过程中经常要<code>手动启动(application:start/1)</code>,但是这种启动是不会自动将列表中的依赖应用也启动的,会报如下错误:</p>
-
-<pre><code class="language-erlang">1&gt; application:which_applications().
-[{stdlib,&quot;ERTS CXC 138 10&quot;,&quot;1.18.1&quot;},
-{kernel,&quot;ERTS CXC 138 10&quot;,&quot;2.15.1&quot;}] 
-2&gt; application:start(xxx). {error,{not_started,lager}}
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">which_applications</span><span class="p">().</span>
+<span class="p">[{</span><span class="n">stdlib</span><span class="p">,</span><span class="s">&#34;ERTS CXC 138 10&#34;</span><span class="p">,</span><span class="s">&#34;1.18.1&#34;</span><span class="p">},</span>
+<span class="p">{</span><span class="n">kernel</span><span class="p">,</span><span class="s">&#34;ERTS CXC 138 10&#34;</span><span class="p">,</span><span class="s">&#34;2.15.1&#34;</span><span class="p">}]</span> 
+<span class="mi">2</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">xxx</span><span class="p">).</span> <span class="p">{</span><span class="n">error</span><span class="p">,{</span><span class="n">not_started</span><span class="p">,</span><span class="n">lager</span><span class="p">}}</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>因此启动<code>xxx</code>应用之前要确保<code>xxx</code>的依赖应用<code>lager</code>先被启动(<code>application:start/1</code>),而<code>lager</code>应 用又依赖<code>compiler</code>和<code>syntax_tools</code>应用,因此都得按照依赖关系一一启动:</p>
-
-<pre><code class="language-erlang">3&gt; application:start(lager).
-{error,{not_started,compiler}}
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="mi">3</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">lager</span><span class="p">).</span>
+<span class="p">{</span><span class="n">error</span><span class="p">,{</span><span class="n">not_started</span><span class="p">,</span><span class="n">compiler</span><span class="p">}}</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>在应用的<code>app</code>文件中会有一个<code>applications</code>属性,列出所有的依赖应用。</p>
-
-<pre><code class="language-erlang">4&gt; application:start(compiler).
-ok
-5&gt; application:start(lager). {error,{not_started,syntax_tools}} 
-6&gt; application:start(syntax_tools). ok
-7&gt; application:start(lager).
-18:40:11.591 [info] Application lager started on node nonode@nohost 
-ok
-8&gt; application:start(xxx).
-18:40:13.739 [info] Application xxx started on node nonode@nohost 
-ok
-</code></pre>
-
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-erlang" data-lang="erlang"><span class="mi">4</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">compiler</span><span class="p">).</span>
+<span class="n">ok</span>
+<span class="mi">5</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">lager</span><span class="p">).</span> <span class="p">{</span><span class="n">error</span><span class="p">,{</span><span class="n">not_started</span><span class="p">,</span><span class="n">syntax_tools</span><span class="p">}}</span> 
+<span class="mi">6</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">syntax_tools</span><span class="p">).</span> <span class="n">ok</span>
+<span class="mi">7</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">lager</span><span class="p">).</span>
+<span class="mi">18</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">11</span><span class="p">.</span><span class="mi">591</span> <span class="p">[</span><span class="n">info</span><span class="p">]</span> <span class="nv">Application</span> <span class="n">lager</span> <span class="n">started</span> <span class="n">on</span> <span class="nb">node</span> <span class="n">nonode</span><span class="p">@</span><span class="n">nohost</span> 
+<span class="n">ok</span>
+<span class="mi">8</span><span class="o">&gt;</span> <span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">xxx</span><span class="p">).</span>
+<span class="mi">18</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">13</span><span class="p">.</span><span class="mi">739</span> <span class="p">[</span><span class="n">info</span><span class="p">]</span> <span class="nv">Application</span> <span class="n">xxx</span> <span class="n">started</span> <span class="n">on</span> <span class="nb">node</span> <span class="n">nonode</span><span class="p">@</span><span class="n">nohost</span> 
+<span class="n">ok</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>在实际开发过程中,这种依赖的一一启动是很枯燥的,<code>Riak Core</code>的<code>riak_core_util</code>模块提供了这种依赖应用的管理:
 <code>riak_core_util:start_app_deps/1</code> 这个函数检查应用依赖的其它应用,并确保所有依赖应用被启动。判断依赖应用<code>:app</code>文件中的<code>applications</code>属性。</p>
 
-    </div>
-
-    <div class="post-copyright">
-             
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>Rg </span>
-                </p>
-            
-           
-             
-            <p class="copyright-item">
-                    <span>Link:</span>
-                    <a href=https://laohanlinux.github.io/2016/03/13/riak-core-guide/>https://laohanlinux.github.io/2016/03/13/riak-core-guide/</span>
-            </p>
-            
-             
-            <p class="copyright-item lincese">
-                本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
-            </p>
-            
-    </div>
-
-  
-    <div class="post-tags">
-        
-            <section>
-            <i class="iconfont icon-tag"></i>Tag(s): 
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak/">
-                    #riak</a></span>
-            
-            <span class="tag"><a href="https://laohanlinux.github.io/tags/riak-core/">
-                    #riak core</a></span>
-            
-            </section>
-        
-        <section>
-                <a href="javascript:window.history.back();">back</a></span> · 
-                <span><a href="https://laohanlinux.github.io">home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav">
-        
-        <a href="https://laohanlinux.github.io/2016/03/13/udon-riak-core/" class="prev" rel="prev" title="udon_riak_core"><i class="iconfont icon-left"></i>&nbsp;udon_riak_core</a>
-         
-        
-        <a href="https://laohanlinux.github.io/2016/03/13/raft%E7%AE%97%E6%B3%95/" class="next" rel="next" title="raft算法">raft算法&nbsp;<i class="iconfont icon-right"></i></a>
-        
-    </div>
-
-    <div class="post-comment">
-          
-                 
-          
-        
-<div id="gitalk-container" style="border:0" ></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css/" style="border:0" >
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js/" style="border:0" ></script>
-<script>
-    const gitalk = new Gitalk({
-        clientID: '88e50f263d090b13460f',
-    clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
-    repo: 'blog',
-    owner: 'laohanlinux',
-    admin: ['laohanlinux'],
-    id: location.pathname, 
-    distractionFreeMode: false 
-    })
-
-gitalk.render('gitalk-container')
-</script>
-
-
-    </div>
+  </div>
 </article>
-          </div>
-		   </main>
-      <footer class="footer">
-    <div class="copyright">
-        &copy;
-        
-        <span itemprop="copyrightYear">2014 - 2019</span>
-        
-        <span class="with-love">
-    	 <i class="iconfont icon-love"></i> 
-         </span>
-         
-            <span class="author" itemprop="copyrightHolder"><a href="https://laohanlinux.github.io">Rg</a> | </span> 
-         
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2016-03-13 22:13:13 \x2b0000 UTC',
+        title: 'riak core 导读',
+        clientID: '88e50f263d090b13460f',
+        clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+        repo: 'blog',
+        owner: 'laohanlinux',
+        admin: ['laohanlinux'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
 
-         
-		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
-    </div>
-</footer>
+      </div>
+    </main>
 
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:daimaldd@email.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/laohanlinux" class="iconfont icon-github" title="github"></a>
+  <a href="https://laohanlinux.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
 
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
 
-
-
-
-
-
-
-
-
-
-    
-    
-    <script src="/js/vendor_no_gallery.min.js" async=""></script>
-    
   
 
+  <span class="copyright-year">
+    &copy; 
+    2014 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Rg</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
 
 
-     </div>
-  </body>
+
+
+
+
+
+
+</body>
 </html>
