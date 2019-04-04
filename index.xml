@@ -84,15 +84,6 @@
     </item>
     
     <item>
-      <title>Goim Analysis of Source Code</title>
-      <link>https://laohanlinux.github.io/2016/12/04/goim-analysis-of-source-code/</link>
-      <pubDate>Sun, 04 Dec 2016 12:03:15 +0800</pubDate>
-      
-      <guid>https://laohanlinux.github.io/2016/12/04/goim-analysis-of-source-code/</guid>
-      <description>Comet comet为用户代理服务器，用于客户端的连接，根据情况可部署多个comet(部署机房选择以用户接入为基础，如：最近接入、按运营商接入)。 流</description>
-    </item>
-    
-    <item>
       <title>Riak Core 原理分析-1</title>
       <link>https://laohanlinux.github.io/2016/06/13/riak-core-%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-1/</link>
       <pubDate>Mon, 13 Jun 2016 23:38:23 +0000</pubDate>
@@ -171,15 +162,6 @@
       
       <guid>https://laohanlinux.github.io/2016/03/20/epoll/</guid>
       <description>epoll epoll是一种事件驱动的io模式，epoll不仅可以应用在网络io上，时钟也是适用，得益于linux/Unix的一切皆为文件理论。这也意</description>
-    </item>
-    
-    <item>
-      <title>Raft Analysis of Source Code</title>
-      <link>https://laohanlinux.github.io/2016/03/13/raft-analysis-of-source-code/</link>
-      <pubDate>Sun, 13 Mar 2016 22:19:30 +0000</pubDate>
-      
-      <guid>https://laohanlinux.github.io/2016/03/13/raft-analysis-of-source-code/</guid>
-      <description></description>
     </item>
     
     <item>
