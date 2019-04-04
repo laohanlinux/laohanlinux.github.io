@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>goim源码剖析 - Welcome to Rg Home</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Rg" /><meta name="description" content="毛剑大神写的分布式聊天系统,即可用于推送也可用于聊天.纯属个人笔记，若有错误，欢迎修正." /><meta name="keywords" content="Rg, Rust, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.54.0 with even 4.0.0" />
+
+
+<link rel="canonical" href="https://laohanlinux.github.io/2016/12/22/goim%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+<link href="/dist/even.3292c2b1.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="goim源码剖析" />
+<meta property="og:description" content="毛剑大神写的分布式聊天系统,即可用于推送也可用于聊天.纯属个人笔记，若有错误，欢迎修正." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://laohanlinux.github.io/2016/12/22/goim%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" />
+<meta property="article:published_time" content="2016-12-22T00:47:22&#43;00:00"/>
+<meta property="article:modified_time" content="2016-12-22T00:47:22&#43;00:00"/>
+
+<meta itemprop="name" content="goim源码剖析">
+<meta itemprop="description" content="毛剑大神写的分布式聊天系统,即可用于推送也可用于聊天.纯属个人笔记，若有错误，欢迎修正.">
+
+
+<meta itemprop="datePublished" content="2016-12-22T00:47:22&#43;00:00" />
+<meta itemprop="dateModified" content="2016-12-22T00:47:22&#43;00:00" />
+<meta itemprop="wordCount" content="6677">
+
+
+
+<meta itemprop="keywords" content="goim," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="goim源码剖析"/>
+<meta name="twitter:description" content="毛剑大神写的分布式聊天系统,即可用于推送也可用于聊天.纯属个人笔记，若有错误，欢迎修正."/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">Welcome come to Rg Home</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Go ~/</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">Welcome come to Rg Home</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Go ~/</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">goim源码剖析</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2016-12-22 </span>
+        <div class="post-category">
+            <a href="/categories/goim/"> goim </a>
+            </div>
+          <span class="more-meta"> 6677 words </span>
+          <span class="more-meta"> 14 mins read </span>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#comet">Comet</a>
+<ul>
+<li><a href="#流程图">流程图</a></li>
+<li><a href="#主要逻辑代码分析">主要逻辑代码分析</a>
+<ul>
+<li><a href="#bucket">bucket</a></li>
+<li><a href="#room">room</a></li>
+<li><a href="#tcp">tcp</a></li>
+<li><a href="#websocket">websocket</a></li>
+<li><a href="#rpc">RPC</a></li>
+<li><a href="#ring">ring</a></li>
+<li><a href="#signal">Signal</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#job">Job</a>
+<ul>
+<li><a href="#单-多播">单/多播</a></li>
+<li><a href="#广播">广播</a></li>
+<li><a href="#按房间推送">按房间推送</a></li>
+<li><a href="#主要逻辑代码分析-1">主要逻辑代码分析</a>
+<ul>
+<li><a href="#comet-1">comet</a></li>
+<li><a href="#room-1">room</a></li>
+<li><a href="#push-kafka">push/kafka</a></li>
+<li><a href="#round-roundoptions">Round/RoundOptions</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#logic">Logic</a>
+<ul>
+<li><a href="#协议">协议</a>
+<ul>
+<li><a href="#push协议">Push协议</a></li>
+<li><a href="#其他http协议">其他http协议</a>
+<ul>
+<li><a href="#删除comet-service">删除comet service</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#主要逻辑代码分析-2">主要逻辑代码分析</a>
+<ul>
+<li><a href="#auth">Auth</a></li>
+<li><a href="#router">router</a></li>
+<li><a href="#rpc-1">rpc</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#router-1">Router</a>
+<ul>
+<li><a href="#主要逻辑代码分析-3">主要逻辑代码分析</a>
+<ul>
+<li><a href="#session">session</a></li>
+<li><a href="#bucket-1">bucket</a></li>
+<li><a href="#cleaner">cleaner</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#libs">Libs</a>
+<ul>
+<li><a href="#缓冲io-bufio">缓冲io-bufio</a>
+<ul>
+<li><a href="#reader">Reader</a></li>
+<li><a href="#writer">Writer</a></li>
+<li><a href="#timer">timer</a></li>
+</ul></li>
+<li><a href="#bytes">bytes</a>
+<ul>
+<li><a href="#pool">Pool</a></li>
+<li><a href="#writer-1">Writer</a></li>
+</ul></li>
+<li><a href="#net">net</a>
+<ul>
+<li><a href="#xrpc">xrpc</a></li>
+<li><a href="#proto">proto</a>
+<ul>
+<li><a href="#job-1">job</a></li>
+<li><a href="#logic-1">logic</a></li>
+<li><a href="#comet-2">comet</a></li>
+<li><a href="#router-2">router</a></li>
+<li><a href="#推送协议">推送协议</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<h2 id="comet">Comet</h2>
+
+<p><code>comet</code>为用户代理服务器，用于客户端的连接，根据情况可部署多个<code>comet</code>(部署机房选择以用户接入为基础，如：最近接入、按运营商接入)。</p>
+
+<h3 id="流程图">流程图</h3>
+
+<p><code>comet</code>支持<code>tcp</code>以及<code>websocket</code>的方式和客户端交互，而和<code>logic</code>、<code>job</code>模块之间的交互采用<code>rpc</code>的方式，<code>comet</code>的主要流程图如下：</p>
+
+<p><center></p>
+
+<p><img src="http://laohanlinux.github.io/images/img/goim/comet-websocket.png" alt="websocket" /></p>
+
+<p></center></p>
+
+<p><center> 图 1-1： comet websocket protoc</center></p>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/comet-tcp.png" alt="tcp" /></center></p>
+
+<p><center> 图 1-2： comet tcp protoc</center></p>
+
+<ul>
+<li>客户端首先连接到<code>comet</code>服务，<code>comet</code>调用<code>logic</code>来校验用户的合法性，<code>logic</code>会返回一个<code>subKey</code>给<code>comet</code>，该<code>subKey</code>成为该连接的唯一标示；</li>
+<li>客户端接下来可以发心跳包给<code>comet</code>，同时，<code>job</code>服务将<code>MQ-Kafka</code>的消息转发到对应<code>comet</code>，<code>comet</code>再将其转发到对应的客户端</li>
+</ul>
+
+<blockquote>
+<p>其中Logic前面可以加上一层4层代理服务器，如LVS。</p>
+</blockquote>
+
+<h3 id="主要逻辑代码分析">主要逻辑代码分析</h3>
+
+<h4 id="bucket">bucket</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">BucketOptions</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">ChannelSize</span>   <span class="kt">int</span> 
+	<span class="nx">RoomSize</span>      <span class="kt">int</span>   <span class="c1">// 房间（Bucket.rooms）的初始化个数
+</span><span class="c1"></span>	<span class="nx">RoutineAmount</span> <span class="kt">int64</span> <span class="c1">// Bucket.routines数组大小
+</span><span class="c1"></span>    <span class="nx">RoutineSize</span>   <span class="kt">int</span>   <span class="c1">// 房间信道通信(proto.BoardcastRoomArg)缓冲区的大小
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="c1">// Bucket is a channel holder.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Bucket</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">cLock</span>    <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>        <span class="c1">// protect the channels for chs
+</span><span class="c1"></span>	<span class="nx">chs</span>      <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">Channel</span> <span class="c1">// map sub key to a channel
+</span><span class="c1"></span>	<span class="nx">boptions</span> <span class="nx">BucketOptions</span>
+	<span class="c1">// room
+</span><span class="c1"></span>	<span class="nx">rooms</span>       <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="o">*</span><span class="nx">Room</span> <span class="c1">// bucket room channels
+</span><span class="c1"></span>	<span class="nx">routines</span>    <span class="p">[]</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">BoardcastRoomArg</span> <span class="c1">// 节点房间的总信道数
+</span><span class="c1"></span>	<span class="nx">routinesNum</span> <span class="kt">uint64</span> <span class="c1">// 处理routines信道的goroutine个数，用于消费房播的信道消息
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bucket-goroutine.png" alt="" /></center></p>
+
+<p><center>图 1-3</center></p>
+
+<p>房间信息推送流程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">1</span>、job通过rpc的方式发送msg到comet
+<span class="m">2</span>、comet内部将消息推送到至bucket.routines，bucket.routines以轮询的方式选出一个proto.BoardcastRoomArg信道进行消息转发
+<span class="m">3</span>、bucket.routines<span class="s1">&#39;s worker 消费消息，根据msg&#39;</span>roomid从roomsMap<span class="o">(</span>bucket.rooms<span class="o">)</span>选出该room的所有客户端Channels，再将消息一一转发至client<span class="s1">&#39;Channel
+</span><span class="s1">4、dispatchWorker消费client&#39;</span>Channel消息，通过websocket或者tcp协议发送到客户端</code></pre></td></tr></table>
+</div>
+</div>
+<p>单播推送流程：</p>
+
+<p>单播相对于&rdquo;房播（群播）&rdquo;，简化了房间检索的步骤。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">1</span>、job通过rpc的方式发送msg到comet
+<span class="m">2</span>、comet内部根据消息的subKey，从buckets中找出对应的channel，将消息转发到对应的Channel
+<span class="m">3</span>、dispatchWorker消费client<span class="err">&#39;</span>Channel消息，通过websocket或者tcp协议发送到客户端</code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>注：</p>
+
+<p>​ subKey的生成采用city32的hash算法，bucket是一个大小为n的hashMap slice，其主要目的是将数据切分成更小的块，从而降低资源的竞争。</p>
+</blockquote>
+
+<p>多播以单播推送流程类似，广播也类似。</p>
+
+<h4 id="room">room</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Room</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">id</span>     <span class="kt">int32</span>        <span class="c1">// 房间号
+</span><span class="c1"></span>	<span class="nx">rLock</span>  <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span> <span class="c1">// 锁
+</span><span class="c1"></span>	<span class="nx">next</span>   <span class="o">*</span><span class="nx">Channel</span>     <span class="c1">// 该房间的所有客户端的Channel
+</span><span class="c1"></span>	<span class="nx">drop</span>   <span class="kt">bool</span>         <span class="c1">// 标示房间是否存活
+</span><span class="c1"></span>	<span class="nx">Online</span> <span class="kt">int</span>          <span class="c1">// 房间的channel数量，即房间的在线用户的多少
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>next *Channel</code>是一个双向链表，复杂度为<code>o(1)</code>，效率比较高。</p>
+
+<h4 id="tcp">tcp</h4>
+
+<p>协议：</p>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/tcp-proto.png" alt="" /></center></p>
+
+<p><center>图 1-4</center></p>
+
+<ul>
+<li><code>BodySize</code>范围：<code>0&lt;=BodySize&lt;=MaxBodySize = int32(1&lt;&lt;10)</code></li>
+<li><code>PackSize</code>范围：<code>RawHeaderSize&lt;=PackSize&lt;=MacPackSize(RawHeaderSize+BodySize)</code></li>
+</ul>
+
+<p><a href="https://github.com/Terry-Mao/goim/blob/master/doc/protocol.png">官网</a></p>
+
+<h4 id="websocket">websocket</h4>
+
+<p><a href="https://github.com/Terry-Mao/goim/blob/master/doc/proto.md">websocket协议</a></p>
+
+<h4 id="rpc">RPC</h4>
+
+<p><code>rpc</code>用于<code>logic</code>、<code>job service</code>模块的通信。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Push RPC
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">PushRPC</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>func (this *PushRPC) Ping(arg *proto.NoArg, reply *proto.NoReply) error</li>
+</ul>
+
+<p>心跳<code>rpc</code></p>
+
+<ul>
+<li>func (this *PushRPC) PushMsg(arg *proto.PushMsgArg, reply *proto.NoReply) (err error)</li>
+</ul>
+
+<p>根据指定的<code>subKey</code>推送消息</p>
+
+<ul>
+<li>func (this *PushRPC) MPushMsg(arg *proto.MPushMsgArg, reply *proto.MPushMsgReply) (err error)</li>
+</ul>
+
+<p>根据指定的<code>subKey</code>一次推送多个消息，主要用于<code>群播</code></p>
+
+<ul>
+<li>func (this *PushRPC) MPushMsgs(arg *proto.MPushMsgsArg, reply *proto.MPushMsgsReply) (err error)</li>
+</ul>
+
+<p>多播</p>
+
+<ul>
+<li>func (this *PushRPC) Broadcast(arg *proto.BoardcastArg, reply *proto.NoReply) (err error)</li>
+</ul>
+
+<p>广播</p>
+
+<ul>
+<li>func (this *PushRPC) BroadcastRoom(arg *proto.BoardcastRoomArg, reply *proto.NoReply) (err error)</li>
+</ul>
+
+<p>按房间推送</p>
+
+<ul>
+<li>func (this *PushRPC) Rooms(arg *proto.NoArg, reply *proto.RoomsReply) (err error)</li>
+</ul>
+
+<p>获取所有房间，包括下线的房间</p>
+
+<h4 id="ring">ring</h4>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/comet-ring.png" alt="" /></center></p>
+
+<p><center>图 1-5</center></p>
+
+<p><code>ring</code>是一个环形对象池，用于管理协议对象-<code>proto</code>，其内存结构如图所示，<code>rp</code>为可读游标，wp为可写游标，内存的大小为<code>4</code>的整数倍。</p>
+
+<ul>
+<li>func (r *Ring) Get() (proto *proto.Proto, err error)</li>
+</ul>
+
+<p>获取一个<code>proto</code>对象的引用，用于读，不会移动可读游标</p>
+
+<ul>
+<li>func (r *Ring) GetAdv()</li>
+</ul>
+
+<p>移动可读游标</p>
+
+<ul>
+<li>func (r *Ring) Set() (proto *proto.Proto, err error)</li>
+</ul>
+
+<p>获取一个<code>proto</code>对象的引用，用于写，不会移动可写游标</p>
+
+<ul>
+<li>func (r *Ring) SetAdv()</li>
+</ul>
+
+<p>移动可写游标</p>
+
+<ul>
+<li>func (r *Ring) Reset()</li>
+</ul>
+
+<p>重置<code>pool</code>对象</p>
+
+<blockquote>
+<p>注：</p>
+
+<p>​ 如果wp移动过快，会影响rp游标指向的数据，如图：</p>
+</blockquote>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/comet-ring-1.png" alt="" /></center></p>
+
+<p><center>图 1-6</center></p>
+
+<p>当程序运行到第<code>3</code>步的时候，<code>wp</code>已经又重新超过<code>rp</code>的索引了，这时候，第<code>6</code>个对象还没被<code>rp</code>读取过，但是它的数据已经被修改了，这样即使<code>rp</code>读取第6个对象，也是一个<code>dirty</code>对象。</p>
+
+<h4 id="signal">Signal</h4>
+
+<p>信号处理模块，可用于在线加载配置，配置动态加载的信号为<code>SIGHUP</code>。</p>
+
+<h2 id="job">Job</h2>
+
+<p><code>Job</code>负责消费<code>kafka</code>消息，然后转发至<code>comet</code>。</p>
+
+<h3 id="单-多播">单/多播</h3>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/Job=&gt;多播.png" alt="" /></center></p>
+
+<p><center>图 2-1</center></p>
+
+<h3 id="广播">广播</h3>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/Job=&gt; 广播.png" alt="" /></center></p>
+
+<p><center>图 2-2</center></p>
+
+<h3 id="按房间推送">按房间推送</h3>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/Job=&gt;按房间推送.png" alt="" /></center></p>
+
+<p><center>图 2-3</center></p>
+
+<h3 id="主要逻辑代码分析-1">主要逻辑代码分析</h3>
+
+<h4 id="comet-1">comet</h4>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/Job=&gt;comet.png" alt="" /></center></p>
+
+<p><center>图 3-4</center></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">CometOptions</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">RoutineSize</span> <span class="kt">int64</span> <span class="c1">// 每个comet rpc goroutine个数
+</span><span class="c1"></span>	<span class="nx">RoutineChan</span> <span class="kt">int</span>   <span class="c1">// 每个协议通道的缓冲大小
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Comet</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">serverId</span>             <span class="kt">int32</span>                      		<span class="c1">// comet service id
+</span><span class="c1"></span>	<span class="nx">rpcClient</span>            <span class="o">*</span><span class="nx">xrpc</span><span class="p">.</span><span class="nx">Clients</span>              		<span class="c1">// rpc连接对象
+</span><span class="c1"></span>	<span class="nx">pushRoutines</span>         <span class="p">[]</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">MPushMsgArg</span>  		<span class="c1">// 单/多播信道
+</span><span class="c1"></span>	<span class="nx">broadcastRoutines</span>    <span class="p">[]</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">BoardcastArg</span>      	<span class="c1">// 广播信道
+</span><span class="c1"></span>	<span class="nx">roomRoutines</span>         <span class="p">[]</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">BoardcastRoomArg</span>  	<span class="c1">// 群播-房播信道
+</span><span class="c1"></span>	<span class="nx">pushRoutinesNum</span>      <span class="kt">int64</span> 								<span class="c1">// 单/多播协议信道=》用于循环
+</span><span class="c1"></span>	<span class="nx">roomRoutinesNum</span>      <span class="kt">int64</span> 								<span class="c1">// 房播-群播协议信道=》
+</span><span class="c1"></span>	<span class="nx">broadcastRoutinesNum</span> <span class="kt">int64</span> 								<span class="c1">// 广播协议信道=》
+</span><span class="c1"></span>	<span class="nx">options</span>              <span class="nx">CometOptions</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>func (c *Comet) Push(arg *proto.MPushMsgArg) (err error)</li>
+</ul>
+
+<p>循环选择一个<code>MPushMsgArg channel</code>，将消息推送至该信道</p>
+
+<ul>
+<li>func (c *Comet) BroadcastRoom(arg *proto.BoardcastRoomArg) (err error)</li>
+</ul>
+
+<p>按照房间推送，循环选择一个<code>BoardcastRoomArg Channel</code>，将消息推送至该信道</p>
+
+<ul>
+<li>func (c *Comet) Broadcast(arg *proto.BoardcastArg) (err error)</li>
+</ul>
+
+<p>广播，循环选择一个<code>BoardcastArg Channe</code>，将消息推送至该信道</p>
+
+<ul>
+<li>func (c *Comet) process(pushChan chan *proto.MPushMsgArg, roomChan chan *proto.BoardcastRoomArg, broadcastChan chan *proto.BoardcastArg)</li>
+</ul>
+
+<p><code>IO</code>复用协程，作为<code>pushChan</code>，<code>roomChan</code>，<code>broadcastChan</code>信道的消费者，消费完后，转发<code>comet service</code></p>
+
+<h4 id="room-1">room</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RoomBucket</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">roomNum</span> <span class="kt">int</span> 
+	<span class="nx">rooms</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="o">*</span><span class="nx">Room</span>
+	<span class="nx">rwLock</span>  <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="nx">options</span> <span class="nx">RoomOptions</span>
+	<span class="nx">round</span>   <span class="o">*</span><span class="nx">Round</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">RoomOptions</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">BatchNum</span>   <span class="kt">int</span>  			<span class="c1">//汇总阈值
+</span><span class="c1"></span>	<span class="nx">SignalTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>room</code>模块用于接收<code>kafka</code>的<code>push</code>模块发送的消息，每个<code>room</code>都有一个协程，其协程的信道缓冲区的大小为<code>RoomOptions.BatchNum</code>的两倍。</p>
+
+<blockquote>
+<p>注：</p>
+
+<p>​ 1、room协程在接收到的消息条数&gt;=BatchNum*2或者timeout时，才会触发转发消息的行为(转发至broadcastRoutines)，即其具有汇总操作。</p>
+
+<p>​ 2、房间的消息使用了Libs/bytes.Writer进行汇总缓存。</p>
+</blockquote>
+
+<h4 id="push-kafka">push/kafka</h4>
+
+<p><code>push/kafka</code>模块用于预处理消息，消息从<code>kafka集群</code>流出，经过<code>kafka</code>模块转发至<code>push</code>模块，<code>push</code>模块对消息预处理/过滤/分类，然后发至不同的<code>comet 信道</code>中，具体使用请参照<code>Job的</code>前3章图.</p>
+
+<p>消息的分类：</p>
+
+<ul>
+<li><p><code>KAFKA_MESSAGE_MULTI</code>=&gt;多播</p></li>
+
+<li><p><code>KAFKA_MESSAGE_BROADCAST</code>=&gt;广播</p></li>
+
+<li><p><code>KAFKA_MESSAGE_BROADCAST_ROOM</code>=&gt;群播/房播</p></li>
+</ul>
+
+<h4 id="round-roundoptions">Round/RoundOptions</h4>
+
+<p>时钟管理器</p>
+
+<h2 id="logic">Logic</h2>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/logic-router.png" alt="" /></center></p>
+
+<p><center>图 3-5</center></p>
+
+<p><code>Logic</code>是<code>goim</code>是主要业务处理模块，负责的内容有：</p>
+
+<ul>
+<li>注册/注销</li>
+<li>验证</li>
+<li>消息<code>Push</code>代理</li>
+</ul>
+
+<h3 id="协议">协议</h3>
+
+<h4 id="push协议">Push协议</h4>
+
+<p><a href="https://github.com/Terry-Mao/goim/blob/master/doc/push.md">linked</a></p>
+
+<p>其中<code>ensure</code>参数是额外的参数，用于控制消息是否必达，为布偶值。</p>
+
+<h4 id="其他http协议">其他http协议</h4>
+
+<h5 id="删除comet-service">删除comet service</h5>
+
+<table>
+<thead>
+<tr>
+<th>接口名</th>
+<th>URL</th>
+<th>访问方式</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>删除<code>comet service</code></td>
+<td><code>/1/server/del</code></td>
+<td><code>POST</code></td>
+</tr>
+
+<tr>
+<td>获取所有<code>comet service</code>或者<code>room</code>信息</td>
+<td><code>/1/count</code></td>
+<td><code>POST</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>请求例子：</p>
+
+<ul>
+<li><code>/1/server/del</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">curl -XPOST &#34;http://127.0.0.1:7172/1/server/del?server=1</pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li><code>/1/count</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">curl -XPOST &#34;http://127.0.0.1:7172/1/count?type=room</pre></td></tr></table>
+</div>
+</div>
+<h3 id="主要逻辑代码分析-2">主要逻辑代码分析</h3>
+
+<h4 id="auth">Auth</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Auther</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">Auth</span><span class="p">(</span><span class="nx">token</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">userId</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">roomId</span> <span class="kt">int32</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>用户验证模块</p>
+
+<h4 id="router">router</h4>
+
+<p>负责与<code>Router Service</code>交互，多个<code>Router Service</code>采用的是一致性<code>hash</code>算法，<code>hash</code>的输入为<code>Router Serviceid</code>，默认所有的<code>Router Service</code>权值是一样的，如果需要控制不同的权值，可以在配置<code>router service</code>的时候加多个端口实例或者同一个节点配置成多个<code>serviceid</code>标签。</p>
+
+<blockquote>
+<p>注：</p>
+
+<p>​ 一致性hash没有实现动态扩容，即没有自动平衡，所以不能够动态改变Router service映射配置，且每个Logic节点的Router Service配置项需保持一致。</p>
+</blockquote>
+
+<ul>
+<li>func getRouterByServer(server string) (*xrpc.Clients, error)</li>
+</ul>
+
+<p>通过<code>router serverid</code>获取对应的<code>router service client</code></p>
+
+<ul>
+<li>func getRouterByUID(userID int64) (*xrpc.Clients, error)</li>
+</ul>
+
+<p>通过<code>userID</code>获取<code>router service client</code></p>
+
+<ul>
+<li>func getRouterNode(userID int64) string</li>
+</ul>
+
+<p>通过<code>userID</code>获取到<code>Router 节点</code></p>
+
+<ul>
+<li>func connect(userID int64, server, roomId int32) (seq int32, err error)</li>
+</ul>
+
+<p>注册、验证用户，返回一个自增序列号(<code>cometServiceID_incr</code>)</p>
+
+<ul>
+<li>func disconnect(userID int64, seq, roomId int32) (has bool, err error)</li>
+</ul>
+
+<p>注销一个用户</p>
+
+<ul>
+<li>func delServer(server int32) (err error)</li>
+</ul>
+
+<p>下线一个<code>comet service</code></p>
+
+<ul>
+<li>func allRoomCount(client *xrpc.Clients) (counter map[int32]int32, err error</li>
+</ul>
+
+<p>获取所有房间个数</p>
+
+<ul>
+<li>func allServerCount(client *xrpc.Clients) (counter map[int32]int32, err error)</li>
+</ul>
+
+<p>获取所有<code>comet-service</code></p>
+
+<ul>
+<li>func genSubKey(userId int64) (res map[int32][]string)</li>
+</ul>
+
+<p>通过用户<code>ID</code>生成<code>subKey</code>；同一个用户可以同时多处登陆或者同处多实例登陆，它们都会被同等对待。</p>
+
+<p><code>subKey生成代码：</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="nx">userId</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">seq</span> <span class="kt">int32</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%d_%d&#34;</span><span class="p">,</span> <span class="nx">userId</span><span class="p">,</span> <span class="nx">seq</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>seq</code>为每个<code>comet service</code>的自增长序索引，假设<code>comet service 1</code>接受到一个用户请求，用户的<code>ID</code>为<code>10</code>，而此时<code>Router buckets</code>的<code>seqIdx</code>为<code>9</code>，则<code>subKey = 10_9</code></p>
+
+<ul>
+<li>func getSubKeys(res chan *proto.MGetReply, serverId string, userIds []int64) | func genSubKeys(userIds []int64) (divide map[int32][]string)</li>
+</ul>
+
+<p>并行获取多个用户信息，返回值为<code>map[comet.serverId][]subkey</code>.</p>
+
+<h4 id="rpc-1">rpc</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// RPC
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">RPC</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">auther</span> <span class="nx">Auther</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>LogicService</code>用于心跳的检测以及客户端的注册/注销。</p>
+
+<ul>
+<li>func (r *RPC) Connect(arg *proto.ConnArg, reply *proto.ConnReply) (err error)</li>
+</ul>
+
+<p>注册</p>
+
+<ul>
+<li>func (r *RPC) Disconnect(arg *proto.DisconnArg, reply *proto.DisconnReply) (err error)</li>
+</ul>
+
+<p>注销</p>
+
+<blockquote>
+<p>注：</p>
+
+<p>​ goim不支持离线消息，如果需要支持离线消息的推送，应hook该模块，实现离线消息推送逻辑</p>
+</blockquote>
+
+<h2 id="router-1">Router</h2>
+
+<h3 id="主要逻辑代码分析-3">主要逻辑代码分析</h3>
+
+<h4 id="session">session</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Session</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">seq</span>     <span class="kt">int32</span>                     <span class="c1">// 序列号自增标记器
+</span><span class="c1"></span>	<span class="nx">servers</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span>           <span class="c1">// seq:server
+</span><span class="c1"></span>	<span class="nx">rooms</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span> <span class="c1">// roomid:seq:server with specified room id
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>客户端会话信息管理，以用户<code>id</code>为单位，即每个用户有且拥有一个<code>session</code>，<code>session</code>包含了用户每个连接的<code>comet service</code>信息，以及每个连接所属的<code>roomid</code>。</p>
+
+<ul>
+<li>func (s *Session) Put(server int32) (seq int32)</li>
+</ul>
+
+<p>关联一个<code>subKey</code>和<code>session</code></p>
+
+<ul>
+<li>func (s *Session) PutRoom(server int32, roomId int32) (seq int32)</li>
+</ul>
+
+<p>关联一个<code>subKey</code>到<code>comet servicey</code> 以及<code>room</code></p>
+
+<ul>
+<li>func (s *Session) Servers() (seqs []int32, servers []int32)</li>
+</ul>
+
+<p>返回<code>session</code>关联的所有<code>comet service</code>信息</p>
+
+<ul>
+<li>func (s *Session) Del(seq int32) (has, empty bool, server int32)</li>
+</ul>
+
+<p>删除指定的<code>subKey</code>所关联的<code>Session.Servers</code></p>
+
+<ul>
+<li>func (s *Session) DelRoom(seq int32, roomId int32) (has, empty bool, server int32)</li>
+</ul>
+
+<p>删除指定的<code>subKey</code>、<code>roomid</code>所关联的<code>Session.rooms</code></p>
+
+<ul>
+<li>func (s *Session) Count() int</li>
+</ul>
+
+<p>返回<code>session</code>所关联的所有<code>comet service</code>信息</p>
+
+<h4 id="bucket-1">bucket</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Bucket</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">bLock</span>             <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="nx">server</span>            <span class="kt">int</span>                       <span class="c1">// session server map init num
+</span><span class="c1"></span>	<span class="nx">session</span>           <span class="kt">int</span>                       <span class="c1">// bucket session init num
+</span><span class="c1"></span>	<span class="nx">sessions</span>          <span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="o">*</span><span class="nx">Session</span>        <span class="c1">// userid-&gt;sessions, 一个可能同时多处登陆
+</span><span class="c1"></span>	<span class="nx">roomCounter</span>       <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span>           <span class="c1">// roomid-&gt;count
+</span><span class="c1"></span>	<span class="nx">serverCounter</span>     <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span>           <span class="c1">// server-&gt;count
+</span><span class="c1"></span>	<span class="nx">userServerCounter</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="kt">int32</span> <span class="c1">// serverid-&gt;userid count
+</span><span class="c1"></span>	<span class="nx">cleaner</span>           <span class="o">*</span><span class="nx">Cleaner</span>                  <span class="c1">// bucket map cleaner
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>func (b *Bucket) counter(userId int64, server int32, roomId int32, incr bool)</li>
+</ul>
+
+<p>增加一个用户或者减少一个用户</p>
+
+<ul>
+<li>func (b *Bucket) Put(userId int64, server int32, roomId int32) (seq int32)</li>
+</ul>
+
+<p>关联<code>channel(session)</code>到指定的用户<code>id</code>，<code>comet id</code>以及<code>room id</code></p>
+
+<ul>
+<li>func (b *Bucket) Get(userId int64) (seqs []int32, servers []int32)</li>
+</ul>
+
+<p>指定用户的<code>session</code>信息</p>
+
+<ul>
+<li>func (b *Bucket) GetAll() (userIds []int64, seqs [][]int32, servers [][]int32)</li>
+</ul>
+
+<p>返回该<code>bucket</code>的所有用户、<code>subKey</code>、<code>comet</code>信息</p>
+
+<p>其他函数省略&hellip;</p>
+
+<h4 id="cleaner">cleaner</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">CleanData</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Key</span>        <span class="kt">int64</span>
+	<span class="nx">expireTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">next</span><span class="p">,</span> <span class="nx">prev</span> <span class="o">*</span><span class="nx">CleanData</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Cleaner</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">cLock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+	<span class="nx">size</span>  <span class="kt">int</span>
+	<span class="nx">root</span>  <span class="nx">CleanData</span>
+	<span class="nx">maps</span>  <span class="kd">map</span><span class="p">[</span><span class="kt">int64</span><span class="p">]</span><span class="o">*</span><span class="nx">CleanData</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>lru</code>对象管理器，只负责管理，不负责触发<code>GC</code>，<code>GC</code>交给<code>Runtime</code>处理。</p>
+
+<p>主要应用于客户端的<code>session</code>管理，定时处理掉一些过期的<code>session</code>对象。</p>
+
+<blockquote>
+<p>1、数据结构使用map和双向列表，map用于快速检索；</p>
+
+<p>2、双向链表用于快速剔除数据：因为从map中剔除数据，map的结构会实时改变，每剔除一个都得再次从起点开始遍历map，而使用链表不用重新遍历，时间复杂度为<code>O(logN)</code></p>
+</blockquote>
+
+<h2 id="libs">Libs</h2>
+
+<h3 id="缓冲io-bufio">缓冲io-bufio</h3>
+
+<h4 id="reader">Reader</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">struct</span> <span class="p">{</span>
+  	<span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+  	<span class="nx">rd</span>	<span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span>
+  	<span class="nx">r</span><span class="p">,</span> <span class="nx">w</span> <span class="kt">int</span>
+  	<span class="nx">err</span> <span class="kt">error</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Reader</code>是一个具有缓存的可读<code>IO</code>。</p>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bufio-reader.png" alt="" /></center></p>
+
+<p><center>图 5-1</center></p>
+
+<p>主要函数</p>
+
+<ul>
+<li>func (b *Reader) Reset(r io.Reader)</li>
+</ul>
+
+<p>重置<code>IO</code>，可读游标重置为<code>0</code></p>
+
+<ul>
+<li>func (b *Reader) ResetBuffer(r io.Reader, buf []byte)</li>
+</ul>
+
+<p>重置<code>IO</code>，可读游标重置为<code>0</code>，且<code>b.buf</code>变为<code>buf</code></p>
+
+<ul>
+<li>func (b *Reader) Peek(n int) ([]byte, error)</li>
+</ul>
+
+<p>窥探缓存的<code>n</code>个字节，可读游标维持不变，可写游标可能会改变;</p>
+
+<p>如果可窥探的数据少于<code>n</code>，则调用<code>b.fill()</code>尝试读取远端数据用于填充<code>b.buf</code>.</p>
+
+<ul>
+<li>func (b *Reader) Pop(n int) ([]byte, error)</li>
+</ul>
+
+<p>返回<code>[b.r:b.r+n]</code>处的数据，该函数会调用<code>b.Peek</code>，而且会改变可读游标和科协游标</p>
+
+<ul>
+<li>func (b *Reader) Discard(n int) (discarded int, err error)</li>
+</ul>
+
+<p>丢弃<code>n</code>个数据；如果缓冲区的可读数据小于<code>n</code>，则一致调用<code>b.fill()</code>尝试读取远程的数据，直到<code>b.buf</code>的可读缓冲区大于或者等于<code>n</code>或者出现网络异常为止</p>
+
+<ul>
+<li>func (b *Reader) Read(p []byte) (n int, err error)</li>
+</ul>
+
+<p>读取缓冲区数据；</p>
+
+<p>如果缓冲区为空，为了提高效率，避免应用层的数据拷贝（<code>kernel net stack=&gt;b.buf==&gt;p</code>），直接将<code>kernel net stack</code>拷贝到<code>p []byte</code>，并且调用<code>f.fill()</code>整理缓冲区.</p>
+
+<ul>
+<li>func (b *Reader) fill()</li>
+</ul>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bufio-reader-fill.png" alt="" /></center></p>
+
+<p><center>图 5-2</center></p>
+
+<p><code>fill</code>读取远程新块数据到本地缓冲区的<code>b.buf</code></p>
+
+<p><code>fill</code>会有数据的移动，如<code>图 5-2</code>所示。</p>
+
+<h4 id="writer">Writer</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">err</span> <span class="kt">error</span>
+	<span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">n</span>   <span class="kt">int</span>
+	<span class="nx">wr</span>  <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Writer</code>是一个具有缓存的可写<code>IO</code>.</p>
+
+<ul>
+<li>func (b *Writer) Reset(w io.Writer) {</li>
+</ul>
+
+<p>重置<code>IO</code>，可写游标重置为<code>0</code>，句柄变为<code>w</code></p>
+
+<ul>
+<li>func (b *Writer) ResetBuffer(w io.Writer, buf []byte)</li>
+</ul>
+
+<p>重置<code>IO</code>，可写游标重置为<code>0</code>，句柄变为<code>w</code>，缓冲区变为<code>buf</code></p>
+
+<ul>
+<li>func (b *Writer) flush() error</li>
+</ul>
+
+<p>刷新缓冲区，将本地缓冲区的数据发送至内核网络栈；</p>
+
+<p>游标被重置（不一定会被重置为0，可能为其他值，因为本地缓冲的数据大于内核可写缓冲区，这时还会造成数据的搬迁）。</p>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bufio-writer.png" alt="" /></center></p>
+
+<ul>
+<li>func (b *Writer) Available() int</li>
+</ul>
+
+<p>可写字节数</p>
+
+<ul>
+<li>func (b *Writer) Buffered()</li>
+</ul>
+
+<p>已写缓冲大小</p>
+
+<ul>
+<li>func (b *Writer) Write(p []byte) (nn int, err error)</li>
+</ul>
+
+<p>将<code>p []byte</code>写到缓冲区或者直接写到网络内核栈（此时缓冲区已满），可能造成可写游标的移动</p>
+
+<ul>
+<li>func (b *Writer) WriteRaw(p []byte) (nn int, err error)</li>
+</ul>
+
+<p>和b.Write()类似</p>
+
+<ul>
+<li>func (b *Writer) Peek(n int) ([]byte, error)</li>
+</ul>
+
+<p>窥探可写缓冲区剩余值，如果可写缓冲区的剩余值小于<code>n</code>，会调用<code>flush</code>，可写游标相应可能会改变</p>
+
+<h4 id="timer">timer</h4>
+
+<p><code>timer</code>是一个最小堆算法实现的时钟对象，串行执行时钟任务，所以时钟任务应该尽量小，<code>timer</code>不适合太耗时的任务，当然用户可以控制时钟任务的并发。</p>
+
+<h3 id="bytes">bytes</h3>
+
+<h4 id="pool">Pool</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Buffer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">buf</span>  <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">next</span> <span class="o">*</span><span class="nx">Buffer</span> <span class="c1">// next free buffer
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+	<span class="nx">free</span> <span class="o">*</span><span class="nx">Buffer</span>
+	<span class="nx">max</span>  <span class="kt">int</span>
+	<span class="nx">num</span>  <span class="kt">int</span>
+	<span class="nx">size</span> <span class="kt">int</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>pool</code>内存组织如下，<code>pool</code>是一个链式存储的<code>栈</code>，数据从栈顶出，同时数据也从栈顶回收。</p>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bytes.png" alt="" /></center></p>
+
+<ul>
+<li>func (p *Pool) Get() (b *Buffer)</li>
+</ul>
+
+<p>获取一个缓冲区</p>
+
+<ul>
+<li>func (p *Pool) Put(b *Buffer)</li>
+</ul>
+
+<p>归还一个缓冲区</p>
+
+<ul>
+<li>func (p *Pool) grow()</li>
+</ul>
+
+<p>重置<code>Pool</code>对象</p>
+
+<blockquote>
+<p>注：</p>
+
+<p>​    pool 是一个不限大小的内存池，如果栈没有数据了，那么pool会调用glow()重新生成数据，所以最后可能造成的内存架构如下图所示</p>
+</blockquote>
+
+<p><center><img src="http://laohanlinux.github.io/images/img/goim/bytes-2.png" alt="" /></center></p>
+
+<p>如果租借的速度大于归还的速度，会造成内存的溢出。</p>
+
+<h4 id="writer-1">Writer</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">n</span>   <span class="kt">int</span> 	<span class="c1">//游标
+</span><span class="c1"></span>	<span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>writer</code>是一个具有缓冲的可写<code>IO</code>。</p>
+
+<ul>
+<li>func (w *Writer) Size()</li>
+</ul>
+
+<p>缓冲区的大小</p>
+
+<ul>
+<li>func (w *Writer) Reset()</li>
+</ul>
+
+<p>重置缓冲区，游标重置为<code>0</code></p>
+
+<ul>
+<li>func (w *Writer) Buffer() []byte</li>
+</ul>
+
+<p>返回缓冲区的内容</p>
+
+<ul>
+<li>func (w *Writer) Peek(n int) []byte</li>
+</ul>
+
+<p>窥探缓冲区的<code>n</code>个字节，如果缓冲区的剩余空间小于<code>n</code>，则会调用<code>w.grow()</code>自增长数据缓冲区，游标会移动</p>
+
+<ul>
+<li>func (w *Writer) grow(n int)</li>
+</ul>
+
+<p>按照<code>2</code>倍的大小增长缓冲区，会发生数据的移动</p>
+
+<h3 id="net">net</h3>
+
+<h4 id="xrpc">xrpc</h4>
+
+<p>根据原生的<code>rpc</code>封装的，其调用采用异步的方式，具有重连功能。</p>
+
+<p><code>xrpc</code>并没有做负载均衡的工作，只是简单做一下容灾而已，相对来时不是很灵活，用户可以稍微修改一下，就支持负载均衡了。</p>
+
+<p>同时<code>xrpc</code>也没有在代码层面上实现<code>[host:por]</code>连接池，即同一个<code>[host:port]</code>配置只会有一个<code>rpc</code>长链接，除非增加多配置。</p>
+
+<h4 id="proto">proto</h4>
+
+<p>主要的<code>rpc</code>协议说明：</p>
+
+<h5 id="job-1">job</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">KafkaMsg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">OP</span>       <span class="kt">string</span>   <span class="s">`json:&#34;op&#34;`</span> 				<span class="c1">//操作类型
+</span><span class="c1"></span>	<span class="nx">RoomId</span>   <span class="kt">int32</span>    <span class="s">`json:&#34;roomid,omitempty&#34;`</span> <span class="c1">//房间号
+</span><span class="c1"></span>	<span class="nx">ServerId</span> <span class="kt">int32</span>    <span class="s">`json:&#34;server,omitempty&#34;`</span>	<span class="c1">//comet id
+</span><span class="c1"></span>	<span class="nx">SubKeys</span>  <span class="p">[]</span><span class="kt">string</span> <span class="s">`json:&#34;subkeys,omitempty&#34;`</span>
+	<span class="nx">Msg</span>      <span class="p">[]</span><span class="kt">byte</span>   <span class="s">`json:&#34;msg&#34;`</span>
+	<span class="nx">Ensure</span>   <span class="kt">bool</span>     <span class="s">`json:&#34;ensure,omitempty&#34;`</span>	<span class="c1">//是否强推送(伪强推)
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="logic-1">logic</h5>
+
+<p>客户端上线：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 用于comet发送客户端的校验信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ConnArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Token</span>  <span class="kt">string</span> <span class="c1">// Token
+</span><span class="c1"></span>	<span class="nx">Server</span> <span class="kt">int32</span>  <span class="c1">// comet id
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="c1">// logic 校验应答
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ConnReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Key</span>    <span class="kt">string</span> 	<span class="c1">// subKey
+</span><span class="c1"></span>	<span class="nx">RoomId</span> <span class="kt">int32</span>	<span class="c1">// 房间号
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>客户端下线：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 用于comet发送客户端连接下线
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">DisconnArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Key</span>    <span class="kt">string</span>	<span class="c1">// subKey
+</span><span class="c1"></span>	<span class="nx">RoomId</span> <span class="kt">int32</span>	<span class="c1">// 房间号
+</span><span class="c1"></span><span class="p">}</span>
+<span class="c1">// 应答客户端下线
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">DisconnReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Has</span> <span class="kt">bool</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="comet-2">comet</h5>
+
+<p><code>Push RPC</code>模块</p>
+
+<p>心跳：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">NoArg</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">NoReply</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>Job----&gt;comet</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 单播
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">PushMsgArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Key</span> <span class="kt">string</span>	<span class="c1">//subKey
+</span><span class="c1"></span>	<span class="nx">P</span>   <span class="nx">Proto</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">NoReply</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// 把某条消息推送给多个subKey
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MPushMsgArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Keys</span> <span class="p">[]</span><span class="kt">string</span>
+	<span class="nx">P</span>    <span class="nx">Proto</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">MPushMsgReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Index</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 多播
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MPushMsgsArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">PMArgs</span> <span class="p">[]</span><span class="o">*</span><span class="nx">PushMsgArg</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">MPushMsgsReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Index</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 广播
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">BoardcastArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">P</span> <span class="nx">Proto</span>
+<span class="p">}</span>
+
+<span class="c1">// 吧某条消息推送给某个房间的所有channels
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">BoardcastRoomArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">RoomId</span> <span class="kt">int32</span>
+	<span class="nx">P</span>      <span class="nx">Proto</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">RoomsReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">RoomIds</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kd">struct</span><span class="p">{}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="router-2">router</h5>
+
+<p>增加用户：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">PutArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserId</span> <span class="kt">int64</span>
+	<span class="nx">Server</span> <span class="kt">int32</span>
+	<span class="nx">RoomId</span> <span class="kt">int32</span>
+<span class="p">}</span>
+<span class="kd">type</span> <span class="nx">PutReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Seq</span> <span class="kt">int32</span>	<span class="c1">// 序列号
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>移除用户：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">DelArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserId</span> <span class="kt">int64</span>
+	<span class="nx">Seq</span>    <span class="kt">int32</span>
+	<span class="nx">RoomId</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">DelReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Has</span> <span class="kt">bool</span>	<span class="c1">//	是否存在目标用户
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>其他：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 剔除comet server
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">DelServerArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Server</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取用户信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">GetArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserId</span> <span class="kt">int64</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取Router的所有信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">GetReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Seqs</span>    <span class="p">[]</span><span class="kt">int32</span>
+	<span class="nx">Servers</span> <span class="p">[]</span><span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">GetAllReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserIds</span>  <span class="p">[]</span><span class="kt">int64</span>
+	<span class="nx">Sessions</span> <span class="p">[]</span><span class="o">*</span><span class="nx">GetReply</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取多个用户信息
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MGetArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserIds</span> <span class="p">[]</span><span class="kt">int64</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">MGetReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserIds</span>  <span class="p">[]</span><span class="kt">int64</span>
+	<span class="nx">Sessions</span> <span class="p">[]</span><span class="o">*</span><span class="nx">GetReply</span>
+<span class="p">}</span>
+
+<span class="c1">// 返回所有连接个数
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">CountReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Count</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取特定房间的所有连接
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">RoomCountArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">RoomId</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">RoomCountReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Count</span> <span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取所有房间的连接个数
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">AllRoomCountReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Counter</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取所有的comet server个数
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">AllServerCountReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Counter</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int32</span><span class="p">]</span><span class="kt">int32</span>
+<span class="p">}</span>
+
+<span class="c1">// 获取所有的用户个数
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">UserCountArg</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">UserId</span> <span class="kt">int64</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">UserCountReply</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Count</span> <span class="kt">int32</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="推送协议">推送协议</h5>
+
+<p>参照官网</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Rg</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2016-12-22
+        
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content">本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</span>
+  </p>
+</div>
+<div class="post-reward">
+  <input type="checkbox" name="reward" id="reward" hidden />
+  <label class="reward-button" for="reward">Reward</label>
+  <div class="qr-code">
+    
+    <label class="qr-code-image" for="reward">
+        <img class="image" src="https://ws2.sinaimg.cn/large/006tNc79gy1g1r15n5iquj30u014qgqe.jpg">
+        <span>wechat</span>
+      </label>
+    
+  </div>
+</div><footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/goim/">goim</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/2017/03/12/200%E8%A1%8C%E5%8C%BA%E5%9D%97%E9%93%BE-go%E8%AF%AD%E8%A8%80%E7%89%88%E6%9C%AC/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">200行区块链-go语言版本</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/2016/06/13/riak-core-%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90-1/">
+            <span class="next-text nav-default">Riak Core 原理分析-1</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2016-12-22 00:47:22 \x2b0000 UTC',
+        title: 'goim源码剖析',
+        clientID: '88e50f263d090b13460f',
+        clientSecret: 'f1007eb6cff0af3b461be3a4b73d808ab7058a21',
+        repo: 'blog',
+        owner: 'laohanlinux',
+        admin: ['laohanlinux'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:daimaldd@email.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/laohanlinux" class="iconfont icon-github" title="github"></a>
+  <a href="https://laohanlinux.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2014 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Rg</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

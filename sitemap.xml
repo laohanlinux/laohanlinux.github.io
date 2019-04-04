@@ -52,7 +52,7 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/2016/12/22/goim%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%901/</loc>
+    <loc>https://laohanlinux.github.io/2016/12/22/goim%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/</loc>
     <lastmod>2016-12-22T00:47:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -82,13 +82,6 @@
   <url>
     <loc>https://laohanlinux.github.io/2016/04/25/erlang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2016-04-25T00:15:14+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://laohanlinux.github.io/2016/04/04/goim%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/</loc>
-    <lastmod>2016-04-04T14:53:49+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
