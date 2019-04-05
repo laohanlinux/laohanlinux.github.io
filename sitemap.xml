@@ -3,6 +3,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/travel-of-singapore/</loc>
+    <lastmod>2019-04-05T17:48:26+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/2019/04/05/travel-of-hong-kong/</loc>
     <lastmod>2019-04-05T17:47:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -256,7 +263,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/post/</loc>
-    <lastmod>2019-04-05T17:47:18+08:00</lastmod>
+    <lastmod>2019-04-05T17:48:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -284,7 +291,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/</loc>
-    <lastmod>2019-04-05T17:47:18+08:00</lastmod>
+    <lastmod>2019-04-05T17:48:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
