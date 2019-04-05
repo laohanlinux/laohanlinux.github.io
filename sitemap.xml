@@ -3,6 +3,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/timer-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/lock-and-rwlock-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:17:52+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/select-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:17:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/syncmap-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:17:20+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/map-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:17:15+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/slice-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:17:07+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/2019/04/05/channel-of-goruntime/</loc>
     <lastmod>2019-04-05T23:03:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -228,7 +270,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/categories/analysis-of-source/</loc>
-    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -249,7 +291,14 @@
   
   <url>
     <loc>https://laohanlinux.github.io/categories/</loc>
-    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/channel/</loc>
+    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -284,14 +333,14 @@
   
   <url>
     <loc>https://laohanlinux.github.io/categories/gokernel/</loc>
-    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://laohanlinux.github.io/tags/goruntime/</loc>
-    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -325,8 +374,29 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/tags/lock/</loc>
+    <lastmod>2019-04-05T23:17:52+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/map/</loc>
+    <lastmod>2019-04-05T23:17:15+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/post/</loc>
-    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/rwlock/</loc>
+    <lastmod>2019-04-05T23:17:52+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -339,8 +409,36 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/tags/select/</loc>
+    <lastmod>2019-04-05T23:17:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/slice/</loc>
+    <lastmod>2019-04-05T23:17:07+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/syncmap/</loc>
+    <lastmod>2019-04-05T23:17:20+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/tags/</loc>
     <lastmod>2016-04-25T23:45:22+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/timer/</loc>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -354,7 +452,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/</loc>
-    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
+    <lastmod>2019-04-05T23:18:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
