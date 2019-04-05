@@ -3,6 +3,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/channel-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/gorountine-shedule-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/04/05/garbage-recycle-algorithms-of-goruntime/</loc>
+    <lastmod>2019-04-05T23:01:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/2019/04/05/travel-of-singapore/</loc>
     <lastmod>2019-04-05T17:48:26+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -206,6 +227,13 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/categories/analysis-of-source/</loc>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/tags/bitcask/</loc>
     <lastmod>2016-04-25T23:45:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -221,7 +249,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/categories/</loc>
-    <lastmod>2017-03-12T23:46:57+00:00</lastmod>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -248,8 +276,36 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/tags/gc/</loc>
+    <lastmod>2019-04-05T23:01:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/categories/gokernel/</loc>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/goruntime/</loc>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/tags/golang/</loc>
     <lastmod>2016-04-25T23:45:22+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/goroutine/</loc>
+    <lastmod>2019-04-05T23:02:34+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -270,7 +326,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/post/</loc>
-    <lastmod>2019-04-05T17:48:26+08:00</lastmod>
+    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -298,7 +354,7 @@
   
   <url>
     <loc>https://laohanlinux.github.io/</loc>
-    <lastmod>2019-04-05T17:48:26+08:00</lastmod>
+    <lastmod>2019-04-05T23:03:22+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
