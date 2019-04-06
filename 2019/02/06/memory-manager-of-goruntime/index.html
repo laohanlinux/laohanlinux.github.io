@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="480">
+<meta itemprop="wordCount" content="529">
 
 
 
@@ -126,8 +126,8 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 480 words </span>
-          <span class="more-meta"> 1 min read </span>
+          <span class="more-meta"> 529 words </span>
+          <span class="more-meta"> 2 mins read </span>
         
       </div>
     </header>
@@ -250,10 +250,23 @@
 
 <p>小于等于<code>32Kb</code>的对象</p>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1g1t0e0phmij311u0eqq3j.jpg" alt="" /></p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1g1t0i0ojahj30q40dkmxq.jpg" alt="" /></p>
 
-<p>小对象被映射成<code>170</code>种规格的大小的小对象，</p>
-
+<p>小对象被映射成<code>170</code>种规格的大小的小对象，每个的规格不一定相同，但满足<code>2^N Bytes</code>，如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">class0</span> <span class="o">=</span>  <span class="sb">`</span><span class="m">2</span>^3 Bytes<span class="sb">`</span> <span class="o">=</span> <span class="sb">`</span>8Bytes<span class="sb">`</span>
+<span class="nv">class1</span> <span class="o">=</span>  <span class="sb">`</span><span class="m">2</span>^4 Bytes<span class="sb">`</span> <span class="o">=</span> <span class="sb">`</span>16Bytes<span class="sb">`</span>
+...
+<span class="nv">class2</span> <span class="o">=</span> <span class="sb">`</span><span class="m">32</span> * <span class="m">2</span>^10<span class="sb">`</span> <span class="o">=</span> <span class="sb">`</span>32Bytes<span class="sb">`</span></code></pre></td></tr></table>
+</div>
+</div>
 <h4 id="large">Large</h4>
 
 <p>大于<code>32Kb</code>的对象</p>
