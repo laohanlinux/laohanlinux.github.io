@@ -94,13 +94,6 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/2019/04/04/go-memory-manager/</loc>
-    <lastmod>2019-04-04T17:12:18+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://laohanlinux.github.io/about/</loc>
     <lastmod>2019-04-04T13:07:28+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -110,6 +103,13 @@
   <url>
     <loc>https://laohanlinux.github.io/2019/04/04/rocket-girls/</loc>
     <lastmod>2019-04-04T00:45:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/2019/02/06/memory-manager-of-goruntime/</loc>
+    <lastmod>2019-02-06T11:49:52+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
