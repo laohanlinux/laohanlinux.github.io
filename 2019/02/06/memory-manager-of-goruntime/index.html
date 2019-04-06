@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="239">
+<meta itemprop="wordCount" content="480">
 
 
 
@@ -126,7 +126,7 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 239 words </span>
+          <span class="more-meta"> 480 words </span>
           <span class="more-meta"> 1 min read </span>
         
       </div>
@@ -139,14 +139,19 @@
 <ul>
 <li>
 <ul>
-<li><a href="#前言">前言</a></li>
+<li><a href="#前言">前言</a>
+<ul>
+<li><a href="#虚拟内存">虚拟内存</a></li>
+</ul></li>
 <li><a href="#tcmalloc">TCMalloc</a>
 <ul>
-<li><a href="#memory-level">Memory Level</a>
+<li><a href="#内存分类">内存分类</a>
 <ul>
 <li><a href="#small">Small</a></li>
-<li><a href="#medium">Medium</a></li>
-<li><a href="#large">Large</a></li>
+<li><a href="#large">Large</a>
+<ul>
+<li><a href="#分配流程">分配流程</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#层次">层次</a>
 <ul>
@@ -154,10 +159,6 @@
 <li><a href="#centralcache">CentralCache</a></li>
 <li><a href="#pageheap">PageHeap</a></li>
 </ul></li>
-</ul></li>
-<li><a href="#enter">Enter</a>
-<ul>
-<li><a href="#虚拟内存">虚拟内存</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -171,17 +172,95 @@
 
 <p><code>Go</code>内存管理是<code>runtime</code>比较重要的一部分，<code>Go</code>内存管理算法来至于<code>TCMalloc</code>，非常类似。<code>tcmalloc</code>已经发展好长一段时间了，是非常高效的一种内存管理算法，下面简单聊一下<code>tcmalloc</code>。</p>
 
+<h3 id="虚拟内存">虚拟内存</h3>
+
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1g1sul0k0sbj311e0twq5z.jpg" alt="" /></p>
+
+<p>在现代系统中，保护模式下，进程看到的内存地址都是<code>虚拟地址</code>，可以通过页表进行转换，转换到实际的主存RAW或者磁盘中。</p>
+
+<p>在go中，对象的地址在编译的时候就确定，来验证一下.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;math/rand&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">rand</span><span class="p">.</span><span class="nf">Seed</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">UnixNano</span><span class="p">())</span>
+
+	<span class="nx">i</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%v at %p\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Run:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">└─[$]&gt; ./virtual_addr
+5 at 0xc0000160c0
+└─[$]&gt; ./virtual_addr
+27 at 0xc0000160c0
+└─[$]&gt; ./virtual_addr
+60 at 0xc0000160c0</pre></td></tr></table>
+</div>
+</div>
+<p>多次运行，对象i的地址都是一致的</p>
+
 <h2 id="tcmalloc">TCMalloc</h2>
 
-<p><code>tcmalloc</code>采用分层的设计，其内存对象被划分为<code>Small</code>、<code>Medium</code>、<code>Large</code>三个等级，每个等级的对象占用内存各不相同。</p>
+<p><code>tcmalloc</code>采用分层的设计，其内存对象被划分为<code>Small</code>、<code>Medium</code>、<code>Large</code>三个等级，每个等级的对象占用内存各不相同，每个线程都有自己的本地缓存（谷歌出品比属精品）。</p>
 
-<h3 id="memory-level">Memory Level</h3>
+<p>结构:</p>
+
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1g1szxe9enmj30qg0ii0ul.jpg" alt="" /></p>
+
+<h3 id="内存分类">内存分类</h3>
 
 <h4 id="small">Small</h4>
 
-<h4 id="medium">Medium</h4>
+<p>小于等于<code>32Kb</code>的对象</p>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1g1t0e0phmij311u0eqq3j.jpg" alt="" /></p>
+
+<p>小对象被映射成<code>170</code>种规格的大小的小对象，</p>
 
 <h4 id="large">Large</h4>
+
+<p>大于<code>32Kb</code>的对象</p>
+
+<h5 id="分配流程">分配流程</h5>
+
+<p>直接从<code>Central Heap</code>分配，以<code>页</code>来适配，比如，对象的大小大于一页，则分配2页的空间。</p>
 
 <h3 id="层次">层次</h3>
 
@@ -190,14 +269,6 @@
 <h4 id="centralcache">CentralCache</h4>
 
 <h4 id="pageheap">PageHeap</h4>
-
-<h2 id="enter">Enter</h2>
-
-<h3 id="虚拟内存">虚拟内存</h3>
-
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1g1sul0k0sbj311e0twq5z.jpg" alt="" /></p>
-
-<p>在现代系统中，保护模式下，进程看到的内存地址都是<code>虚拟地址</code>，可以通过页表进行转换，转换到实际的主存RAW或者磁盘中。</p>
 
     </div>
 
