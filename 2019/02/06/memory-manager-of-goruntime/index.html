@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="529">
+<meta itemprop="wordCount" content="719">
 
 
 
@@ -126,7 +126,7 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 529 words </span>
+          <span class="more-meta"> 719 words </span>
           <span class="more-meta"> 2 mins read </span>
         
       </div>
@@ -150,6 +150,7 @@
 <li><a href="#small">Small</a></li>
 <li><a href="#large">Large</a>
 <ul>
+<li><a href="#分配">分配</a></li>
 <li><a href="#分配流程">分配流程</a></li>
 </ul></li>
 </ul></li>
@@ -272,6 +273,33 @@
 <p>大于<code>32Kb</code>的对象</p>
 
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1g1t0wqfxtkj311c0lamyd.jpg" alt="" /></p>
+
+<p>一共有256中，<code>[1，255]</code>类型每一项分别占用<code>n*4k</code>，<code>rest</code>为特殊项。</p>
+
+<h5 id="分配">分配</h5>
+
+<ul>
+<li>[1，255]</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">1</span>：根据Object Size查找适合的<span class="sb">`</span>k pages<span class="sb">`</span>
+<span class="m">2</span>：依次查找<span class="sb">`</span>last free list entry<span class="sb">`</span>，如果查不到<span class="sb">`</span>free list entry<span class="sb">`</span>，即无空闲内存，则向操作系统重新申请<span class="sb">`</span>k*4k<span class="sb">`</span>内存，作为<span class="sb">`</span>free entry<span class="sb">`</span>链接到<span class="sb">`</span>last free list<span class="sb">`</span></code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>内存申请可以使用<code>(using sbrk, mmap, or by mapping in portions of /dev/mem</code></p>
+</blockquote>
+
+<ul>
+<li>256</li>
+</ul>
+
+<p>和前面的步骤类似</p>
 
 <h5 id="分配流程">分配流程</h5>
 
