@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="790">
+<meta itemprop="wordCount" content="1629">
 
 
 
@@ -126,8 +126,8 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 790 words </span>
-          <span class="more-meta"> 2 mins read </span>
+          <span class="more-meta"> 1629 words </span>
+          <span class="more-meta"> 4 mins read </span>
         
       </div>
     </header>
@@ -174,6 +174,11 @@
 <li><a href="#go-memory">Go Memory</a>
 <ul>
 <li><a href="#interview">Interview</a></li>
+<li><a href="#层级">层级</a>
+<ul>
+<li><a href="#go-分配器">Go 分配器</a></li>
+<li><a href="#small-allocator">Small Allocator</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -348,7 +353,223 @@
 <h1 id="go-memory">Go Memory</h1>
 
 <h2 id="interview">Interview</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="nf">f</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">//go:noinline
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">f</span><span class="p">()</span> <span class="o">*</span><span class="kt">int</span> <span class="p">{</span>
+  <span class="nx">i</span> <span class="o">:=</span> <span class="mi">10</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">i</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>注：</strong> 关闭内敛编译，否则经过编译器优化后</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="nx">i</span> <span class="o">:=</span> <span class="mi">10</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>编译：<code>go build -gcflags &quot;-m -m&quot; alloc.go</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sh" data-lang="sh"><span class="c1"># command-line-arguments</span>
+./alloc.go:8:6: cannot inline f: marked go:noinline
+./alloc.go:3:6: cannot inline main: <span class="k">function</span> too complex: cost <span class="m">82</span> exceeds budget <span class="m">80</span>
+./alloc.go:10:9: <span class="p">&amp;</span>i escapes to heap
+./alloc.go:10:9: 	from ~r0 <span class="o">(</span><span class="k">return</span><span class="o">)</span> at ./alloc.go:10:2
+./alloc.go:9:2: moved to heap: i</code></pre></td></tr></table>
+</div>
+</div>
+<p>关键点：</p>
+
+<ul>
+<li>&amp;i escapes to heap</li>
+</ul>
+
+<p>逃逸到堆</p>
+
+<ul>
+<li>move to heap: i</li>
+</ul>
+
+<p><em>i</em> 迁移到堆(作为指针返回)</p>
+
+<p>查看一下反汇编的情况：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="err">$</span> <span class="k">go</span> <span class="nx">tool</span> <span class="nx">compile</span> <span class="o">-</span><span class="nx">S</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+
+<span class="s">&#34;&#34;</span><span class="p">.</span><span class="nx">f</span> <span class="nx">STEXT</span> <span class="nx">size</span><span class="p">=</span><span class="mi">79</span> <span class="nx">args</span><span class="p">=</span><span class="mh">0x8</span> <span class="nx">locals</span><span class="p">=</span><span class="mh">0x18</span>
+	<span class="mh">0x0000</span> <span class="mo">00000</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">TEXT</span>	<span class="s">&#34;&#34;</span><span class="p">.</span><span class="nf">f</span><span class="p">(</span><span class="nx">SB</span><span class="p">),</span> <span class="err">$</span><span class="mi">24</span><span class="o">-</span><span class="mi">8</span>
+	<span class="mh">0x0000</span> <span class="mo">00000</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nf">MOVQ</span>	<span class="p">(</span><span class="nx">TLS</span><span class="p">),</span> <span class="nx">CX</span>
+	<span class="mh">0x0009</span> <span class="mo">0000</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">CMPQ</span>	<span class="nx">SP</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="nx">CX</span><span class="p">)</span>
+	<span class="mh">0x000d</span> <span class="mo">00013</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">JLS</span>	<span class="mi">72</span>
+	<span class="mh">0x000f</span> <span class="mo">00015</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">SUBQ</span>	<span class="err">$</span><span class="mi">24</span><span class="p">,</span> <span class="nx">SP</span>
+	<span class="mh">0x0013</span> <span class="mo">0001</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">MOVQ</span>	<span class="nx">BP</span><span class="p">,</span> <span class="mi">16</span><span class="p">(</span><span class="nx">SP</span><span class="p">)</span>
+	<span class="mh">0x0018</span> <span class="mo">00024</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">LEAQ</span>	<span class="mi">16</span><span class="p">(</span><span class="nx">SP</span><span class="p">),</span> <span class="nx">BP</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">FUNCDATA</span>	<span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="nx">gclocals</span><span class="err">·</span><span class="mi">9</span><span class="nf">fb7f0986f647f17cb53dda1484e0f7a</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">FUNCDATA</span>	<span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="nx">gclocals</span><span class="err">·</span><span class="mi">69</span><span class="nf">c1753bd5f81501d95132d08af04464</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">8</span><span class="p">)</span>	<span class="nx">FUNCDATA</span>	<span class="err">$</span><span class="mi">3</span><span class="p">,</span> <span class="nx">gclocals</span><span class="err">·</span><span class="mi">9</span><span class="nf">fb7f0986f647f17cb53dda1484e0f7a</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">PCDATA</span>	<span class="err">$</span><span class="mi">2</span><span class="p">,</span> <span class="err">$</span><span class="mi">1</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">PCDATA</span>	<span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="err">$</span><span class="mi">0</span>
+	<span class="mh">0x001d</span> <span class="mo">0002</span><span class="mi">9</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">LEAQ</span>	<span class="kd">type</span><span class="p">.</span><span class="nb">int</span><span class="p">(</span><span class="nx">SB</span><span class="p">),</span> <span class="nx">AX</span>
+	<span class="mh">0x0024</span> <span class="mo">00036</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">PCDATA</span>	<span class="err">$</span><span class="mi">2</span><span class="p">,</span> <span class="err">$</span><span class="mi">0</span>
+	<span class="mh">0x0024</span> <span class="mo">00036</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">MOVQ</span>	<span class="nx">AX</span><span class="p">,</span> <span class="p">(</span><span class="nx">SP</span><span class="p">)</span>
+	<span class="mh">0x0028</span> <span class="mo">00040</span> <span class="p">(</span><span class="nx">alloc</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">9</span><span class="p">)</span>	<span class="nx">CALL</span>	<span class="nx">runtime</span><span class="p">.</span><span class="nf">newobject</span><span class="p">(</span><span class="nx">SB</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>runtime.newobject</strong>申请对象</p>
+
+<h2 id="层级">层级</h2>
+
+<p>和 <code>tcmalloc</code> 不同，go memory分为3个level，分别为<code>tiny, small, large</code></p>
+
+<ul>
+<li>Tiny</li>
+</ul>
+
+<p>小于等于16字节(no pointer)</p>
+
+<ul>
+<li>small</li>
+</ul>
+
+<p>小于等于32字节大于16字节</p>
+
+<ul>
+<li>Large</li>
+</ul>
+
+<p>大于32字节</p>
+
+<h3 id="go-分配器">Go 分配器</h3>
+
+<p>go的垃圾回收是<code>并行</code>的，是不是全部步骤都是<code>并行</code>？</p>
+
+<ul>
+<li>检索所有对象(并行)</li>
+<li>标记哪些对象是active的(并行)</li>
+<li>交换未active的对象(stop the world)</li>
+</ul>
+
+<h3 id="small-allocator">Small Allocator</h3>
+
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g1u5lyie1dj30rq0rs410.jpg" alt="" /></p>
+
+<blockquote>
+<p>At source-code: sizeclasses.go</p>
+</blockquote>
+
+<p><code>66</code>中小对象规格，具体意思如<code>class1</code>：</p>
+
+<ul>
+<li>byets/object</li>
+</ul>
+
+<p>每个对象的代销不超过8字节</p>
+
+<ul>
+<li>bytes/span</li>
+</ul>
+
+<p>跨度为8192 kB = 8 kB</p>
+
+<ul>
+<li>objects</li>
+</ul>
+
+<p>可分配的对象，计算过程：(8 kB / 8B) = 1k = 1024</p>
+
+<p>源码中有几个关键的常量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">_MaxSmallSize</span>   <span class="p">=</span> <span class="mi">32768</span> <span class="c1">// 小对象的最大值
+</span><span class="c1"></span>	<span class="nx">smallSizeDiv</span>    <span class="p">=</span> <span class="mi">8</span>
+	<span class="nx">smallSizeMax</span>    <span class="p">=</span> <span class="mi">1024</span>
+	<span class="nx">largeSizeDiv</span>    <span class="p">=</span> <span class="mi">128</span>
+	<span class="nx">_NumSizeClasses</span> <span class="p">=</span> <span class="mi">67</span>
+	<span class="nx">_PageShift</span>      <span class="p">=</span> <span class="mi">13</span>
+<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">class_to_size</span> <span class="p">=</span> <span class="p">[</span><span class="nx">_NumSizeClasses</span><span class="p">]</span><span class="kt">uint16</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">352</span><span class="p">,</span> <span class="mi">384</span><span class="p">,</span> <span class="mi">416</span><span class="p">,</span> <span class="mi">448</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">576</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">704</span><span class="p">,</span> <span class="mi">768</span><span class="p">,</span> <span class="mi">896</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1152</span><span class="p">,</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">1408</span><span class="p">,</span> <span class="mi">1536</span><span class="p">,</span> <span class="mi">1792</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">2304</span><span class="p">,</span> <span class="mi">2688</span><span class="p">,</span> <span class="mi">3072</span><span class="p">,</span> <span class="mi">3200</span><span class="p">,</span> <span class="mi">3456</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">4864</span><span class="p">,</span> <span class="mi">5376</span><span class="p">,</span> <span class="mi">6144</span><span class="p">,</span> <span class="mi">6528</span><span class="p">,</span> <span class="mi">6784</span><span class="p">,</span> <span class="mi">6912</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">9472</span><span class="p">,</span> <span class="mi">9728</span><span class="p">,</span> <span class="mi">10240</span><span class="p">,</span> <span class="mi">10880</span><span class="p">,</span> <span class="mi">12288</span><span class="p">,</span> <span class="mi">13568</span><span class="p">,</span> <span class="mi">14336</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">18432</span><span class="p">,</span> <span class="mi">19072</span><span class="p">,</span> <span class="mi">20480</span><span class="p">,</span> <span class="mi">21760</span><span class="p">,</span> <span class="mi">24576</span><span class="p">,</span> <span class="mi">27264</span><span class="p">,</span> <span class="mi">28672</span><span class="p">,</span> <span class="mi">32768</span><span class="p">}</span>
+<span class="kd">var</span> <span class="nx">class_to_allocnpages</span> <span class="p">=</span> <span class="p">[</span><span class="nx">_NumSizeClasses</span><span class="p">]</span><span class="kt">uint8</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     <div class="post-copyright">
