@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="1650">
+<meta itemprop="wordCount" content="1654">
 
 
 
@@ -126,7 +126,7 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 1650 words </span>
+          <span class="more-meta"> 1654 words </span>
           <span class="more-meta"> 4 mins read </span>
         
       </div>
@@ -177,7 +177,10 @@
 <li><a href="#层级">层级</a>
 <ul>
 <li><a href="#go-分配器">Go 分配器</a></li>
-<li><a href="#small-allocator">Small Allocator</a></li>
+<li><a href="#small-allocator">Small Allocator</a>
+<ul>
+<li><a href="#分配流程-1">分配流程</a></li>
+</ul></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -480,6 +483,8 @@
 
 <h2 id="层级">层级</h2>
 
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1uelpv8qwj318z0u0n1v.jpg" alt="Go学习笔记" /></p>
+
 <p>和 <code>tcmalloc</code> 不同，go memory分为3个level，分别为<code>tiny, small, large</code></p>
 
 <ul>
@@ -572,6 +577,10 @@
 <span class="kd">var</span> <span class="nx">class_to_allocnpages</span> <span class="p">=</span> <span class="p">[</span><span class="nx">_NumSizeClasses</span><span class="p">]</span><span class="kt">uint8</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
+<h4 id="分配流程-1">分配流程</h4>
+
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g1ueixmli3j313u0gqabt.jpg" alt="image-20190407214226925" /></p>
+
     </div>
 
     <div class="post-copyright">
