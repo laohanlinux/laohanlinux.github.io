@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="719">
+<meta itemprop="wordCount" content="793">
 
 
 
@@ -126,7 +126,7 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 719 words </span>
+          <span class="more-meta"> 793 words </span>
           <span class="more-meta"> 2 mins read </span>
         
       </div>
@@ -151,6 +151,12 @@
 <li><a href="#large">Large</a>
 <ul>
 <li><a href="#分配">分配</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#span">Span</a>
+<ul>
+<li>
+<ul>
 <li><a href="#分配流程">分配流程</a></li>
 </ul></li>
 </ul></li>
@@ -161,6 +167,10 @@
 <li><a href="#pageheap">PageHeap</a></li>
 </ul></li>
 </ul></li>
+</ul></li>
+<li><a href="#go-memory">Go Memory</a>
+<ul>
+<li><a href="#interview">Interview</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -299,7 +309,22 @@
 <li>256</li>
 </ul>
 
-<p>和前面的步骤类似</p>
+<p>和前面的步骤类似.</p>
+
+<p>1）大对象的分配由<strong>Central heap</strong>负责；2）Requested size is rounded up to number of pages(4kB)</p>
+
+<blockquote>
+<p>be round up to 向上取整</p>
+</blockquote>
+
+<h3 id="span">Span</h3>
+
+<p>Manages memory in units called <code>Span</code></p>
+
+<ul>
+<li>Runs of <strong>contiguous</strong> memory pages</li>
+<li>Metadata is <strong>kept separated from the allocation arena</strong></li>
+</ul>
 
 <h5 id="分配流程">分配流程</h5>
 
@@ -312,6 +337,10 @@
 <h4 id="centralcache">CentralCache</h4>
 
 <h4 id="pageheap">PageHeap</h4>
+
+<h1 id="go-memory">Go Memory</h1>
+
+<h2 id="interview">Interview</h2>
 
     </div>
 
