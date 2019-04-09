@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="743">
+<meta itemprop="wordCount" content="912">
 
 
 
@@ -129,7 +129,7 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 743 words </span>
+          <span class="more-meta"> 912 words </span>
           <span class="more-meta"> 2 mins read </span>
         
       </div>
@@ -142,6 +142,10 @@
 <ul>
 <li><a href="#view">View</a></li>
 <li><a href="#dilatation">Dilatation</a></li>
+<li><a href="#other-special-function-or-value">Other Special Function or Value</a>
+<ul>
+<li><a href="#bucketshift">bucketShift()</a></li>
+</ul></li>
 </ul>
 </nav>
   </div>
@@ -162,6 +166,8 @@
 <p>比如有这么一个hashmap：</p>
 
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1wvl0gbn1j30qi0f0dh6.jpg" alt="image-20190410010342018" /></p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1wxb61f09j30ae15g40q.jpg" alt="" /></p>
 
 <h1 id="dilatation">Dilatation</h1>
 
@@ -225,6 +231,35 @@
 
 <p><a href="https://en.wikipedia.org/wiki/Hash_table">wiki</a></p>
 
+<h1 id="other-special-function-or-value">Other Special Function or Value</h1>
+
+<h2 id="bucketshift">bucketShift()</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// bucketShift returns 1&lt;&lt;b, optimized for code generation.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">bucketShift</span><span class="p">(</span><span class="nx">b</span> <span class="kt">uint8</span><span class="p">)</span> <span class="kt">uintptr</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">sys</span><span class="p">.</span><span class="nx">GoarchAmd64</span><span class="p">|</span><span class="nx">sys</span><span class="p">.</span><span class="nx">GoarchAmd64p32</span><span class="p">|</span><span class="nx">sys</span><span class="p">.</span><span class="nx">Goarch386</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">b</span> <span class="o">&amp;=</span> <span class="nx">sys</span><span class="p">.</span><span class="nx">PtrSize</span><span class="o">*</span><span class="mi">8</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1">// help x86 archs remove shift overflow checks
+</span><span class="c1"></span>		<span class="c1">// 4 * 8 - 1 = 31
+</span><span class="c1"></span>		<span class="c1">// b &amp;= 31 = b &amp;= 1111 1 即b的取值范围[0, 1111 1]，再看下面可知，被限制在 1&lt;&lt;31内
+</span><span class="c1"></span>		<span class="c1">// 在[sys.GoarchAmd64|sys.GoarchAmd64p32|sys.Goarch386]，这几种架构中被限制
+</span><span class="c1"></span>	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="nx">b</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     <div class="post-copyright">
