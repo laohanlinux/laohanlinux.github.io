@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-02-06T11:49:52&#43;08:00" />
 <meta itemprop="dateModified" content="2019-02-06T11:49:52&#43;08:00" />
-<meta itemprop="wordCount" content="1718">
+<meta itemprop="wordCount" content="2024">
 
 
 
@@ -126,8 +126,8 @@
       <div class="post-meta">
         <span class="post-time"> 2019-02-06 </span>
         
-          <span class="more-meta"> 1718 words </span>
-          <span class="more-meta"> 4 mins read </span>
+          <span class="more-meta"> 2024 words </span>
+          <span class="more-meta"> 5 mins read </span>
         
       </div>
     </header>
@@ -183,6 +183,11 @@
 </ul></li>
 <li><a href="#tiny-allocator">Tiny Allocator</a></li>
 <li><a href="#内存释放">内存释放</a></li>
+<li><a href="#span-1">span</a></li>
+</ul></li>
+<li><a href="#实践">实践</a>
+<ul>
+<li><a href="#trace">Trace</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -607,6 +612,41 @@
 </code></pre></td></tr></table>
 </div>
 </div>
+<p><a href="http://man7.org/linux/man-pages/man2/madvise.2.html">Linux man madvise(2)</a></p>
+
+<h3 id="span-1">span</h3>
+
+<p>span有三种状态：1）mSpanInUse，2）mSpanManual，3）mSpanFree</p>
+
+<p>转态转移：</p>
+
+<ul>
+<li>在GC期间，span可能从free转为in-use或者mannual</li>
+<li>在sweeping阶段(gcphase== _GCoff)，span从in-use转为free(由于sweeping的结果) 或者 从manual转为free(由于栈释放)</li>
+<li>在GC（gcphase != GCoff）期间，span必须不能mannual或者in-use转为free状态。因为并发gc可能会读到一个指针并且查找到这个指针指到的span，span的状态必须是单向的</li>
+</ul>
+
+<p><a href="https://github.com/golang/go/blob/master/src/runtime/mheap.go#L252">Gits</a></p>
+
+<h2 id="实践">实践</h2>
+
+<h3 id="trace">Trace</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ curl http://server:port/debug/pprof/trace?serconds<span class="o">=</span><span class="m">5</span> -o trace.out
+$ go tool trace -http<span class="o">=</span>:12345 trace.out</code></pre></td></tr></table>
+</div>
+</div>
+<p><a href="https://www.youtube.com/watch?v=FJQjUueBJ2A">Understanding Running Go Programs - GopherConSG 2018</a></p>
+
+<p><a href="https://www.youtube.com/watch?v=2557w0qsDV0">Escape Analysis and Memory Profiling - Gopher SG 2017</a></p>
+
+<p><a href="https://povilasv.me/go-memory-management/">go-memory-management</a></p>
+
     </div>
 
     <div class="post-copyright">
