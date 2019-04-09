@@ -62,7 +62,7 @@
       <pubDate>Fri, 05 Apr 2019 23:17:07 +0800</pubDate>
       
       <guid>https://laohanlinux.github.io/2019/04/05/slice-of-goruntime/</guid>
-      <description>array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc 扩容 slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要</description>
+      <description>Overview array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc Dilatation slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要</description>
     </item>
     
     <item>

@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-<meta name="author" content="Rg" /><meta name="description" content="array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc 扩容 slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要" /><meta name="keywords" content="Rg, Rust, even" />
+<meta name="author" content="Rg" /><meta name="description" content="Overview array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc Dilatation slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要" /><meta name="keywords" content="Rg, Rust, even" />
 
 
 
@@ -39,14 +39,14 @@
 
 
 <meta property="og:title" content="Slice of GoRuntime" />
-<meta property="og:description" content="array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc 扩容 slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要" />
+<meta property="og:description" content="Overview array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc Dilatation slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://laohanlinux.github.io/2019/04/05/slice-of-goruntime/" />
 <meta property="article:published_time" content="2019-04-05T23:17:07&#43;08:00"/>
 <meta property="article:modified_time" content="2019-04-05T23:17:07&#43;08:00"/>
 
 <meta itemprop="name" content="Slice of GoRuntime">
-<meta itemprop="description" content="array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc 扩容 slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要">
+<meta itemprop="description" content="Overview array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc Dilatation slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要">
 
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:07&#43;08:00" />
@@ -58,7 +58,7 @@
 <meta itemprop="keywords" content="Slice,GoRuntime," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Slice of GoRuntime"/>
-<meta name="twitter:description" content="array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc 扩容 slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要"/>
+<meta name="twitter:description" content="Overview array 底层指向数组的指针，是一块连续的空间 len 大小 cap 容量 New slice mallocgc Dilatation slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？ 主要"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -142,12 +142,10 @@
 <ul>
 <li>
 <ul>
-<li>
-<ul>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#new-slice">New slice</a></li>
-<li><a href="#扩容">扩容</a></li>
+<li><a href="#dilatation">Dilatation</a></li>
 <li><a href="#example">Example</a></li>
-</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -155,6 +153,8 @@
 </div>
     <div class="post-content">
       
+
+<h2 id="overview">Overview</h2>
 
 <p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1w7kwcyk1j30ci0723yv.jpg" alt="" /></p>
 
@@ -176,13 +176,13 @@
 
 <p>容量</p>
 
-<h3 id="new-slice">New slice</h3>
+<h2 id="new-slice">New slice</h2>
 
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1w7vakto3j30ci0jkgm5.jpg" alt="image-20190409112312727" /></p>
 
 <p><a href="https://laohanlinux.github.io/2019/02/06/memory-manager-of-goruntime/">mallocgc</a></p>
 
-<h3 id="扩容">扩容</h3>
+<h2 id="dilatation">Dilatation</h2>
 
 <p>slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？</p>
 
@@ -192,7 +192,7 @@
 
 <p><em>注：</em> 主要关键的两个逻辑：所需容量小于1024，2^N；大于1024，1/4慢慢递增，直至能容纳所需容量的大小</p>
 
-<h3 id="example">Example</h3>
+<h2 id="example">Example</h2>
 
 <p>往上看到了一个比较有意思的例子</p>
 <div class="highlight"><div class="chroma">
