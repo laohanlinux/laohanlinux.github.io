@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:07&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:07&#43;08:00" />
-<meta itemprop="wordCount" content="235">
+<meta itemprop="wordCount" content="289">
 
 
 
@@ -129,7 +129,7 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 235 words </span>
+          <span class="more-meta"> 289 words </span>
           <span class="more-meta"> 1 min read </span>
         
       </div>
@@ -187,6 +187,10 @@
 <p>slice比较有意思的是扩容阶段，slice到底是以怎样的方式进行扩容的呢？</p>
 
 <p>主要逻辑在<code>growslice</code>函数</p>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1wj3opq8qj30k60qu410.jpg" alt="" /></p>
+
+<p><em>注：</em> 主要关键的两个逻辑：所需容量小于1024，2^N；大于1024，1/4慢慢递增，直至能容纳所需容量的大小</p>
 
 <h3 id="example">Example</h3>
 
