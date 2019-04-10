@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="931">
+<meta itemprop="wordCount" content="1132">
 
 
 
@@ -129,8 +129,8 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 931 words </span>
-          <span class="more-meta"> 2 mins read </span>
+          <span class="more-meta"> 1132 words </span>
+          <span class="more-meta"> 3 mins read </span>
         
       </div>
     </header>
@@ -141,10 +141,12 @@
     <nav id="TableOfContents">
 <ul>
 <li><a href="#view">View</a></li>
+<li><a href="#access-map-key">Access map[key]</a></li>
 <li><a href="#dilatation">Dilatation</a></li>
 <li><a href="#other-special-function-or-value">Other Special Function or Value</a>
 <ul>
 <li><a href="#hashfunction">hashFunction</a></li>
+<li><a href="#tohash-0">ToHash[0]</a></li>
 <li><a href="#bucketshift">bucketShift()</a></li>
 </ul></li>
 </ul>
@@ -162,16 +164,66 @@
 
 <p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1wpiggsrhj310q0s40y4.jpg" alt="" /></p>
 
-<p>hmap.B 可容纳的键值对: *2^B*；hmap.bucketSize: 每个桶的大小；hmap.buckets: <em>2^B</em> Buckets的数组；hmap.oldbuckets: 旧桶，在迁移时不为空。</p>
+<p>hmap.B 可容纳的键值对: *2^B*；hmap.bucketSize: 每个桶的大小；hmap.buckets: <em>2^B</em> Buckets的数组；hmap.oldbuckets: 旧桶，在迁移时不为空；nevacuate：迁移进度；extra：？</p>
 
 <p>比如有这么一个hashmap：</p>
 
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1wvl0gbn1j30qi0f0dh6.jpg" alt="image-20190410010342018" /></p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g1xn5eruszj30u00x1n0u.jpg" alt="" /></p>
 
 <p><center>
   <img src = "https://ws4.sinaimg.cn/large/006tNc79gy1g1wxb61f09j30ae15g40q.jpg" with = 750, hight = 800>
 </center></p>
 
+<h1 id="access-map-key">Access map[key]</h1>
+
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g1xnd8mli2j3074118mxx.jpg" alt="" /></p>
+
+<ul>
+<li>计算桶的位置</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">alg</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span>
+<span class="nx">hash</span> <span class="o">:=</span> <span class="nx">alg</span><span class="p">.</span><span class="nf">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span><span class="p">))</span>
+<span class="nx">m</span> <span class="o">:=</span> <span class="nf">bucketMask</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="c1">//
+</span><span class="c1"></span><span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>检查是否处于oldBuckets</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">c</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span><span class="p">;</span> <span class="nx">c</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">sameSizeGrow</span><span class="p">()</span> <span class="p">{</span>
+			<span class="c1">// There used to be half as many buckets; mask down one more power of two.
+</span><span class="c1"></span>			<span class="nx">m</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+		<span class="p">}</span>
+		<span class="nx">oldb</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nf">evacuated</span><span class="p">(</span><span class="nx">oldb</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">b</span> <span class="p">=</span> <span class="nx">oldb</span>
+		<span class="p">}</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
 <h1 id="dilatation">Dilatation</h1>
 
 <p>既然是hashTable，当数据量大的时候，检索会越来越慢，该如何解决这些问题。Go的Map采用了传统的扩容方式，如下：</p>
@@ -239,6 +291,46 @@
 <h2 id="hashfunction">hashFunction</h2>
 
 <p>TODO</p>
+
+<h2 id="tohash-0">ToHash[0]</h2>
+
+<p>桶的迁移进度状态</p>
+
+<ul>
+<li>Empty</li>
+</ul>
+
+<p>槽为空，即该桶无元素</p>
+
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1g1xnxsw5lsj303e0ay3yf.jpg" alt="image-20190410172447045" /></p>
+
+<ul>
+<li>evacuatedEmpty = 1</li>
+</ul>
+
+<p>槽为空，并且桶被迁移到新的地方</p>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1xo2flhvtj30ey0piwft.jpg" alt="image-20190410172914111" /></p>
+
+<ul>
+<li>evacuatedX</li>
+</ul>
+
+<p>键值对合法，键值对被迁移到新表的<strong>前半位置</strong></p>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1xo5lpixaj30ey0piabd.jpg" alt="image-20190410173217777" /></p>
+
+<ul>
+<li>evacuatedY</li>
+</ul>
+
+<p>键值对合法，键值对被迁移到新表的**后半位置</p>
+
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1xo5wiwswj30ey0pi3zw.jpg" alt="image-20190410173233685" /></p>
+
+<ul>
+<li>minTopHash</li>
+</ul>
 
 <h2 id="bucketshift">bucketShift()</h2>
 <div class="highlight"><div class="chroma">
