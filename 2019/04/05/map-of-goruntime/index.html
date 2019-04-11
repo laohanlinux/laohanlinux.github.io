@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="1132">
+<meta itemprop="wordCount" content="1480">
 
 
 
@@ -129,7 +129,7 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 1132 words </span>
+          <span class="more-meta"> 1480 words </span>
           <span class="more-meta"> 3 mins read </span>
         
       </div>
@@ -141,7 +141,10 @@
     <nav id="TableOfContents">
 <ul>
 <li><a href="#view">View</a></li>
-<li><a href="#access-map-key">Access map[key]</a></li>
+<li><a href="#init-map">Init Map</a></li>
+<li><a href="#lookups">Lookups</a></li>
+<li><a href="#insert">Insert</a></li>
+<li><a href="#remove">Remove</a></li>
 <li><a href="#dilatation">Dilatation</a></li>
 <li><a href="#other-special-function-or-value">Other Special Function or Value</a>
 <ul>
@@ -174,14 +177,148 @@
   <img src = "https://ws1.sinaimg.cn/large/006tNc79gy1g1xn5eruszj30u00x1n0u.jpg">
 </center></p>
 
+<h1 id="init-map">Init Map</h1>
+
+<ul>
+<li>Fix hint</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">hint</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">hint</span> <span class="p">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="nf">maxSliceCap</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucket</span><span class="p">.</span><span class="nx">size</span><span class="p">))</span> <span class="p">{</span>
+		<span class="nx">hint</span> <span class="p">=</span> <span class="mi">0</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>Init hashFunction</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">h</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">h</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">hmap</span><span class="p">)(</span><span class="nf">newobject</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">hmap</span><span class="p">))</span>
+	<span class="p">}</span>
+<span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span> <span class="p">=</span> <span class="nf">fastrand</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><em>注：</em> 为了安全，每次启动哈希函数的<code>部分输入</code>都是不同的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">fastrand</span><span class="p">()</span> <span class="kt">uint32</span> <span class="p">{</span>
+	<span class="nx">mp</span> <span class="o">:=</span> <span class="nf">getg</span><span class="p">().</span><span class="nx">m</span>
+	<span class="c1">// Implement xorshift64+: 2 32-bit xorshift sequences added together.
+</span><span class="c1"></span>	<span class="c1">// Shift triplet [17,7,16] was calculated as indicated in Marsaglia&#39;s
+</span><span class="c1"></span>	<span class="c1">// Xorshift paper: https://www.jstatsoft.org/article/view/v008i14/xorshift.pdf
+</span><span class="c1"></span>	<span class="c1">// This generator passes the SmallCrush suite, part of TestU01 framework:
+</span><span class="c1"></span>	<span class="c1">// http://simul.iro.umontreal.ca/testu01/tu01.html
+</span><span class="c1"></span>	<span class="nx">s1</span><span class="p">,</span> <span class="nx">s0</span> <span class="o">:=</span> <span class="nx">mp</span><span class="p">.</span><span class="nx">fastrand</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">mp</span><span class="p">.</span><span class="nx">fastrand</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nx">s1</span> <span class="p">^=</span> <span class="nx">s1</span> <span class="o">&lt;&lt;</span> <span class="mi">17</span>
+	<span class="nx">s1</span> <span class="p">=</span> <span class="nx">s1</span> <span class="p">^</span> <span class="nx">s0</span> <span class="p">^</span> <span class="nx">s1</span><span class="o">&gt;&gt;</span><span class="mi">7</span> <span class="p">^</span> <span class="nx">s0</span><span class="o">&gt;&gt;</span><span class="mi">16</span>
+	<span class="nx">mp</span><span class="p">.</span><span class="nx">fastrand</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">mp</span><span class="p">.</span><span class="nx">fastrand</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s0</span><span class="p">,</span> <span class="nx">s1</span>
+	<span class="k">return</span> <span class="nx">s0</span> <span class="o">+</span> <span class="nx">s1</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>Init B</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// find size parameter which will hold the requested # of elements
+</span><span class="c1"></span>	<span class="nx">B</span> <span class="o">:=</span> <span class="nb">uint8</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+	<span class="c1">// 计算一个合适的负载因子
+</span><span class="c1"></span>	<span class="c1">// 主要是loadFactorNum*(bucketShift(B)/loadFactorDen))
+</span><span class="c1"></span>	<span class="c1">// bucketShift(B) * loadFactorNum/loadFactorDen
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nf">overLoadFactor</span><span class="p">(</span><span class="nx">hint</span><span class="p">,</span> <span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">B</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="p">=</span> <span class="nx">B</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>Init hash table</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">nextOverflow</span> <span class="o">*</span><span class="nx">bmap</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="nx">nextOverflow</span> <span class="p">=</span> <span class="nf">makeBucketArray</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">nextOverflow</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="p">=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">mapextra</span><span class="p">)</span>
+			<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">nextOverflow</span> <span class="p">=</span> <span class="nx">nextOverflow</span>
+		<span class="p">}</span>
+	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>如果B=0，则采用懒惰分配策略</p>
+
+<ul>
+<li>Init Memory Space</li>
+</ul>
+
 <p><center>
   <img src = "https://ws4.sinaimg.cn/large/006tNc79gy1g1wxb61f09j30ae15g40q.jpg" with = 750, hight = 800>
 </center></p>
 
-<h1 id="access-map-key">Access map[key]</h1>
-
+<h1 id="lookups">Lookups</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">v := m[&#34;key&#34;] --&gt; runtime.mapaccess1(m, &#34;key&#34;, &amp;v)
+v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &amp;ok)</pre></td></tr></table>
+</div>
+</div>
 <p><center>
-  <img src = "https://ws2.sinaimg.cn/large/006tNc79gy1g1xnd8mli2j3074118mxx.jpg">
+  <img src = "https://ws2.sinaimg.cn/large/006tNc79gy1g1xnd8mli2j3074118mxx.jpg" with = "750" hight = "50">
 </center></p>
 
 <ul>
@@ -228,6 +365,24 @@
 			<span class="nx">b</span> <span class="p">=</span> <span class="nx">oldb</span>
 		<span class="p">}</span>
 	<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="insert">Insert</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">m[&#34;key&#34;] = 8120 --&gt; runtime.mapinsert(m, &#34;key&#34;, 8120)</pre></td></tr></table>
+</div>
+</div>
+<h1 id="remove">Remove</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">delete(m, &#34;key&#34;) --&gt; runtime.mapdelete(m, &#34;key&#34;)</pre></td></tr></table>
 </div>
 </div>
 <h1 id="dilatation">Dilatation</h1>
@@ -286,6 +441,8 @@
 //</pre></td></tr></table>
 </div>
 </div>
+<p>GoMap使用的是<em>6.5</em></p>
+
 <p>资料扩展：</p>
 
 <p><a href="https://www.google.com/search?q=hashmap+load+factor&amp;spell=1&amp;sa=X&amp;ved=0ahUKEwi7haG6u8PhAhWaHzQIHf7EAN0QBQgpKAA&amp;biw=1680&amp;bih=916">google hashmap load factor</a></p>
