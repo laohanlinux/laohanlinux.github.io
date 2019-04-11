@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="1817">
+<meta itemprop="wordCount" content="1884">
 
 
 
@@ -129,7 +129,7 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 1817 words </span>
+          <span class="more-meta"> 1884 words </span>
           <span class="more-meta"> 4 mins read </span>
         
       </div>
@@ -177,7 +177,9 @@
 
 <p>*注*：</p>
 
-<p>为了避免字节对齐带来的空间浪费，键值对的存储并不是<code>键/值/键/值</code>这种方式，而是<code>键/键/值/值</code>的方式。</p>
+<p>1：为了避免字节对齐带来的空间浪费，键值对的存储并不是<code>键/值/键/值</code>这种方式，而是<code>键/键/值/值</code>的方式。</p>
+
+<p>2：如果键值存储的是指针会加重gc的扫描(指针需要扫描指针指引的对象，可能会一直迭代扫描下去)，如果不是指针，那么一一迭代扫描了。</p>
 
 <h1 id="init-map">Init Map</h1>
 
