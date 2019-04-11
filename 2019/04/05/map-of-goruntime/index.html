@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="1480">
+<meta itemprop="wordCount" content="1580">
 
 
 
@@ -129,8 +129,8 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 1480 words </span>
-          <span class="more-meta"> 3 mins read </span>
+          <span class="more-meta"> 1580 words </span>
+          <span class="more-meta"> 4 mins read </span>
         
       </div>
     </header>
@@ -211,7 +211,7 @@
 <span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span> <span class="p">=</span> <span class="nf">fastrand</span><span class="p">()</span></code></pre></td></tr></table>
 </div>
 </div>
-<p><em>注：</em> 为了安全，每次启动哈希函数的<code>部分输入</code>都是不同的</p>
+<p><em>注：</em> 为了安全（加入随机因子），不停的迭代，可以看出每个new map，他们随机因子都是不同的，而且<code>getg().m</code>应该每次启动都不同的(TODO：找出更多细节).</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
@@ -367,6 +367,33 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 	<span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
+<ul>
+<li>topHash</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// tophash calculates the tophash value for hash.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">tophash</span><span class="p">(</span><span class="nx">hash</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="kt">uint8</span> <span class="p">{</span>
+	<span class="nx">top</span> <span class="o">:=</span> <span class="nb">uint8</span><span class="p">(</span><span class="nx">hash</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="nx">sys</span><span class="p">.</span><span class="nx">PtrSize</span><span class="o">*</span><span class="mi">8</span> <span class="o">-</span> <span class="mi">8</span><span class="p">))</span>
+	<span class="k">if</span> <span class="nx">top</span> <span class="p">&lt;</span> <span class="nx">minTopHash</span> <span class="p">{</span>
+		<span class="nx">top</span> <span class="o">+=</span> <span class="nx">minTopHash</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">top</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>高8位</p>
+
 <h1 id="insert">Insert</h1>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -531,6 +558,8 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 </div>
 </div>
 <p><a href="https://github.com/EDDYCJY/blog/blob/master/golang/pkg/2019-03-04-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Go-map-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E8%AE%BF%E9%97%AE%E5%85%83%E7%B4%A0.md">深入理解 Go map：初始化和访问元素</a></p>
+
+<p><a href="https://dave.cheney.net/2018/05/29/how-the-go-runtime-implements-maps-efficiently-without-generics">how-the-go-runtime-implements-maps-efficiently-without-generics</a></p>
 
     </div>
 
