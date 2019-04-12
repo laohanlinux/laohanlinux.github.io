@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="2272">
+<meta itemprop="wordCount" content="2537">
 
 
 
@@ -129,8 +129,8 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 2272 words </span>
-          <span class="more-meta"> 5 mins read </span>
+          <span class="more-meta"> 2537 words </span>
+          <span class="more-meta"> 6 mins read </span>
         
       </div>
     </header>
@@ -145,6 +145,7 @@
 <li><a href="#lookups">Lookups</a></li>
 <li><a href="#insert">Insert</a></li>
 <li><a href="#remove">Remove</a></li>
+<li><a href="#iterator">Iterator</a></li>
 <li><a href="#dilatation">Dilatation</a>
 <ul>
 <li><a href="#grow">Grow</a></li>
@@ -335,6 +336,8 @@
   <img src = "https://ws4.sinaimg.cn/large/006tNc79gy1g1wxb61f09j30ae15g40q.jpg" with = 750, hight = 800>
 </center></p>
 
+<p><em>注：</em> 内存分配是要涉及到页对齐，所以<code>nbuckets</code>可能会比<code>base</code>大，这时候会预分配 <code>nbuckets - base</code> 个 <code>nextOverflow</code>桶</p>
+
 <h1 id="lookups">Lookups</h1>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -477,6 +480,61 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 </ul>
 
 <p>？TODO key/value指正和非指针处理方式稍有不同</p>
+
+<h1 id="iterator">Iterator</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// A hash iteration structure.
+</span><span class="c1">// If you modify hiter, also change cmd/internal/gc/reflect.go to indicate
+</span><span class="c1">// the layout of this structure.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">hiter</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">key</span>         <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// Must be in first position.  Write nil to indicate iteration end (see cmd/internal/gc/range.go).
+</span><span class="c1"></span>	<span class="nx">value</span>       <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// Must be in second position (see cmd/internal/gc/range.go).
+</span><span class="c1"></span>	<span class="nx">t</span>           <span class="o">*</span><span class="nx">maptype</span>
+	<span class="nx">h</span>           <span class="o">*</span><span class="nx">hmap</span>
+	<span class="nx">buckets</span>     <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// bucket ptr at hash_iter initialization time
+</span><span class="c1"></span>	<span class="nx">bptr</span>        <span class="o">*</span><span class="nx">bmap</span>          <span class="c1">// current bucket
+</span><span class="c1"></span>	<span class="nx">overflow</span>    <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>       <span class="c1">// keeps overflow buckets of hmap.buckets alive
+</span><span class="c1"></span>	<span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>       <span class="c1">// keeps overflow buckets of hmap.oldbuckets alive
+</span><span class="c1"></span>	<span class="nx">startBucket</span> <span class="kt">uintptr</span>        <span class="c1">// bucket iteration started at
+</span><span class="c1"></span>	<span class="nx">offset</span>      <span class="kt">uint8</span>          <span class="c1">// intra-bucket offset to start from during iteration (should be big enough to hold bucketCnt-1)
+</span><span class="c1"></span>	<span class="nx">wrapped</span>     <span class="kt">bool</span>           <span class="c1">// already wrapped around from end of bucket array to beginning
+</span><span class="c1"></span>	<span class="nx">B</span>           <span class="kt">uint8</span>
+	<span class="nx">i</span>           <span class="kt">uint8</span>
+	<span class="nx">bucket</span>      <span class="kt">uintptr</span>
+	<span class="nx">checkBucket</span> <span class="kt">uintptr</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>入口函数<code>mapiterinit(t *maptype, h *hmap, it *iter)</code></p>
+
+<ul>
+<li>构造迭代器对象(使用Copy方式构造)</li>
+<li>选择迭代器基点</li>
+<li>开始迭代</li>
+</ul>
 
 <h1 id="dilatation">Dilatation</h1>
 
