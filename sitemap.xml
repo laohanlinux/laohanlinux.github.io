@@ -129,6 +129,13 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/2018/04/14/c10k-of-rust-network/</loc>
+    <lastmod>2018-04-14T01:23:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/2018/01/25/shanghai-work-life/</loc>
     <lastmod>2018-01-25T22:21:48+08:00</lastmod>
     <changefreq>weekly</changefreq>
