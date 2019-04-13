@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="3450">
+<meta itemprop="wordCount" content="3743">
 
 
 
@@ -129,8 +129,8 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 3450 words </span>
-          <span class="more-meta"> 7 mins read </span>
+          <span class="more-meta"> 3743 words </span>
+          <span class="more-meta"> 8 mins read </span>
         
       </div>
     </header>
@@ -610,6 +610,89 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 <h2 id="grow">Grow</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">hashGrow</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">bigger</span> <span class="o">:=</span> <span class="nb">uint8</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nf">overLoadFactor</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">count</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">bigger</span> <span class="p">=</span> <span class="mi">0</span>
+    <span class="c1">// 溢出太多空桶而扩容
+</span><span class="c1"></span>		<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="o">|=</span> <span class="nx">sameSizeGrow</span>
+	<span class="p">}</span>
+	<span class="nx">oldbuckets</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span>
+	<span class="nx">newbuckets</span><span class="p">,</span> <span class="nx">nextOverflow</span> <span class="o">:=</span> <span class="nf">makeBucketArray</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="o">+</span><span class="nx">bigger</span><span class="p">)</span>
+
+	<span class="nx">flags</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="o">&amp;^</span> <span class="p">(</span><span class="nx">iterator</span> <span class="p">|</span> <span class="nx">oldIterator</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">flags</span><span class="o">&amp;</span><span class="nx">iterator</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">flags</span> <span class="o">|=</span> <span class="nx">oldIterator</span>
+	<span class="p">}</span>
+	
+  <span class="c1">// 重置数据
+</span><span class="c1"></span>	<span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="o">+=</span> <span class="nx">bigger</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="p">=</span> <span class="nx">flags</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span> <span class="p">=</span> <span class="nx">oldbuckets</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span> <span class="p">=</span> <span class="nx">newbuckets</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="p">=</span> <span class="mi">0</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">noverflow</span> <span class="p">=</span> <span class="mi">0</span>
+
+  <span class="c1">// 将当前溢出桶迁移至`旧`溢出桶
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">overflow</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// Promote current overflow buckets to the old generation.
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">oldoverflow</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nf">throw</span><span class="p">(</span><span class="s">&#34;oldoverflow is not nil&#34;</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">oldoverflow</span> <span class="p">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">overflow</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">overflow</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">nextOverflow</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="p">=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">mapextra</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">nextOverflow</span> <span class="p">=</span> <span class="nx">nextOverflow</span>
+	<span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
@@ -735,37 +818,66 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 </span><span class="lnt">123
 </span><span class="lnt">124
 </span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">growWork</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">bucket</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="p">{</span>
-	<span class="c1">// make sure we evacuate the oldbucket corresponding
-</span><span class="c1"></span>	<span class="c1">// to the bucket we&#39;re about to use
+	<span class="c1">// 确保迁移了bucket对应的oldbucket
 </span><span class="c1"></span>	<span class="nf">evacuate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">bucket</span><span class="o">&amp;</span><span class="nx">h</span><span class="p">.</span><span class="nf">oldbucketmask</span><span class="p">())</span>
-
-	<span class="c1">// evacuate one more oldbucket to make progress on growing
+	<span class="c1">// 再迁移一个标记过的桶
 </span><span class="c1"></span>	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nf">growing</span><span class="p">()</span> <span class="p">{</span>
 		<span class="nf">evacuate</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="p">}</span>
+<span class="c1">// evacDst is an evacuation destination.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">evacDst</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">b</span> <span class="o">*</span><span class="nx">bmap</span>          <span class="c1">// current destination bucket
+</span><span class="c1"></span>	<span class="nx">i</span> <span class="kt">int</span>            <span class="c1">// key/val index into b
+</span><span class="c1"></span>	<span class="nx">k</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// pointer to current key storage
+</span><span class="c1"></span>	<span class="nx">v</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// pointer to current value storage
+</span><span class="c1"></span><span class="p">}</span>
 
+<span class="c1">// 计算真正扩容的旧桶对应的B
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">)</span> <span class="nf">noldbuckets</span><span class="p">()</span> <span class="kt">uintptr</span> <span class="p">{</span>
+	<span class="nx">oldB</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">sameSizeGrow</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">oldB</span><span class="o">--</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nf">bucketShift</span><span class="p">(</span><span class="nx">oldB</span><span class="p">)</span>
+<span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">evacuate</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">oldbucket</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span><span class="p">,</span> <span class="nx">oldbucket</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
-	<span class="nx">newbit</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">noldbuckets</span><span class="p">()</span>
-	<span class="k">if</span> <span class="p">!</span><span class="nf">evacuated</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
-		<span class="c1">// TODO: reuse overflow buckets instead of using new ones, if there
-</span><span class="c1"></span>		<span class="c1">// is no iterator using the old buckets.  (If !oldIterator.)
-</span><span class="c1"></span>
-		<span class="c1">// xy contains the x and y (low and high) evacuation destinations.
-</span><span class="c1"></span>		<span class="kd">var</span> <span class="nx">xy</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="nx">evacDst</span>
+  <span class="c1">// 计算出旧桶的位置
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span><span class="p">,</span> <span class="nx">oldbucket</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
+  <span class="c1">// 扩容前桶的个数
+</span><span class="c1"></span>	<span class="nx">newbit</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">noldbuckets</span><span class="p">()</span>
+  <span class="c1">// 桶还未被迁移
+</span><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nf">evacuated</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">xy</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="nx">evacDst</span>
 		<span class="nx">x</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-		<span class="nx">x</span><span class="p">.</span><span class="nx">b</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="nx">oldbucket</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
-		<span class="nx">x</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
-		<span class="nx">x</span><span class="p">.</span><span class="nx">v</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
-
-		<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">sameSizeGrow</span><span class="p">()</span> <span class="p">{</span>
-			<span class="c1">// Only calculate y pointers if we&#39;re growing bigger.
-</span><span class="c1"></span>			<span class="c1">// Otherwise GC can see bad pointers.
+		<span class="nx">x</span><span class="p">.</span><span class="nx">b</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="nx">oldbucket</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span> <span class="c1">// 新低位桶
+</span><span class="c1"></span>		<span class="nx">x</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span> <span class="c1">// 新低位桶的第一个key
+</span><span class="c1"></span>		<span class="nx">x</span><span class="p">.</span><span class="nx">v</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span><span class="c1">// 新低位桶的第一个value
+</span><span class="c1"></span>		<span class="c1">// 如果不是等量扩容
+</span><span class="c1"></span>		<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">sameSizeGrow</span><span class="p">()</span> <span class="p">{</span>
+      <span class="c1">// 新高位桶
 </span><span class="c1"></span>			<span class="nx">y</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 			<span class="nx">y</span><span class="p">.</span><span class="nx">b</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">bmap</span><span class="p">)(</span><span class="nf">add</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">buckets</span><span class="p">,</span> <span class="p">(</span><span class="nx">oldbucket</span><span class="o">+</span><span class="nx">newbit</span><span class="p">)</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">bucketsize</span><span class="p">)))</span>
 			<span class="nx">y</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">y</span><span class="p">.</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
@@ -773,8 +885,10 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 		<span class="p">}</span>
 
 		<span class="k">for</span> <span class="p">;</span> <span class="nx">b</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">b</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">overflow</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
-			<span class="nx">k</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
-			<span class="nx">v</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+      <span class="c1">// 旧桶key的地址
+</span><span class="c1"></span>			<span class="nx">k</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
+      <span class="c1">// 旧桶value的地址
+</span><span class="c1"></span>			<span class="nx">v</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
 			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">bucketCnt</span><span class="p">;</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="p">=</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nf">add</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">)),</span> <span class="nf">add</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span> <span class="p">{</span>
 				<span class="nx">top</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
 				<span class="k">if</span> <span class="nx">top</span> <span class="o">==</span> <span class="nx">empty</span> <span class="p">{</span>
@@ -790,22 +904,10 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 				<span class="p">}</span>
 				<span class="kd">var</span> <span class="nx">useY</span> <span class="kt">uint8</span>
 				<span class="k">if</span> <span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nf">sameSizeGrow</span><span class="p">()</span> <span class="p">{</span>
-					<span class="c1">// Compute hash to make our evacuation decision (whether we need
-</span><span class="c1"></span>					<span class="c1">// to send this key/value to bucket x or bucket y).
-</span><span class="c1"></span>					<span class="nx">hash</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span><span class="p">.</span><span class="nf">hash</span><span class="p">(</span><span class="nx">k2</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span><span class="p">))</span>
+        	
+					<span class="nx">hash</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span><span class="p">.</span><span class="nf">hash</span><span class="p">(</span><span class="nx">k2</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hash0</span><span class="p">))</span>
 					<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">flags</span><span class="o">&amp;</span><span class="nx">iterator</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nx">reflexivekey</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">.</span><span class="nx">alg</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="nx">k2</span><span class="p">,</span> <span class="nx">k2</span><span class="p">)</span> <span class="p">{</span>
-						<span class="c1">// If key != key (NaNs), then the hash could be (and probably
-</span><span class="c1"></span>						<span class="c1">// will be) entirely different from the old hash. Moreover,
-</span><span class="c1"></span>						<span class="c1">// it isn&#39;t reproducible. Reproducibility is required in the
-</span><span class="c1"></span>						<span class="c1">// presence of iterators, as our evacuation decision must
-</span><span class="c1"></span>						<span class="c1">// match whatever decision the iterator made.
-</span><span class="c1"></span>						<span class="c1">// Fortunately, we have the freedom to send these keys either
-</span><span class="c1"></span>						<span class="c1">// way. Also, tophash is meaningless for these kinds of keys.
-</span><span class="c1"></span>						<span class="c1">// We let the low bit of tophash drive the evacuation decision.
-</span><span class="c1"></span>						<span class="c1">// We recompute a new random tophash for the next level so
-</span><span class="c1"></span>						<span class="c1">// these keys will get evenly distributed across all buckets
-</span><span class="c1"></span>						<span class="c1">// after multiple grows.
-</span><span class="c1"></span>						<span class="nx">useY</span> <span class="p">=</span> <span class="nx">top</span> <span class="o">&amp;</span> <span class="mi">1</span>
+						<span class="nx">useY</span> <span class="p">=</span> <span class="nx">top</span> <span class="o">&amp;</span> <span class="mi">1</span>
 						<span class="nx">top</span> <span class="p">=</span> <span class="nf">tophash</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span>
 					<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 						<span class="k">if</span> <span class="nx">hash</span><span class="o">&amp;</span><span class="nx">newbit</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
@@ -817,18 +919,18 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 				<span class="k">if</span> <span class="nx">evacuatedX</span><span class="o">+</span><span class="mi">1</span> <span class="o">!=</span> <span class="nx">evacuatedY</span> <span class="p">{</span>
 					<span class="nf">throw</span><span class="p">(</span><span class="s">&#34;bad evacuatedN&#34;</span><span class="p">)</span>
 				<span class="p">}</span>
-
-				<span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">evacuatedX</span> <span class="o">+</span> <span class="nx">useY</span> <span class="c1">// evacuatedX + 1 == evacuatedY
-</span><span class="c1"></span>				<span class="nx">dst</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">xy</span><span class="p">[</span><span class="nx">useY</span><span class="p">]</span>                 <span class="c1">// evacuation destination
-</span><span class="c1"></span>
+				<span class="c1">// 设置tophash[i]
+</span><span class="c1"></span>				<span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">evacuatedX</span> <span class="o">+</span> <span class="nx">useY</span> 
+        <span class="c1">// 迁移的目标
+</span><span class="c1"></span>				<span class="nx">dst</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">xy</span><span class="p">[</span><span class="nx">useY</span><span class="p">]</span>                 
 				<span class="k">if</span> <span class="nx">dst</span><span class="p">.</span><span class="nx">i</span> <span class="o">==</span> <span class="nx">bucketCnt</span> <span class="p">{</span>
 					<span class="nx">dst</span><span class="p">.</span><span class="nx">b</span> <span class="p">=</span> <span class="nx">h</span><span class="p">.</span><span class="nf">newoverflow</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">dst</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span>
 					<span class="nx">dst</span><span class="p">.</span><span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span>
 					<span class="nx">dst</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">b</span><span class="p">),</span> <span class="nx">dataOffset</span><span class="p">)</span>
 					<span class="nx">dst</span><span class="p">.</span><span class="nx">v</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nx">bucketCnt</span><span class="o">*</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
 				<span class="p">}</span>
-				<span class="nx">dst</span><span class="p">.</span><span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">dst</span><span class="p">.</span><span class="nx">i</span><span class="o">&amp;</span><span class="p">(</span><span class="nx">bucketCnt</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="p">=</span> <span class="nx">top</span> <span class="c1">// mask dst.i as an optimization, to avoid a bounds check
-</span><span class="c1"></span>				<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">indirectkey</span> <span class="p">{</span>
+				<span class="nx">dst</span><span class="p">.</span><span class="nx">b</span><span class="p">.</span><span class="nx">tophash</span><span class="p">[</span><span class="nx">dst</span><span class="p">.</span><span class="nx">i</span><span class="o">&amp;</span><span class="p">(</span><span class="nx">bucketCnt</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="p">=</span> <span class="nx">top</span> 
+				<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">indirectkey</span> <span class="p">{</span>
 					<span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">k</span><span class="p">)</span> <span class="p">=</span> <span class="nx">k2</span> <span class="c1">// copy pointer
 </span><span class="c1"></span>				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 					<span class="nf">typedmemmove</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span> <span class="nx">dst</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="c1">// copy value
@@ -839,11 +941,8 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 					<span class="nf">typedmemmove</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">dst</span><span class="p">.</span><span class="nx">v</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
 				<span class="p">}</span>
 				<span class="nx">dst</span><span class="p">.</span><span class="nx">i</span><span class="o">++</span>
-				<span class="c1">// These updates might push these pointers past the end of the
-</span><span class="c1"></span>				<span class="c1">// key or value arrays.  That&#39;s ok, as we have the overflow pointer
-</span><span class="c1"></span>				<span class="c1">// at the end of the bucket to protect against pointing past the
-</span><span class="c1"></span>				<span class="c1">// end of the bucket.
-</span><span class="c1"></span>				<span class="nx">dst</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
+				
+				<span class="nx">dst</span><span class="p">.</span><span class="nx">k</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">k</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">keysize</span><span class="p">))</span>
 				<span class="nx">dst</span><span class="p">.</span><span class="nx">v</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">dst</span><span class="p">.</span><span class="nx">v</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">valuesize</span><span class="p">))</span>
 			<span class="p">}</span>
 		<span class="p">}</span>
@@ -861,9 +960,36 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 	<span class="k">if</span> <span class="nx">oldbucket</span> <span class="o">==</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="p">{</span>
 		<span class="nf">advanceEvacuationMark</span><span class="p">(</span><span class="nx">h</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">newbit</span><span class="p">)</span>
 	<span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kd">func</span> <span class="nf">advanceEvacuationMark</span><span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">hmap</span><span class="p">,</span> <span class="nx">t</span> <span class="o">*</span><span class="nx">maptype</span><span class="p">,</span> <span class="nx">newbit</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="o">++</span>
+	<span class="nx">stop</span> <span class="o">:=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">+</span> <span class="mi">1024</span>
+	<span class="k">if</span> <span class="nx">stop</span> <span class="p">&gt;</span> <span class="nx">newbit</span> <span class="p">{</span>
+		<span class="nx">stop</span> <span class="p">=</span> <span class="nx">newbit</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">!=</span> <span class="nx">stop</span> <span class="o">&amp;&amp;</span> <span class="nf">bucketEvacuated</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span><span class="o">++</span>
+	<span class="p">}</span>
+  <span class="c1">// 数据已全部迁移完毕，清理相关变量值，不会影响到迭代器，即迭代器还是可以方位就的数据
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">nevacuate</span> <span class="o">==</span> <span class="nx">newbit</span> <span class="p">{</span> 
+		<span class="nx">h</span><span class="p">.</span><span class="nx">oldbuckets</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">extra</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">h</span><span class="p">.</span><span class="nx">extra</span><span class="p">.</span><span class="nx">oldoverflow</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="p">}</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nx">flags</span> <span class="o">&amp;^=</span> <span class="nx">sameSizeGrow</span>
+	<span class="p">}</span>
 <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
+<p>*注*：</p>
+
+<ul>
+<li>如果有迭代器在迭代，那么旧的桶不会被迁移</li>
+<li>sameSizeGrow = 8：当前字典增长到新字典并且保持相同的大小</li>
+</ul>
+
 <p>资料扩展：</p>
 
 <p><a href="https://www.google.com/search?q=hashmap+load+factor&amp;spell=1&amp;sa=X&amp;ved=0ahUKEwi7haG6u8PhAhWaHzQIHf7EAN0QBQgpKAA&amp;biw=1680&amp;bih=916">google hashmap load factor</a></p>
