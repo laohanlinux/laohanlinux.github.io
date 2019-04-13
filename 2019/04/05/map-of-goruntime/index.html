@@ -51,7 +51,7 @@
 
 <meta itemprop="datePublished" content="2019-04-05T23:17:15&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-05T23:17:15&#43;08:00" />
-<meta itemprop="wordCount" content="3743">
+<meta itemprop="wordCount" content="3774">
 
 
 
@@ -129,7 +129,7 @@
             <a href="/categories/gokernel/"> GoKernel </a>
             <a href="/categories/analysis-of-source/"> Analysis of Source </a>
             </div>
-          <span class="more-meta"> 3743 words </span>
+          <span class="more-meta"> 3774 words </span>
           <span class="more-meta"> 8 mins read </span>
         
       </div>
@@ -490,57 +490,34 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 <p>？TODO key/value指正和非指针处理方式稍有不同</p>
 
 <h1 id="iterator">Iterator</h1>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// A hash iteration structure.
-</span><span class="c1">// If you modify hiter, also change cmd/internal/gc/reflect.go to indicate
-</span><span class="c1">// the layout of this structure.
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">hiter</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">key</span>         <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// Must be in first position.  Write nil to indicate iteration end (see cmd/internal/gc/range.go).
-</span><span class="c1"></span>	<span class="nx">value</span>       <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// Must be in second position (see cmd/internal/gc/range.go).
-</span><span class="c1"></span>	<span class="nx">t</span>           <span class="o">*</span><span class="nx">maptype</span>
-	<span class="nx">h</span>           <span class="o">*</span><span class="nx">hmap</span>
-	<span class="nx">buckets</span>     <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// bucket ptr at hash_iter initialization time
-</span><span class="c1"></span>	<span class="nx">bptr</span>        <span class="o">*</span><span class="nx">bmap</span>          <span class="c1">// current bucket
-</span><span class="c1"></span>	<span class="nx">overflow</span>    <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>       <span class="c1">// keeps overflow buckets of hmap.buckets alive
-</span><span class="c1"></span>	<span class="nx">oldoverflow</span> <span class="o">*</span><span class="p">[]</span><span class="o">*</span><span class="nx">bmap</span>       <span class="c1">// keeps overflow buckets of hmap.oldbuckets alive
-</span><span class="c1"></span>	<span class="nx">startBucket</span> <span class="kt">uintptr</span>        <span class="c1">// bucket iteration started at
-</span><span class="c1"></span>	<span class="nx">offset</span>      <span class="kt">uint8</span>          <span class="c1">// intra-bucket offset to start from during iteration (should be big enough to hold bucketCnt-1)
-</span><span class="c1"></span>	<span class="nx">wrapped</span>     <span class="kt">bool</span>           <span class="c1">// already wrapped around from end of bucket array to beginning
-</span><span class="c1"></span>	<span class="nx">B</span>           <span class="kt">uint8</span>
-	<span class="nx">i</span>           <span class="kt">uint8</span>
-	<span class="nx">bucket</span>      <span class="kt">uintptr</span>
-	<span class="nx">checkBucket</span> <span class="kt">uintptr</span>
-<span class="p">}</span></code></pre></td></tr></table>
-</div>
-</div>
+
 <p>入口函数<code>mapiterinit(t *maptype, h *hmap, it *iter)</code></p>
 
 <ul>
 <li>构造迭代器对象(使用Copy方式构造)</li>
-<li>选择迭代器基点</li>
+<li>选择迭代器基点(这是随机的，随机的种子来之于&hellip;)</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">  <span class="c1">// decide where to start
+</span><span class="c1"></span>	<span class="nx">r</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nf">fastrand</span><span class="p">())</span>
+	<span class="k">if</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="p">&gt;</span> <span class="mi">31</span><span class="o">-</span><span class="nx">bucketCntBits</span> <span class="p">{</span>
+		<span class="nx">r</span> <span class="o">+=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nf">fastrand</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span>
+	<span class="p">}</span>
+	<span class="nx">it</span><span class="p">.</span><span class="nx">startBucket</span> <span class="p">=</span> <span class="nx">r</span> <span class="o">&amp;</span> <span class="nf">bucketMask</span><span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+	<span class="nx">it</span><span class="p">.</span><span class="nx">offset</span> <span class="p">=</span> <span class="nb">uint8</span><span class="p">(</span><span class="nx">r</span> <span class="o">&gt;&gt;</span> <span class="nx">h</span><span class="p">.</span><span class="nx">B</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nx">bucketCnt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<ul>
 <li>开始迭代</li>
 </ul>
 
@@ -555,13 +532,19 @@ v, ok := m[&#34;key&#34;] --&gt; runtime.mapaccess2(m, &#34;key&#34;, &amp;v, &a
 <p>这时候同时出现了两个<code>map</code>，旧map的键值对会逐步迁移至新的map，为了性能的考虑，不会一次性迁移，采用*增量扩容*策略，那么就会需要解决如下的问题：</p>
 
 <ul>
-<li>迁移的时机，什么操作会触发迁移</li>
+<li>扩容触发的原因</li>
 </ul>
 
-<p>在 Go 的 mapassign 插入 Key 值、mapdelete 删除 key 值的时候都会检查当前是否在扩容中.</p>
+<p>1：达到负载因子（负载因子的单位是cell，即key）；2：负载因子为达到，但是溢出的空桶太多（这里的单位是bucket，即溢出的bucket个数），溢出空间使用率就低了</p>
 
 <ul>
-<li>每次的迁移数据量是多少</li>
+<li>什么操作会触发增量迁移</li>
+</ul>
+
+<p>在 Go 的 mapassign 插入 Key 值、mapdelete 删除 key 值的时候都会检查当前是否在扩容中，如果是，则迁移当前key所在的bucket。</p>
+
+<ul>
+<li>每次的迁移数据量是多少(1 个bucket)</li>
 </ul>
 
 <p>除此之外，还有一个比较有意思的问题，键值对达到多少时会触发扩容？在hashTable中有个*loadFactor*的概念，中文意思是*加载因子*或者叫做*负载系数*。</p>
