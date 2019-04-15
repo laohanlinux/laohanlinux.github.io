@@ -17,7 +17,9 @@
       <pubDate>Mon, 15 Apr 2019 21:56:00 +0800</pubDate>
       
       <guid>https://laohanlinux.github.io/2019/04/15/c10k-of-tokio-rs-network/</guid>
-      <description></description>
+      <description>server
+benchmark-client
+Benchmark 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k</description>
     </item>
     
   </channel>
