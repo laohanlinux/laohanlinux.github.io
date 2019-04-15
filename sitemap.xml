@@ -311,13 +311,6 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/c10k/</loc>
-    <lastmod>2018-04-14T01:23:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://laohanlinux.github.io/categories/</loc>
     <lastmod>2019-04-10T01:32:19+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -346,14 +339,14 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/erlang/</loc>
+    <loc>https://laohanlinux.github.io/categories/erlang/</loc>
     <lastmod>2016-04-25T00:15:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/categories/erlang/</loc>
+    <loc>https://laohanlinux.github.io/tags/erlang/</loc>
     <lastmod>2016-04-25T00:15:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -430,14 +423,14 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/rust/</loc>
+    <loc>https://laohanlinux.github.io/categories/rust/</loc>
     <lastmod>2018-04-14T01:23:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/categories/rust/</loc>
+    <loc>https://laohanlinux.github.io/tags/rust/</loc>
     <lastmod>2018-04-14T01:23:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -521,6 +514,13 @@
   </url>
   
   <url>
+    <loc>https://laohanlinux.github.io/tags/c10k/</loc>
+    <lastmod>2018-04-14T01:23:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://laohanlinux.github.io/tags/cowboy/</loc>
     <lastmod>2015-04-25T22:59:40+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -556,13 +556,6 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/goim/</loc>
-    <lastmod>2016-12-22T00:47:22+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://laohanlinux.github.io/categories/goim/</loc>
     <lastmod>2016-12-22T00:47:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -570,14 +563,21 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/muduo/</loc>
-    <lastmod>2015-07-01T00:24:59+00:00</lastmod>
+    <loc>https://laohanlinux.github.io/tags/goim/</loc>
+    <lastmod>2016-12-22T00:47:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://laohanlinux.github.io/categories/muduo/</loc>
+    <lastmod>2015-07-01T00:24:59+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://laohanlinux.github.io/tags/muduo/</loc>
     <lastmod>2015-07-01T00:24:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
@@ -668,14 +668,14 @@
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/tags/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</loc>
+    <loc>https://laohanlinux.github.io/categories/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2016-04-25T23:45:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://laohanlinux.github.io/categories/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</loc>
+    <loc>https://laohanlinux.github.io/tags/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2016-04-25T23:45:22+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
