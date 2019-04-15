@@ -19,7 +19,8 @@
       <guid>https://laohanlinux.github.io/2019/04/15/c10k-of-tokio-rs-network/</guid>
       <description>server
 benchmark-client
-Benchmark 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k</description>
+Benchmark v.0.1 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   v.0.2 mutil io reator
+1 2 3 4 5 6  ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 115648 request/sec, 115648 response/sec, 11293 kb/sec Requests: 1156483 Responses: 1156482   continue to challenge 500k</description>
     </item>
     
   </channel>

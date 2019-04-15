@@ -18,7 +18,8 @@
 
 <meta name="author" content="Rg" /><meta name="description" content="server
 benchmark-client
-Benchmark 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k" /><meta name="keywords" content="Rg, Rust, even" />
+Benchmark v.0.1 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   v.0.2 mutil io reator
+1 2 3 4 5 6  ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 115648 request/sec, 115648 response/sec, 11293 kb/sec Requests: 1156483 Responses: 1156482   continue to challenge 500k" /><meta name="keywords" content="Rg, Rust, even" />
 
 
 
@@ -43,7 +44,8 @@ Benchmark 1 2 3 4 5 6 7  -&amp;gt; % target/release/examples/echo_client -t 2 -c
 <meta property="og:title" content="c10k of tokio-rs network" />
 <meta property="og:description" content="server
 benchmark-client
-Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k" />
+Benchmark v.0.1 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   v.0.2 mutil io reator
+1 2 3 4 5 6  ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 115648 request/sec, 115648 response/sec, 11293 kb/sec Requests: 1156483 Responses: 1156482   continue to challenge 500k" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://laohanlinux.github.io/2019/04/15/c10k-of-tokio-rs-network/" />
 <meta property="article:published_time" content="2019-04-15T21:56:00&#43;08:00"/>
@@ -52,12 +54,13 @@ Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100
 <meta itemprop="name" content="c10k of tokio-rs network">
 <meta itemprop="description" content="server
 benchmark-client
-Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k">
+Benchmark v.0.1 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   v.0.2 mutil io reator
+1 2 3 4 5 6  ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 115648 request/sec, 115648 response/sec, 11293 kb/sec Requests: 1156483 Responses: 1156482   continue to challenge 500k">
 
 
 <meta itemprop="datePublished" content="2019-04-15T21:56:00&#43;08:00" />
 <meta itemprop="dateModified" content="2019-04-15T21:56:00&#43;08:00" />
-<meta itemprop="wordCount" content="43">
+<meta itemprop="wordCount" content="76">
 
 
 
@@ -66,7 +69,8 @@ Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100
 <meta name="twitter:title" content="c10k of tokio-rs network"/>
 <meta name="twitter:description" content="server
 benchmark-client
-Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   challenge 500k"/>
+Benchmark v.0.1 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100 -l 100 -a 127.0.0.1:3941 ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 100230 request/sec, 100230 response/sec, 9788 kb/sec Requests: 1002303 Responses: 1002302   v.0.2 mutil io reator
+1 2 3 4 5 6  ==================Benchmarking: 127.0.0.1:3941================== 100 clients, running 100 bytes, 10 sec. Speed: 115648 request/sec, 115648 response/sec, 11293 kb/sec Requests: 1156483 Responses: 1156482   continue to challenge 500k"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -136,7 +140,7 @@ Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100
         <div class="post-category">
             <a href="/categories/rust/"> Rust </a>
             </div>
-          <span class="more-meta"> 43 words </span>
+          <span class="more-meta"> 76 words </span>
           <span class="more-meta"> 1 min read </span>
         
       </div>
@@ -149,7 +153,11 @@ Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100
 <ul>
 <li>
 <ul>
-<li><a href="#benchmark">Benchmark</a></li>
+<li><a href="#benchmark">Benchmark</a>
+<ul>
+<li><a href="#v-0-1">v.0.1</a></li>
+<li><a href="#v-0-2">v.0.2</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -163,6 +171,8 @@ Benchmark 1 2 3 4 5 6 7  -&gt; % target/release/examples/echo_client -t 2 -c 100
 <p><a href="https://github.com/Xudong-Huang/may">benchmark-client</a></p>
 
 <h2 id="benchmark">Benchmark</h2>
+
+<h3 id="v-0-1">v.0.1</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
@@ -183,7 +193,28 @@ Requests: <span class="m">1002303</span>
 Responses: <span class="m">1002302</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>challenge <code>500k</code></p>
+<h3 id="v-0-2">v.0.2</h3>
+
+<p>mutil io reator</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">==================</span>Benchmarking: <span class="m">127</span>.0.0.1:3941<span class="o">==================</span>
+<span class="m">100</span> clients, running <span class="m">100</span> bytes, <span class="m">10</span> sec.
+
+Speed: <span class="m">115648</span> request/sec,  <span class="m">115648</span> response/sec, <span class="m">11293</span> kb/sec
+Requests: <span class="m">1156483</span>
+Responses: <span class="m">1156482</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>continue to challenge <code>500k</code></p>
 
     </div>
 
