@@ -169,7 +169,7 @@
 
 <p><a href="https://github.com/laohanlinux/bitcask">go bitcask github</a></p>
 
-<p><center><img src="http://image.haha.mx/2013/04/03/middle/803545_68a109882550ec3556a2b19e277ddb10_1364992759.gif" alt="" /></center></p>
+<p><center><img src="https://i.loli.net/2019/05/03/5ccbe076ebd69.gif" alt="" /></center></p>
 
 <p><center><code>talk is cheap, show me the code!</code> </center></p>
 
@@ -186,11 +186,11 @@
 
 <p><code>bitcask</code>的数据文件分为<strong>只读文件</strong>和唯一<strong>一个读写文件</strong></p>
 
-<p><center><img src="http://laohanlinux.github.io/images/img/bitcask-1.png" alt="图-1" /></center></p>
+<p><center><img src="https://i.loli.net/2019/05/03/5ccbe07cc3e8a.png" alt="图-1" /></center></p>
 
 <p>为了加快索引的重建速度，每个数据文件对应一个<code>hint</code>文件，如：</p>
 
-<p><center><img src="http://laohanlinux.github.io/images/img/bitcask-2.png" alt="图-2" /></center></p>
+<p><center><img src="https://i.loli.net/2019/05/03/5ccbe07d98438.png" alt="图-2" /></center></p>
 
 <p><code>data</code>文件的格式如下：</p>
 <div class="highlight"><div class="chroma">
@@ -369,7 +369,7 @@
 
 <p>为简化设计，便于实现，<code>merge</code>操作把需要的<code>old file</code>文件重新扫描，如果记录是老的或者被删除了得，就过滤掉；需要保留的就按正常的操作重新插入到<code>active file</code>文件中。</p>
 
-<p><center><img src="http://laohanlinux.github.io/images/img/bitcask-3.png" alt="" /></center></p>
+<p><center><img src="https://i.loli.net/2019/05/03/5ccbe07e6ee62.png" alt="" /></center></p>
 
 <p>(<code>ps:本人只实现了一个简单的merge操作，由于比较忙，优化和策略方面还没全面</code>)</p>
 

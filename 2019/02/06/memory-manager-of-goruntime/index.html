@@ -203,7 +203,7 @@
 
 <h3 id="虚拟内存">虚拟内存</h3>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1g1sul0k0sbj311e0twq5z.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0ac96b2b.jpg" alt="" /></p>
 
 <p>在现代系统中，保护模式下，进程看到的内存地址都是<code>虚拟地址</code>，可以通过页表进行转换，转换到实际的主存RAW或者磁盘中。</p>
 
@@ -271,7 +271,7 @@
 
 <p>结构:</p>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1g1szxe9enmj30qg0ii0ul.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0ad3c9eb.jpg" alt="" /></p>
 
 <h3 id="内存分类">内存分类</h3>
 
@@ -279,7 +279,7 @@
 
 <p>小于等于<code>32Kb</code>的对象</p>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1g1t0i0ojahj30q40dkmxq.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccc03703ff4f.jpg" alt="" /></p>
 
 <p>小对象被映射成<code>170</code>种规格的大小的小对象，每个的规格不一定相同，但满足<code>2^N Bytes</code>，如：</p>
 <div class="highlight"><div class="chroma">
@@ -298,13 +298,13 @@
 </div>
 <h5 id="分配">分配</h5>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g1u3ru12tvj318c0rctdk.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0a971456.jpg" alt="" /></p>
 
 <h4 id="large">Large</h4>
 
 <p>大于<code>32Kb</code>的对象</p>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1g1t0wqfxtkj311c0lamyd.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccc0374055b6.jpg" alt="" /></p>
 
 <p>一共有256中，<code>[1，255]</code>类型每一项分别占用<code>n*4k</code>，<code>rest</code>为特殊项。</p>
 
@@ -490,7 +490,7 @@
 
 <h2 id="层级">层级</h2>
 
-<p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g1uelpv8qwj318z0u0n1v.jpg" alt="Go学习笔记" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0c51b569.jpg" alt="Go学习笔记" /></p>
 
 <p>和 <code>tcmalloc</code> 不同，go memory分为3个level，分别为<code>tiny, small, large</code></p>
 
@@ -524,7 +524,7 @@
 
 <h3 id="small-allocator">Small Allocator</h3>
 
-<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1g1u5lyie1dj30rq0rs410.jpg" alt="" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0aa3373c.jpg" alt="" /></p>
 
 <blockquote>
 <p>At source-code: sizeclasses.go</p>
@@ -586,11 +586,11 @@
 </div>
 <h4 id="分配流程-1">分配流程</h4>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g1ueixmli3j313u0gqabt.jpg" alt="image-20190407214226925" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0b867399.jpg" alt="image-20190407214226925" /></p>
 
 <h3 id="tiny-allocator">Tiny Allocator</h3>
 
-<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g1uewk49qmj314a0k2n0j.jpg" alt="image-20190407215529472" /></p>
+<p><img src="https://i.loli.net/2019/05/03/5ccbe0b93b1d9.jpg" alt="image-20190407215529472" /></p>
 
 <h3 id="内存释放">内存释放</h3>
 
